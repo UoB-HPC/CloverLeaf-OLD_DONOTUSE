@@ -35,6 +35,7 @@ SUBROUTINE read_input()
 
   CHARACTER(LEN=500) :: word
 
+
   test_problem=0
 
   state_max=0
