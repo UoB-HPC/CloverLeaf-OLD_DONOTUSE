@@ -28,7 +28,6 @@ SUBROUTINE field_summary()
 
   USE clover_module
   USE ideal_gas_module
-  USE field_summary_kernel_module
 
   IMPLICIT NONE
 
@@ -64,28 +63,7 @@ SUBROUTINE field_summary()
   t_press=0.0
 
 
-  IF(use_fortran_kernels) THEN
-    DO tile=1,tiles_per_chunk
-      CALL field_summary_kernel(chunk%tiles(tile)%t_xmin,                   &
-        chunk%tiles(tile)%t_xmax,                   &
-        chunk%tiles(tile)%t_ymin,                   &
-        chunk%tiles(tile)%t_ymax,                   &
-        chunk%tiles(tile)%field%volume,                  &
-        chunk%tiles(tile)%field%density0,                &
-        chunk%tiles(tile)%field%energy0,                 &
-        chunk%tiles(tile)%field%pressure,                &
-        chunk%tiles(tile)%field%xvel0,                   &
-        chunk%tiles(tile)%field%yvel0,                   &
-        vol,mass,ie,ke,press                     )
-      t_vol=t_vol+vol
-      t_mass=t_mass+mass
-      t_ie=t_ie+ie
-      t_ke=t_ke+ke
-      t_press=t_press+press
-
-    ENDDO
-
-  ELSEIF(use_C_kernels) THEN
+  IF(use_C_kernels) THEN
     DO tile=1,tiles_per_chunk
       CALL field_summary_kernel_c(chunk%tiles(tile)%t_xmin,                   &
         chunk%tiles(tile)%t_xmax,                   &

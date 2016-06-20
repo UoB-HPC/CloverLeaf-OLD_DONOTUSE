@@ -26,7 +26,6 @@ CONTAINS
   SUBROUTINE accelerate()
 
     USE clover_module
-    USE accelerate_kernel_module
 
     IMPLICIT NONE
 
@@ -37,29 +36,7 @@ CONTAINS
     IF(profiler_on) kernel_time=timer()
   
     
-    IF(use_fortran_kernels) THEN
-      DO tile=1,tiles_per_chunk
-
-
-        CALL accelerate_kernel(chunk%tiles(tile)%t_xmin,                &
-          chunk%tiles(tile)%t_xmax,                  &
-          chunk%tiles(tile)%t_ymin,                  &
-          chunk%tiles(tile)%t_ymax,                  &
-          dt,                                     &
-          chunk%tiles(tile)%field%xarea,                  &
-          chunk%tiles(tile)%field%yarea,                  &
-          chunk%tiles(tile)%field%volume,                 &
-          chunk%tiles(tile)%field%density0,               &
-          chunk%tiles(tile)%field%pressure,               &
-          chunk%tiles(tile)%field%viscosity,              &
-          chunk%tiles(tile)%field%xvel0,                  &
-          chunk%tiles(tile)%field%yvel0,                  &
-          chunk%tiles(tile)%field%xvel1,                  &
-          chunk%tiles(tile)%field%yvel1                  )
-
-
-      ENDDO
-    ELSEIF(use_C_kernels)THEN
+    IF(use_C_kernels)THEN
       DO tile=1,tiles_per_chunk
         CALL accelerate_kernel_c(chunk%tiles(tile)%t_xmin,                &
           chunk%tiles(tile)%t_xmax,                  &

@@ -65,8 +65,8 @@ SUBROUTINE read_input()
   dtv_safe=0.5_8
   dtdiv_safe=0.7_8
 
-  use_fortran_kernels=.TRUE.
-  use_C_kernels=.FALSE.
+  use_fortran_kernels=.FALSE.
+  use_C_kernels=.TRUE.
   use_OA_kernels=.FALSE.
   profiler_on=.FALSE.
   profiler%timestep=0.0
@@ -172,8 +172,8 @@ SUBROUTINE read_input()
           tiles_per_chunk=parse_getival(parse_getword(.TRUE.))/parallel%max_task
           IF(parallel%boss)WRITE(g_out,"(1x,a25,i12)")'tiles_per_chunk',tiles_per_chunk
         CASE('use_fortran_kernels')
-          use_fortran_kernels=.TRUE.
-          use_C_kernels=.FALSE.
+          use_fortran_kernels=.FALSE.
+          use_C_kernels=.TRUE.
           use_OA_kernels=.FALSE.
         CASE('use_c_kernels')
           use_fortran_kernels=.FALSE.
@@ -254,7 +254,7 @@ SUBROUTINE read_input()
   IF(parallel%boss) THEN
     WRITE(g_out,*)
     IF(use_fortran_kernels) THEN
-      WRITE(g_out,"(1x,a25)")'Using Fortran Kernels'
+      WRITE(g_out,"(1x,a25)")'Using C Kernels'
     ELSEIF(use_c_kernels) THEN
       WRITE(g_out,"(1x,a25)")'Using C Kernels'
     ELSEIF(use_oa_kernels) THEN

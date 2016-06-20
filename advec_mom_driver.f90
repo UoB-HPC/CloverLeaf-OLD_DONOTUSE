@@ -26,61 +26,12 @@ CONTAINS
   SUBROUTINE advec_mom_driver(tile,which_vel,direction,sweep_number)
 
     USE clover_module
-    USE advec_mom_kernel_mod
 
     IMPLICIT NONE
 
     INTEGER :: tile,which_vel,direction,sweep_number
 
-    IF(use_fortran_kernels)THEN
-      IF(which_vel.EQ.1) THEN
-        CALL advec_mom_kernel(chunk%tiles(tile)%t_xmin,            &
-          chunk%tiles(tile)%t_xmax,              &
-          chunk%tiles(tile)%t_ymin,              &
-          chunk%tiles(tile)%t_ymax,              &
-          chunk%tiles(tile)%field%xvel1,         &
-          chunk%tiles(tile)%field%mass_flux_x,   &
-          chunk%tiles(tile)%field%vol_flux_x,    &
-          chunk%tiles(tile)%field%mass_flux_y,   &
-          chunk%tiles(tile)%field%vol_flux_y,    &
-          chunk%tiles(tile)%field%volume,        &
-          chunk%tiles(tile)%field%density1,      &
-          chunk%tiles(tile)%field%work_array1,   &
-          chunk%tiles(tile)%field%work_array2,   &
-          chunk%tiles(tile)%field%work_array3,   &
-          chunk%tiles(tile)%field%work_array4,   &
-          chunk%tiles(tile)%field%work_array5,   &
-          chunk%tiles(tile)%field%work_array6,   &
-          chunk%tiles(tile)%field%celldx,        &
-          chunk%tiles(tile)%field%celldy,        &
-          which_vel,                             &
-          sweep_number,                          &
-          direction                              )
-      ELSE
-        CALL advec_mom_kernel(chunk%tiles(tile)%t_xmin,            &
-          chunk%tiles(tile)%t_xmax,              &
-          chunk%tiles(tile)%t_ymin,              &
-          chunk%tiles(tile)%t_ymax,              &
-          chunk%tiles(tile)%field%yvel1,         &
-          chunk%tiles(tile)%field%mass_flux_x,   &
-          chunk%tiles(tile)%field%vol_flux_x,    &
-          chunk%tiles(tile)%field%mass_flux_y,   &
-          chunk%tiles(tile)%field%vol_flux_y,    &
-          chunk%tiles(tile)%field%volume,        &
-          chunk%tiles(tile)%field%density1,      &
-          chunk%tiles(tile)%field%work_array1,   &
-          chunk%tiles(tile)%field%work_array2,   &
-          chunk%tiles(tile)%field%work_array3,   &
-          chunk%tiles(tile)%field%work_array4,   &
-          chunk%tiles(tile)%field%work_array5,   &
-          chunk%tiles(tile)%field%work_array6,   &
-          chunk%tiles(tile)%field%celldx,        &
-          chunk%tiles(tile)%field%celldy,        &
-          which_vel,                             &
-          sweep_number,                          &
-          direction                              )
-      ENDIF
-    ELSEIF(use_C_kernels)THEN
+    IF(use_C_kernels)THEN
       IF(which_vel.EQ.1) THEN
         CALL advec_mom_kernel_c(chunk%tiles(tile)%t_xmin,            &
           chunk%tiles(tile)%t_xmax,              &

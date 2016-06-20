@@ -22,7 +22,7 @@
 SUBROUTINE initialise_chunk(tile)
 
   USE clover_module
-  USE initialise_chunk_kernel_module
+
 
   IMPLICIT NONE
 
@@ -38,26 +38,7 @@ SUBROUTINE initialise_chunk(tile)
   ymin=grid%ymin+dy*float(chunk%tiles(tile)%t_bottom-1)
 
   
-  IF(use_fortran_kernels) THEN
-
-    CALL initialise_chunk_kernel(chunk%tiles(tile)%t_xmin,    &
-      chunk%tiles(tile)%t_xmax,    &
-      chunk%tiles(tile)%t_ymin,    &
-      chunk%tiles(tile)%t_ymax,    &
-      xmin,ymin,dx,dy,              &
-      chunk%tiles(tile)%field%vertexx,  &
-      chunk%tiles(tile)%field%vertexdx, &
-      chunk%tiles(tile)%field%vertexy,  &
-      chunk%tiles(tile)%field%vertexdy, &
-      chunk%tiles(tile)%field%cellx,    &
-      chunk%tiles(tile)%field%celldx,   &
-      chunk%tiles(tile)%field%celly,    &
-      chunk%tiles(tile)%field%celldy,   &
-      chunk%tiles(tile)%field%volume,   &
-      chunk%tiles(tile)%field%xarea,    &
-      chunk%tiles(tile)%field%yarea     )
-
-  ELSEIF(use_C_kernels) THEN
+  IF(use_C_kernels) THEN
     CALL initialise_chunk_kernel_c(chunk%tiles(tile)%t_xmin,    &
       chunk%tiles(tile)%t_xmax,    &
       chunk%tiles(tile)%t_ymin,    &

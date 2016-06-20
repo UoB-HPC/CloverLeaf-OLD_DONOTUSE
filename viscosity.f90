@@ -27,31 +27,13 @@ CONTAINS
   SUBROUTINE viscosity()
 
     USE clover_module
-    USE viscosity_kernel_module
   
     IMPLICIT NONE
 
     INTEGER :: tile
 
 
-    IF(use_fortran_kernels) THEN
-      DO tile=1,tiles_per_chunk
-
-        CALL viscosity_kernel(chunk%tiles(tile)%t_xmin,                   &
-          chunk%tiles(tile)%t_xmax,                     &
-          chunk%tiles(tile)%t_ymin,                     &
-          chunk%tiles(tile)%t_ymax,                     &
-          chunk%tiles(tile)%field%celldx,                    &
-          chunk%tiles(tile)%field%celldy,                    &
-          chunk%tiles(tile)%field%density0,                  &
-          chunk%tiles(tile)%field%pressure,                  &
-          chunk%tiles(tile)%field%viscosity,                 &
-          chunk%tiles(tile)%field%xvel0,                     &
-          chunk%tiles(tile)%field%yvel0                      )
-
-
-      ENDDO
-    ELSEIF(use_C_kernels) THEN
+    IF(use_C_kernels) THEN
       DO tile=1,tiles_per_chunk
 
         CALL viscosity_kernel_c(chunk%tiles(tile)%t_xmin,                   &

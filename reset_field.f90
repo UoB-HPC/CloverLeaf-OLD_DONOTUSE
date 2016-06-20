@@ -26,7 +26,6 @@ CONTAINS
   SUBROUTINE reset_field()
 
     USE clover_module
-    USE reset_field_kernel_module
 
     IMPLICIT NONE
 
@@ -36,27 +35,7 @@ CONTAINS
 
     IF(profiler_on) kernel_time=timer()
 
-    IF(use_fortran_kernels) THEN
-
-      DO tile=1,tiles_per_chunk
-
-
-        CALL reset_field_kernel(chunk%tiles(tile)%t_xmin,   &
-          chunk%tiles(tile)%t_xmax,     &
-          chunk%tiles(tile)%t_ymin,     &
-          chunk%tiles(tile)%t_ymax,     &
-          chunk%tiles(tile)%field%density0,  &
-          chunk%tiles(tile)%field%density1,  &
-          chunk%tiles(tile)%field%energy0,   &
-          chunk%tiles(tile)%field%energy1,   &
-          chunk%tiles(tile)%field%xvel0,     &
-          chunk%tiles(tile)%field%xvel1,     &
-          chunk%tiles(tile)%field%yvel0,     &
-          chunk%tiles(tile)%field%yvel1      )
-
-      ENDDO
-  
-    ELSEIF(use_C_kernels) THEN
+    IF(use_C_kernels) THEN
       DO tile=1,tiles_per_chunk
 
 

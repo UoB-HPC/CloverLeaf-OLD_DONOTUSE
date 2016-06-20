@@ -146,7 +146,37 @@ C_MPI_COMPILER_ = CC
 C_SOURCES = accelerate_kernel_c.c PdV_kernel_c.c flux_calc_kernel_c.c revert_kernel_c.c reset_field_kernel_c.c ideal_gas_kernel_c.c viscosity_kernel_c.c advec_mom_kernel_c.c advec_cell_kernel_c.c calc_dt_kernel_c.c field_summary_kernel_c.c update_halo_kernel_c.c pack_kernel_c.c generate_chunk_kernel_c.c initialise_chunk_kernel_c.c timer_c.c definitions_c.c data_c.c data_c.h definitions_c.h
 C_OBJECTS = $(C_SOURCES:.c=.o)
 
-F90_SOURCES =  data.f90 definitions.f90 pack_kernel.f90 clover.f90 report.f90 timer.f90 parse.f90 read_input.f90 initialise_chunk_kernel.f90 initialise_chunk.f90 build_field.f90 update_tile_halo_kernel.f90 update_tile_halo.f90 update_halo_kernel.f90 update_halo.f90 ideal_gas_kernel.f90 ideal_gas.f90 start.f90 generate_chunk_kernel.f90 generate_chunk.f90 initialise.f90 field_summary_kernel.f90 field_summary.f90 viscosity_kernel.f90 viscosity.f90 calc_dt_kernel.f90 calc_dt.f90 timestep.f90 accelerate_kernel.f90 accelerate.f90 revert_kernel.f90 revert.f90 PdV_kernel.f90 PdV.f90 flux_calc_kernel.f90 flux_calc.f90 advec_cell_kernel.f90 advec_cell_driver.f90 advec_mom_kernel.f90 advec_mom_driver.f90 advection.f90 reset_field_kernel.f90 reset_field.f90 hydro.f90 visit.f90 clover_leaf.f90
+F90_SOURCES =  data.f90 \
+	definitions.f90 \
+	clover.f90 \
+	report.f90 \
+	timer.f90 \
+	parse.f90 \
+	read_input.f90 \
+	initialise_chunk.f90 \
+	build_field.f90 \
+	update_tile_halo_kernel.f90 \
+	update_tile_halo.f90 \
+	update_halo.f90 \
+	ideal_gas.f90 \
+	start.f90 \
+	generate_chunk.f90 \
+	initialise.f90 \
+	field_summary.f90 \
+	viscosity.f90 \
+	calc_dt.f90 \
+	timestep.f90 \
+	accelerate.f90 \
+	revert.f90 \
+	PdV.f90 \
+	flux_calc.f90 \
+	advec_cell_driver.f90 \
+	advec_mom_driver.f90 \
+	advection.f90 \
+	reset_field.f90 \
+	hydro.f90 \
+	visit.f90 \
+	clover_leaf.f90
 
 FLAGS=$(FLAGS_$(COMPILER)) $(OMP) $(I3E) $(OPTIONS)
 CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(C_OPTIONS) -c

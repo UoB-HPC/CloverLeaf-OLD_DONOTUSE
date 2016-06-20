@@ -22,7 +22,6 @@
 SUBROUTINE generate_chunk(tile)
 
   USE clover_module
-  USE generate_chunk_kernel_module
 
   IMPLICIT NONE
 
@@ -46,34 +45,7 @@ SUBROUTINE generate_chunk(tile)
     state_geometry(state)=states(state)%geometry
   ENDDO
 
-  IF(use_fortran_kernels) THEN
-    CALL generate_chunk_kernel(chunk%tiles(tile)%t_xmin,             &
-      chunk%tiles(tile)%t_xmax,             &
-      chunk%tiles(tile)%t_ymin,             &
-      chunk%tiles(tile)%t_ymax,             &
-      chunk%tiles(tile)%field%vertexx,           &
-      chunk%tiles(tile)%field%vertexy,           &
-      chunk%tiles(tile)%field%cellx,             &
-      chunk%tiles(tile)%field%celly,             &
-      chunk%tiles(tile)%field%density0,          &
-      chunk%tiles(tile)%field%energy0,           &
-      chunk%tiles(tile)%field%xvel0,             &
-      chunk%tiles(tile)%field%yvel0,             &
-      number_of_states,                      &
-      state_density,                         &
-      state_energy,                          &
-      state_xvel,                            &
-      state_yvel,                            &
-      state_xmin,                            &
-      state_xmax,                            &
-      state_ymin,                            &
-      state_ymax,                            &
-      state_radius,                          &
-      state_geometry,                        &
-      g_rect,                                &
-      g_circ,                                &
-      g_point)
-  ELSEIF(use_C_kernels) THEN
+  IF(use_C_kernels) THEN
     CALL generate_chunk_kernel_c(chunk%tiles(tile)%t_xmin,             &
       chunk%tiles(tile)%t_xmax,             &
       chunk%tiles(tile)%t_ymin,             &

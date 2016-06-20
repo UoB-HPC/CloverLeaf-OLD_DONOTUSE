@@ -28,7 +28,6 @@ CONTAINS
 
     USE clover_module
     USE update_tile_halo_module
-    USE update_halo_kernel_module
 
     IMPLICIT NONE
 
@@ -50,37 +49,7 @@ CONTAINS
       (chunk%chunk_neighbours(CHUNK_TOP) .EQ. EXTERNAL_FACE) ) THEN
 
 
-      IF(use_fortran_kernels) THEN
-        DO tile=1,tiles_per_chunk
-
-          CALL update_halo_kernel(chunk%tiles(tile)%t_xmin,          &
-            chunk%tiles(tile)%t_xmax,          &
-            chunk%tiles(tile)%t_ymin,          &
-            chunk%tiles(tile)%t_ymax,          &
-            chunk%chunk_neighbours,     &
-            chunk%tiles(tile)%tile_neighbours,     &
-            chunk%tiles(tile)%field%density0,       &
-            chunk%tiles(tile)%field%energy0,        &
-            chunk%tiles(tile)%field%pressure,       &
-            chunk%tiles(tile)%field%viscosity,      &
-            chunk%tiles(tile)%field%soundspeed,     &
-            chunk%tiles(tile)%field%density1,       &
-            chunk%tiles(tile)%field%energy1,        &
-            chunk%tiles(tile)%field%xvel0,          &
-            chunk%tiles(tile)%field%yvel0,          &
-            chunk%tiles(tile)%field%xvel1,          &
-            chunk%tiles(tile)%field%yvel1,          &
-            chunk%tiles(tile)%field%vol_flux_x,     &
-            chunk%tiles(tile)%field%vol_flux_y,     &
-            chunk%tiles(tile)%field%mass_flux_x,    &
-            chunk%tiles(tile)%field%mass_flux_y,    &
-            fields,                         &
-            depth                          )
-
-
-        ENDDO
-
-      ELSEIF(use_C_kernels) THEN
+      IF(use_C_kernels) THEN
         DO tile=1,tiles_per_chunk
 
           CALL update_halo_kernel_c(chunk%tiles(tile)%t_xmin,          &
