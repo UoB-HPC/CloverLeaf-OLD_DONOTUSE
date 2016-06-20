@@ -2,6 +2,8 @@
 #define DATA_C_C
 
 #include <stdbool.h>
+#include <stdio.h>
+#include "data_c.h"
 
 double g_version = 1.3;
 
@@ -62,17 +64,10 @@ int g_rect = 1,
     g_point = 3;
 
 
-int g_in, // File for input data.
-    g_out;
+FILE *g_in, // File for input data.
+     *g_out;
 
 
-struct parallel_t {
-    bool parallel,
-         boss;
-    int max_task,
-        task,
-        boss_task;
-};
 
 struct parallel_t parallel;
 

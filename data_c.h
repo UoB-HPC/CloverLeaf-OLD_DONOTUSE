@@ -2,6 +2,7 @@
 #define DATA_C_H
 
 #include <stdbool.h>
+#include <stdio.h>
 
 extern double g_version;
 
@@ -62,11 +63,20 @@ extern int g_rect ,
        g_point ;
 
 
-extern int g_in, // File for input data.
-       g_out;
+extern FILE *g_in, // File for input data.
+       *g_out;
+
+struct parallel_t {
+       bool parallel,
+            boss;
+       int max_task,
+           task,
+           boss_task;
+};
 
 extern struct parallel_t parallel;
 
 extern int g_len_max ;
+
 
 #endif
