@@ -5,3 +5,5 @@
 *.ptx
 *genmod*
 clover_leaf
+clover_leafc
+*.gch
