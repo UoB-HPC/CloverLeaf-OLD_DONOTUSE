@@ -20,20 +20,24 @@
  *  @author Oliver Perks
  *  @details C function to call from fortran.
  */
-
 #include <sys/time.h>
 #include <sys/times.h>
 #include <sys/resource.h>
 #include <stdlib.h>
-
-void timer_c_( double *elapsed_time);
-
+#include "timer_c.h"
 
 void timer_c_( double *elapsed_time)
 {
-   struct timeval t;
-   gettimeofday(&t, (struct timezone *) NULL);
-   *elapsed_time = t.tv_sec + t.tv_usec * 1.0E-6;
-         
+    struct timeval t;
+    gettimeofday(&t, (struct timezone *) NULL);
+    *elapsed_time = t.tv_sec + t.tv_usec * 1.0E-6;
+
+}
+
+double timer()
+{
+    double t;
+    timer_c_(&t);
+    return t;
 }
 

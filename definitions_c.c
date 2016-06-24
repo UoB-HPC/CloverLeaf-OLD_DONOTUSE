@@ -35,7 +35,7 @@ int end_step;
 
 double dtold,
        dt,
-       time,
+       _time,
        dtinit,
        dtmin,
        dtmax,

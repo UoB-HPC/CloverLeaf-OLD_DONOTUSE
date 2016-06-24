@@ -1,6 +1,6 @@
 /*
-** Fortran to C index translation macros for Mark Govett's ctof for 
-** GPU kernels.  
+** Fortran to C index translation macros for Mark Govett's ctof for
+** GPU kernels.
 **
 ** Tom Henderson
 ** 9/25/08
@@ -25,7 +25,7 @@
 #ifndef MIN
 #define MIN(a, b) ((a) >= (b) ? (b) : (a))
 #endif
-#define SIGN(a,b) (((b) <  (0) && (a > (0))||((b) > (0) && ((a)<(0)))) ? (-a) : (a))
+#define SIGN(a,b) ( ( (((b) < (0)) && ((a) > (0))) || (((b) > (0)) && ((a) < (0))) ) ? (-a) : (a) )
 #define SQR(a) ((a)*(a))
 #endif /* _FTOC_MACROS_ */
 

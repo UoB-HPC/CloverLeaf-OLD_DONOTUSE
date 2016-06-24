@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 void report_error(char *location, char *error)
 {
@@ -6,4 +7,5 @@ void report_error(char *location, char *error)
     fprintf(stdout, "CLOVER is terminating.");
     //TODO
     // clover_abort();
+    exit(1);
 }

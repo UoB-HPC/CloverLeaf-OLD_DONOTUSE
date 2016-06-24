@@ -1,0 +1,193 @@
+
+#include "update_tile_halo.h"
+#include "definitions_c.h"
+#include "ftocmacros.h"
+
+// void __update_tile_halo_kernel_module_MOD_update_tile_halo_t_kernel();
+
+void update_tile_halo(int *fields, int depth)
+{
+    int t_left, t_right, t_up, t_down;
+
+    for (int tile = 0; tile < tiles_per_chunk; tile++) {
+        t_up = chunk.tiles[tile].tile_neighbours[TILE_TOP];
+        t_down = chunk.tiles[tile].tile_neighbours[TILE_BOTTOM];
+
+        if (t_up != EXTERNAL_TILE) {
+            __update_tile_halo_kernel_module_MOD_update_tile_halo_t_kernel(
+                &chunk.tiles[tile].t_xmin,
+                &chunk.tiles[tile].t_xmax,
+                &chunk.tiles[tile].t_ymin,
+                &chunk.tiles[tile].t_ymax,
+                chunk.tiles[tile].field.density0,
+                chunk.tiles[tile].field.energy0,
+                chunk.tiles[tile].field.pressure,
+                chunk.tiles[tile].field.viscosity,
+                chunk.tiles[tile].field.soundspeed,
+                chunk.tiles[tile].field.density1,
+                chunk.tiles[tile].field.energy1,
+                chunk.tiles[tile].field.xvel0,
+                chunk.tiles[tile].field.yvel0,
+                chunk.tiles[tile].field.xvel1,
+                chunk.tiles[tile].field.yvel1,
+                chunk.tiles[tile].field.vol_flux_x,
+                chunk.tiles[tile].field.vol_flux_y,
+                chunk.tiles[tile].field.mass_flux_x,
+                &chunk.tiles[tile].field.mass_flux_y,
+                &chunk.tiles[t_up].t_xmin,
+                &chunk.tiles[t_up].t_xmax,
+                &chunk.tiles[t_up].t_ymin,
+                &chunk.tiles[t_up].t_ymax,
+                chunk.tiles[t_up].field.density0,
+                chunk.tiles[t_up].field.energy0,
+                chunk.tiles[t_up].field.pressure,
+                chunk.tiles[t_up].field.viscosity,
+                chunk.tiles[t_up].field.soundspeed,
+                chunk.tiles[t_up].field.density1,
+                chunk.tiles[t_up].field.energy1,
+                chunk.tiles[t_up].field.xvel0,
+                chunk.tiles[t_up].field.yvel0,
+                chunk.tiles[t_up].field.xvel1,
+                chunk.tiles[t_up].field.yvel1,
+                chunk.tiles[t_up].field.vol_flux_x,
+                chunk.tiles[t_up].field.vol_flux_y,
+                chunk.tiles[t_up].field.mass_flux_x,
+                chunk.tiles[t_up].field.mass_flux_y,
+                fields,
+                &depth);
+        }
+        if (t_down != EXTERNAL_TILE) {
+            __update_tile_halo_kernel_module_MOD_update_tile_halo_b_kernel(
+                &chunk.tiles[tile].t_xmin,
+                &chunk.tiles[tile].t_xmax,
+                &chunk.tiles[tile].t_ymin,
+                &chunk.tiles[tile].t_ymax,
+                chunk.tiles[tile].field.density0,
+                chunk.tiles[tile].field.energy0,
+                chunk.tiles[tile].field.pressure,
+                chunk.tiles[tile].field.viscosity,
+                chunk.tiles[tile].field.soundspeed,
+                chunk.tiles[tile].field.density1,
+                chunk.tiles[tile].field.energy1,
+                chunk.tiles[tile].field.xvel0,
+                chunk.tiles[tile].field.yvel0,
+                chunk.tiles[tile].field.xvel1,
+                chunk.tiles[tile].field.yvel1,
+                chunk.tiles[tile].field.vol_flux_x,
+                chunk.tiles[tile].field.vol_flux_y,
+                chunk.tiles[tile].field.mass_flux_x,
+                &chunk.tiles[tile].field.mass_flux_y,
+                &chunk.tiles[t_up].t_xmin,
+                &chunk.tiles[t_up].t_xmax,
+                &chunk.tiles[t_up].t_ymin,
+                &chunk.tiles[t_up].t_ymax,
+                chunk.tiles[t_up].field.density0,
+                chunk.tiles[t_up].field.energy0,
+                chunk.tiles[t_up].field.pressure,
+                chunk.tiles[t_up].field.viscosity,
+                chunk.tiles[t_up].field.soundspeed,
+                chunk.tiles[t_up].field.density1,
+                chunk.tiles[t_up].field.energy1,
+                chunk.tiles[t_up].field.xvel0,
+                chunk.tiles[t_up].field.yvel0,
+                chunk.tiles[t_up].field.xvel1,
+                chunk.tiles[t_up].field.yvel1,
+                chunk.tiles[t_up].field.vol_flux_x,
+                chunk.tiles[t_up].field.vol_flux_y,
+                chunk.tiles[t_up].field.mass_flux_x,
+                chunk.tiles[t_up].field.mass_flux_y,
+                fields,
+                &depth);
+        }
+
+        t_left = chunk.tiles[tile].tile_neighbours[TILE_LEFT];
+        t_right = chunk.tiles[tile].tile_neighbours[TILE_RIGHT];
+
+        if (t_left != EXTERNAL_TILE) {
+            __update_tile_halo_kernel_module_MOD_update_tile_halo_l_kernel(
+                &chunk.tiles[tile].t_xmin,
+                &chunk.tiles[tile].t_xmax,
+                &chunk.tiles[tile].t_ymin,
+                &chunk.tiles[tile].t_ymax,
+                chunk.tiles[tile].field.density0,
+                chunk.tiles[tile].field.energy0,
+                chunk.tiles[tile].field.pressure,
+                chunk.tiles[tile].field.viscosity,
+                chunk.tiles[tile].field.soundspeed,
+                chunk.tiles[tile].field.density1,
+                chunk.tiles[tile].field.energy1,
+                chunk.tiles[tile].field.xvel0,
+                chunk.tiles[tile].field.yvel0,
+                chunk.tiles[tile].field.xvel1,
+                chunk.tiles[tile].field.yvel1,
+                chunk.tiles[tile].field.vol_flux_x,
+                chunk.tiles[tile].field.vol_flux_y,
+                chunk.tiles[tile].field.mass_flux_x,
+                &chunk.tiles[tile].field.mass_flux_y,
+                &chunk.tiles[t_up].t_xmin,
+                &chunk.tiles[t_up].t_xmax,
+                &chunk.tiles[t_up].t_ymin,
+                &chunk.tiles[t_up].t_ymax,
+                chunk.tiles[t_up].field.density0,
+                chunk.tiles[t_up].field.energy0,
+                chunk.tiles[t_up].field.pressure,
+                chunk.tiles[t_up].field.viscosity,
+                chunk.tiles[t_up].field.soundspeed,
+                chunk.tiles[t_up].field.density1,
+                chunk.tiles[t_up].field.energy1,
+                chunk.tiles[t_up].field.xvel0,
+                chunk.tiles[t_up].field.yvel0,
+                chunk.tiles[t_up].field.xvel1,
+                chunk.tiles[t_up].field.yvel1,
+                chunk.tiles[t_up].field.vol_flux_x,
+                chunk.tiles[t_up].field.vol_flux_y,
+                chunk.tiles[t_up].field.mass_flux_x,
+                chunk.tiles[t_up].field.mass_flux_y,
+                fields,
+                &depth);
+        }
+        if (t_right != EXTERNAL_TILE) {
+            __update_tile_halo_kernel_module_MOD_update_tile_halo_r_kernel(
+                &chunk.tiles[tile].t_xmin,
+                &chunk.tiles[tile].t_xmax,
+                &chunk.tiles[tile].t_ymin,
+                &chunk.tiles[tile].t_ymax,
+                chunk.tiles[tile].field.density0,
+                chunk.tiles[tile].field.energy0,
+                chunk.tiles[tile].field.pressure,
+                chunk.tiles[tile].field.viscosity,
+                chunk.tiles[tile].field.soundspeed,
+                chunk.tiles[tile].field.density1,
+                chunk.tiles[tile].field.energy1,
+                chunk.tiles[tile].field.xvel0,
+                chunk.tiles[tile].field.yvel0,
+                chunk.tiles[tile].field.xvel1,
+                chunk.tiles[tile].field.yvel1,
+                chunk.tiles[tile].field.vol_flux_x,
+                chunk.tiles[tile].field.vol_flux_y,
+                chunk.tiles[tile].field.mass_flux_x,
+                &chunk.tiles[tile].field.mass_flux_y,
+                &chunk.tiles[t_up].t_xmin,
+                &chunk.tiles[t_up].t_xmax,
+                &chunk.tiles[t_up].t_ymin,
+                &chunk.tiles[t_up].t_ymax,
+                chunk.tiles[t_up].field.density0,
+                chunk.tiles[t_up].field.energy0,
+                chunk.tiles[t_up].field.pressure,
+                chunk.tiles[t_up].field.viscosity,
+                chunk.tiles[t_up].field.soundspeed,
+                chunk.tiles[t_up].field.density1,
+                chunk.tiles[t_up].field.energy1,
+                chunk.tiles[t_up].field.xvel0,
+                chunk.tiles[t_up].field.yvel0,
+                chunk.tiles[t_up].field.xvel1,
+                chunk.tiles[t_up].field.yvel1,
+                chunk.tiles[t_up].field.vol_flux_x,
+                chunk.tiles[t_up].field.vol_flux_y,
+                chunk.tiles[t_up].field.mass_flux_x,
+                chunk.tiles[t_up].field.mass_flux_y,
+                fields,
+                &depth);
+        }
+    }
+}
