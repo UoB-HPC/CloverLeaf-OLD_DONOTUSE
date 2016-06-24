@@ -25,21 +25,21 @@ void hydro()
     while (true) {
         step_time = timer();
         step++;
-        // fprintf(stderr, "1\n");
+
         timestep();
-        // fprintf(stderr, "2\n");
+
         PdV(true);
-        // fprintf(stderr, "3\n");
+
         accelerate();
-        // fprintf(stderr, "4\n");
+
         PdV(false);
-        // fprintf(stderr, "5\n");
+
         flux_calc();
-        // fprintf(stderr, "6\n");
+
         advection();
-        // fprintf(stderr, "7\n");
+
         reset_field();
-        // fprintf(stderr, "8\n");
+
         advect_x = !advect_x;
 
         _time += dt;
