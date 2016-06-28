@@ -9,14 +9,15 @@ void update_halo(int *fields, int depth)
 {
     double kernel_time;
     if (profiler_on) kernel_time = timer();
-    // update_tile_halo(fields, depth);
+
+    update_tile_halo(fields, depth);
 
     if (profiler_on) {
         profiler.tile_halo_exchange += (timer() - kernel_time);
         kernel_time = timer();
     }
 
-    clover_exchange(fields, depth);
+    // clover_exchange(fields, depth);
 
     if (profiler_on) {
         profiler.mpi_halo_exchange = profiler.mpi_halo_exchange + (timer() - kernel_time);
@@ -53,4 +54,5 @@ void update_halo(int *fields, int depth)
                 fields,
                 &depth);
     }
+
 }
