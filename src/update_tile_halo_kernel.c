@@ -43,8 +43,8 @@ void update_tile_halo_l_kernel_c_(
         y_max = *ymax;
     int left_xmin = *leftxmin,
         left_xmax = *leftxmax,
-        left_ymin = *leftymin,
-        left_ymax = *leftymax;
+        left_ymin = *leftymin;
+    // left_ymax = *leftymax;
     int depth = *_depth;
 
     // Density 0
@@ -272,8 +272,8 @@ void update_tile_halo_r_kernel_c_(
         y_max = *ymax;
     int right_xmin = *rightxmin,
         right_xmax = *rightxmax,
-        right_ymin = *rightymin,
-        right_ymax = *rightymax;
+        right_ymin = *rightymin;
+    // right_ymax = *rightymax;
     int depth = *_depth;
 
     // Density 0
@@ -498,12 +498,12 @@ void update_tile_halo_t_kernel_c_(
 {
     int x_min  = *xmin,
         x_max = *xmax,
-        y_min = *ymin,
+        // y_min = *ymin,
         y_max = *ymax;
     int top_xmin = *topxmin,
         top_xmax = *topxmax,
-        top_ymin = *topymin,
-        top_ymax = *topymax;
+        top_ymin = *topymin;
+    // top_ymax = *topymax;
     int depth = *_depth;
 
 
@@ -729,8 +729,8 @@ void update_tile_halo_b_kernel_c_(
 {
     int x_min  = *xmin,
         x_max = *xmax,
-        y_min = *ymin,
-        y_max = *ymax;
+        y_min = *ymin;
+    // y_max = *ymax;
     int bottom_xmin = *bottomxmin,
         bottom_xmax = *bottomxmax,
         bottom_ymin = *bottomymin,

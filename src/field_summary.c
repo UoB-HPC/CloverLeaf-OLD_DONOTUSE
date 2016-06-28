@@ -7,7 +7,7 @@
 
 void field_summary()
 {
-    double kernel_time,
+    double kernel_time = 0.0,
            vol, mass, ie, ke, press;
     fprintf(g_out, "\nTime %.13f\n", _time); // TODO
     fprintf(g_out, "%13s%16s%16s%16s%16s%16s%16s%16s\n", "", "Volume", "Mass", "Density", "Pressure", "Internal Energy", "Kinetic Energy", "Total Energy");
@@ -59,7 +59,7 @@ void field_summary()
     press = t_press;
 
     fprintf(g_out, "%6s%7d%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e\n\n", " step:", step, vol, mass, mass / vol, press / vol, ie, ke, ie + ke);
-    double qa_diff;
+    double qa_diff = 4.0;
     if (complete) {
         if (test_problem >= 1) {
             if (test_problem == 1) qa_diff = fabs((100.0 * (ke / 1.82280367310258)) - 100.0);

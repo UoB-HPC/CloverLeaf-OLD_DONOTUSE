@@ -7,7 +7,7 @@
 
 void update_halo(int *fields, int depth)
 {
-    double kernel_time;
+    double kernel_time = 0.0;
     if (profiler_on) kernel_time = timer();
 
     update_tile_halo(fields, depth);

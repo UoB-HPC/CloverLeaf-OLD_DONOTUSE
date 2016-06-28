@@ -15,14 +15,14 @@ void timestep()
 {
     dt = g_big;
     int small = 0;
-    double kernel_time;
+    double kernel_time = 0.0;
 
     int jldt, kldt;
     double dtlp;
 
     char dt_control[8], dtl_control[8];
     double xl_pos, yl_pos,
-           x_pos, y_pos;
+           x_pos = 0.0, y_pos = 0.0;
 
     if (profiler_on) kernel_time = timer();
     for (int tile = 0; tile < tiles_per_chunk; tile++) {

@@ -9,7 +9,7 @@
 void PdV(bool predict)
 {
     // error_condition = 0;
-    double kernel_time;
+    double kernel_time = 0.0;
     int prdct;
 
     if (profiler_on) kernel_time = timer();

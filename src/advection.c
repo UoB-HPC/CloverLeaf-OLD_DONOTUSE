@@ -14,7 +14,7 @@ void advection()
     int sweep_number, direction;
     int xvel, yvel;
     int fields[NUM_FIELDS];
-    double kernel_time;
+    double kernel_time = 0.0;
 
     sweep_number = 1;
     if (advect_x)
