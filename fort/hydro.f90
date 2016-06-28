@@ -33,7 +33,7 @@ SUBROUTINE hydro
 
     IMPLICIT NONE
 
-    INTEGER         :: loc(1)
+    INTEGER         :: loc(1), tile
     REAL(KIND=8)    :: timer,timerstart,wall_clock,step_clock
   
     REAL(KIND=8)    :: grind_time,cells,rstep
@@ -51,20 +51,21 @@ SUBROUTINE hydro
 
         CALL timestep()
 
+
         CALL PdV(.TRUE.)
 
         CALL accelerate()
 
         CALL PdV(.FALSE.)
 
+
         CALL flux_calc()
 
         CALL advection()
 
         CALL reset_field()
-
         advect_x = .NOT. advect_x
-  
+ 
         time = time + dt
 
         IF(summary_frequency.NE.0) THEN
@@ -83,6 +84,32 @@ SUBROUTINE hydro
 
         IF(time+g_small.GT.end_time.OR.step.GE.end_step) THEN
 
+    DO tile = 1, tiles_per_chunk
+    !     CALL debug_kernel( &
+    !         tile-1, &
+    !         chunk%tiles(tile)%t_xmin, &
+    !         chunk%tiles(tile)%t_xmax, &
+    !         chunk%tiles(tile)%t_ymin, &
+    !         chunk%tiles(tile)%t_ymax, &
+    !         chunk%tiles(tile)%field%density0, &
+    !         chunk%tiles(tile)%field%density1, &
+    !         chunk%tiles(tile)%field%energy0, &
+    !         chunk%tiles(tile)%field%energy1, &
+    !         chunk%tiles(tile)%field%pressure, &
+    !         chunk%tiles(tile)%field%viscosity, &
+    !         chunk%tiles(tile)%field%soundspeed, &
+    !         chunk%tiles(tile)%field%xvel0, &
+    !         chunk%tiles(tile)%field%xvel1, &
+    !         chunk%tiles(tile)%field%yvel0, &
+    !         chunk%tiles(tile)%field%yvel1, &
+    !         chunk%tiles(tile)%field%vol_flux_x, &
+    !         chunk%tiles(tile)%field%vol_flux_y, &
+    !         chunk%tiles(tile)%field%mass_flux_x, &
+    !         chunk%tiles(tile)%field%mass_flux_y, &
+    !         chunk%tiles(tile)%field%xarea, &
+    !         chunk%tiles(tile)%field%yarea, &
+    !         chunk%tiles(tile)%field%volume)
+    ! END DO 
             complete=.TRUE.
             CALL field_summary()
             IF(visit_frequency.NE.0) CALL visit()

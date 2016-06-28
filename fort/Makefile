@@ -143,7 +143,8 @@ C_MPI_COMPILER_XL = xlc
 MPI_COMPILER_ = FC
 C_MPI_COMPILER_ = CC
 
-C_SOURCES = accelerate_kernel_c.c PdV_kernel_c.c flux_calc_kernel_c.c revert_kernel_c.c reset_field_kernel_c.c ideal_gas_kernel_c.c viscosity_kernel_c.c advec_mom_kernel_c.c advec_cell_kernel_c.c calc_dt_kernel_c.c field_summary_kernel_c.c update_halo_kernel_c.c pack_kernel_c.c generate_chunk_kernel_c.c initialise_chunk_kernel_c.c timer_c.c definitions_c.c data_c.c data_c.h definitions_c.h
+C_SOURCES = accelerate_kernel_c.c PdV_kernel_c.c flux_calc_kernel_c.c revert_kernel_c.c reset_field_kernel_c.c ideal_gas_kernel_c.c viscosity_kernel_c.c advec_mom_kernel_c.c advec_cell_kernel_c.c calc_dt_kernel_c.c field_summary_kernel_c.c ../update_halo_kernel_c.c pack_kernel_c.c generate_chunk_kernel_c.c initialise_chunk_kernel_c.c timer_c.c definitions_c.c data_c.c data_c.h definitions_c.h ../debug_kernel.c
+
 C_OBJECTS = $(C_SOURCES:.c=.o)
 
 F90_SOURCES =  data.f90 \
@@ -184,7 +185,7 @@ CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(C_OPTIONS) -c
 MPI_COMPILER=$(MPI_COMPILER_$(COMPILER))
 C_MPI_COMPILER=$(C_MPI_COMPILER_$(COMPILER))
 
-clover_leaf: c_lover $(F90_SOURCES) Makefile
+clover_leaf: $(C_OBJECTS) $(F90_SOURCES) Makefile
 	$(MPI_COMPILER) $(FLAGS)	\
 	$(F90_SOURCES) \
 	$(C_OBJECTS) \
@@ -193,6 +194,9 @@ clover_leaf: c_lover $(F90_SOURCES) Makefile
 
 c_lover: $(C_SOURCES)
 	$(C_MPI_COMPILER) $(CFLAGS) $(C_SOURCES)
+
+%.o: %.c
+	$(C_MPI_COMPILER) $(CFLAGS) -o $@ $<
 
 clean:
 	rm -f *.o *.mod *genmod* *cuda* *hmd* *.cu *.oo *.hmf *.lst *.cub *.ptx *.cl clover_leaf
