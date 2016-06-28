@@ -84,7 +84,7 @@ SUBROUTINE hydro
 
         IF(time+g_small.GT.end_time.OR.step.GE.end_step) THEN
 
-    DO tile = 1, tiles_per_chunk
+    ! DO tile = 1, tiles_per_chunk
     !     CALL debug_kernel( &
     !         tile-1, &
     !         chunk%tiles(tile)%t_xmin, &

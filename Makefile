@@ -29,15 +29,15 @@ OBJECTS = data_c.o \
 
 
 OBJDIR = obj
+SRCDIR = src
 
 COBJECTS = $(addprefix $(OBJDIR)/, $(OBJECTS))
+CSOURCES = $(addprefix $(SRCDIR)/, $(OBJECTS:.o=.c))
 
-CSOURCES = $(OBJECTS:.o=.c)
+all: $(COBJECTS) $(FOBJECTS) Makefile
+	$(CC) $(FLAGS) $(COBJECTS) $(FOBJECTS) $(SRCDIR)/clover_leaf.c -o clover_leaf
 
-all: $(COBJECTS) $(FOBJECTS) update_tile_halo_kernel.c Makefile
-	$(CC) $(FLAGS) $(COBJECTS) $(FOBJECTS) clover_leaf.c -o clover_leaf
-
-$(OBJDIR)/%.o: %.c
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 %.o: %.f90
@@ -48,6 +48,4 @@ fast: $(CSOURCES) $(FOBJECTS)
 
 
 clean:
-	rm -f $(OBJDIR)/* *.o *.mod clover_leaf
-	# *.o *.mod *genmod* *cuda* *hmd* *.cu *.oo *.hmf *.lst *.cub *.ptx *.cl clover_leaf
-
+	rm -f $(OBJDIR)/* *.o clover_leaf
