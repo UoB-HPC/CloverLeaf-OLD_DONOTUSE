@@ -1,6 +1,6 @@
 
-CC = gcc
-FLAGS = -std=c99 -Wall -g -Wpedantic -Wno-unknown-pragmas -O3
+CC = gcc-6
+FLAGS = -std=c99 -march=native -Wall -g -Wpedantic -Wno-unknown-pragmas -O3
 OBJECTS = data_c.o \
 	definitions_c.o \
 	initialise.o \
@@ -40,12 +40,8 @@ all: $(COBJECTS) $(FOBJECTS) Makefile
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(FLAGS) -c $< -o $@
 
-%.o: %.f90
-	gfortran -g -c data.f90 $<
-
 fast: $(CSOURCES) $(FOBJECTS)
-	$(CC) $(FLAGS) $(CSOURCES) $(FOBJECTS) clover_leaf.c -o clover_leaf
-
+	$(CC) $(FLAGS) $(CSOURCES) $(FOBJECTS) $(SRCDIR)/clover_leaf.c -o clover_leaf
 
 clean:
 	rm -f $(OBJDIR)/* *.o clover_leaf
