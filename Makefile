@@ -1,6 +1,6 @@
 
-CC = gcc-6
-FLAGS = -std=c99 -Wall -g -Wpedantic -Wno-unknown-pragmas -O3 -lgfortran
+CC = gcc
+FLAGS = -std=c99 -Wall -g -Wpedantic -Wno-unknown-pragmas -O3
 OBJECTS = data_c.o \
 	definitions_c.o \
 	initialise.o \
@@ -29,12 +29,12 @@ OBJECTS = data_c.o \
 
 
 OBJDIR = obj
-FOBJECTS = update_tile_halo_kernel.o
+
 COBJECTS = $(addprefix $(OBJDIR)/, $(OBJECTS))
 
 CSOURCES = $(OBJECTS:.o=.c)
 
-all: $(COBJECTS) $(FOBJECTS) update_tile_halo_kernel.c
+all: $(COBJECTS) $(FOBJECTS) update_tile_halo_kernel.c Makefile
 	$(CC) $(FLAGS) $(COBJECTS) $(FOBJECTS) clover_leaf.c -o clover_leaf
 
 $(OBJDIR)/%.o: %.c

@@ -18,7 +18,7 @@ void update_tile_halo(int *fields, int depth)
         t_right = chunk.tiles[tile].tile_neighbours[TILE_RIGHT];
 
         if (t_up != EXTERNAL_TILE) {
-            update_tile_halo_u_kernel_c_(
+            update_tile_halo_t_kernel_c_(
                 &chunk.tiles[tile].t_xmin,
                 &chunk.tiles[tile].t_xmax,
                 &chunk.tiles[tile].t_ymin,
@@ -61,7 +61,7 @@ void update_tile_halo(int *fields, int depth)
                 &depth);
         }
         if (t_down != EXTERNAL_TILE) {
-            update_tile_halo_d_kernel_c_(
+            update_tile_halo_b_kernel_c_(
                 &chunk.tiles[tile].t_xmin,
                 &chunk.tiles[tile].t_xmax,
                 &chunk.tiles[tile].t_ymin,
