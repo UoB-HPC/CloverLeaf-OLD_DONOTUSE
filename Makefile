@@ -32,7 +32,9 @@ OBJDIR = obj
 FOBJECTS = update_tile_halo_kernel.o
 COBJECTS = $(addprefix $(OBJDIR)/, $(OBJECTS))
 
-all: $(COBJECTS) $(FOBJECTS)
+CSOURCES = $(OBJECTS:.o=.c)
+
+all: $(COBJECTS) $(FOBJECTS) update_tile_halo_kernel.c
 	$(CC) $(FLAGS) $(COBJECTS) $(FOBJECTS) clover_leaf.c -o clover_leaf
 
 $(OBJDIR)/%.o: %.c
@@ -40,6 +42,9 @@ $(OBJDIR)/%.o: %.c
 
 %.o: %.f90
 	gfortran -g -c data.f90 $<
+
+fast: $(CSOURCES) $(FOBJECTS)
+	$(CC) $(FLAGS) $(CSOURCES) $(FOBJECTS) clover_leaf.c -o clover_leaf
 
 
 clean:
