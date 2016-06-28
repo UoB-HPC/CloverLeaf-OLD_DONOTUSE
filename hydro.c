@@ -9,9 +9,9 @@
 #include "reset_field.h"
 #include "visit.h"
 #include "field_summary.h"
-#include <xmmintrin.h>
 #include "accelerate.h"
 
+#include <xmmintrin.h>
 
 void hydro()
 {
@@ -41,7 +41,6 @@ void hydro()
         reset_field();
 
         advect_x = !advect_x;
-
         _time += dt;
 
         if (summary_frequency != 0) {
@@ -56,6 +55,7 @@ void hydro()
         if (step == 2) second_step = timer() - step_time;
 
         if ((_time + g_small) > end_time || step >= end_step) {
+
             complete = true;
             field_summary();
             if (visit_frequency != 0) visit();
@@ -74,3 +74,32 @@ void hydro()
         }
     }
 }
+
+// for debugging state
+// for (int tile = 0; tile < tiles_per_chunk; tile++) {
+//     debug_kernel_(
+//         &tile,
+//         &chunk.tiles[tile].t_xmin,
+//         &chunk.tiles[tile].t_xmax,
+//         &chunk.tiles[tile].t_ymin,
+//         &chunk.tiles[tile].t_ymax,
+//         chunk.tiles[tile].field.density0,
+//         chunk.tiles[tile].field.density1,
+//         chunk.tiles[tile].field.energy0,
+//         chunk.tiles[tile].field.energy1,
+//         chunk.tiles[tile].field.pressure,
+//         chunk.tiles[tile].field.viscosity,
+//         chunk.tiles[tile].field.soundspeed,
+//         chunk.tiles[tile].field.xvel0,
+//         chunk.tiles[tile].field.xvel1,
+//         chunk.tiles[tile].field.yvel0,
+//         chunk.tiles[tile].field.yvel1,
+//         chunk.tiles[tile].field.vol_flux_x,
+//         chunk.tiles[tile].field.vol_flux_y,
+//         chunk.tiles[tile].field.mass_flux_x,
+//         chunk.tiles[tile].field.mass_flux_y,
+//         chunk.tiles[tile].field.xarea,
+//         chunk.tiles[tile].field.yarea,
+//         chunk.tiles[tile].field.volume
+//     );
+// };
