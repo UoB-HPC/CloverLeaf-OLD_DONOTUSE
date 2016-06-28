@@ -52,6 +52,12 @@ void field_summary()
     }
     if (profiler_on) profiler.summary += timer() - kernel_time;
 
+    vol = t_vol;
+    ie = t_ie;
+    ke = t_ke;
+    mass = t_mass;
+    press = t_press;
+
     fprintf(g_out, "%6s%7d%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e\n\n", " step:", step, vol, mass, mass / vol, press / vol, ie, ke, ie + ke);
     double qa_diff;
     if (complete) {
