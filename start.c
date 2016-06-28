@@ -6,6 +6,7 @@
 #include "ideal_gas.h"
 #include "update_halo.h"
 #include "field_summary.h"
+#include "visit.h"
 
 void clover_decompose(int x_cells,
                       int y_cells,
@@ -54,6 +55,7 @@ void start()
     chunk.tiles = malloc(sizeof(struct tile_type) * tiles_per_chunk);
 
     clover_tile_decompose(x_cells, y_cells);
+
     build_field();
     clover_allocate_buffers();
 
@@ -63,7 +65,6 @@ void start()
         initialise_chunk(tile);
         generate_chunk(tile);
     }
-
     advect_x = true;
     bool profiler_off = profiler_on;
     profiler_on = false;
@@ -89,13 +90,14 @@ void start()
     fields[FIELD_XVEL1] = 1;
     fields[FIELD_YVEL1] = 1;
 
+
     update_halo(fields, 2);
 
     fprintf(g_out, "Problem initialised and generated\n");
 
     field_summary();
 
-    // if(visit_frequency != 0) visit(); // TODO
+    if (visit_frequency != 0) visit();
 
     profiler_on = profiler_off;
 }
@@ -154,7 +156,7 @@ void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells)
             factor_x = tiles_per_chunk / (double)t;
             factor_y = t;
 
-            if (factor_x / factor_y < chunk_mesh_ratio) {
+            if (factor_x / factor_y <= chunk_mesh_ratio) {
                 tile_y = t;
                 tile_x = tiles_per_chunk / t;
                 split_found = 1;
@@ -163,7 +165,7 @@ void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells)
     }
 
     if (split_found == 0 || tile_y == tiles_per_chunk) {
-        if (chunk_mesh_ratio > 1.0) {
+        if (chunk_mesh_ratio >= 1.0) {
             tile_x = tiles_per_chunk;
             tile_y = 1;
         } else {
@@ -179,13 +181,14 @@ void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells)
 
     add_x_prev = 0;
     add_y_prev = 0;
+
     tile = 0;
     for (ty = 1; ty <= tile_y; ty++) {
-        for (tx = 1; tx <= tile_y; tx++) {
+        for (tx = 1; tx <= tile_x; tx++) {
             add_x = 0;
             add_y = 0;
-            if (tx < chunk_mod_x) add_x = 1;
-            if (ty < chunk_mod_y) add_y = 1;
+            if (tx <= chunk_mod_x) add_x = 1;
+            if (ty <= chunk_mod_y) add_y = 1;
 
             left = chunk.left + (tx - 1) * chunk_delta_x + add_x_prev;
             right = left + chunk_delta_x - 1 + add_x;
@@ -216,7 +219,7 @@ void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells)
                 chunk.tiles[tile].external_tile_mask[TILE_TOP] = 1;
             }
 
-            if (tx < chunk_mod_x) add_x_prev++;
+            if (tx <= chunk_mod_x) add_x_prev++;
 
             chunk.tiles[tile].t_xmin = 1;
             chunk.tiles[tile].t_xmax = right - left + 1;
@@ -231,7 +234,7 @@ void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells)
             tile++;
         }
         add_x_prev = 0;
-        if (ty < chunk_mod_y) add_y_prev++;
+        if (ty <= chunk_mod_y) add_y_prev++;
     }
 }
 
@@ -314,7 +317,7 @@ void clover_decompose(int x_cells,
         add_x_prev = 0;
         if (cy < mod_y) add_y_prev++;
     }
-    // fprintf(g_out, "%d, %d, %d, %d\n", *left, *right, *top, *bottom);
+
     fprintf(g_out, "\nMesh ratio of %.4f\n", mesh_ratio);
     fprintf(g_out, "Decomposing the mesh into %d by %d chunks\n", chunk_x, chunk_y);
     fprintf(g_out, "Decomposing the chunk with %d tiles\n\n", tiles_per_chunk);
