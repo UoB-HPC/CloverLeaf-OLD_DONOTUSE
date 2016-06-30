@@ -3,7 +3,7 @@
 #include "timer_c.h"
 #include "update_tile_halo.h"
 #include "update_halo_kernel_c.c"
-#include "clover_exchange.h"
+#include "clover.h"
 
 void update_halo(int *fields, int depth)
 {
@@ -17,7 +17,7 @@ void update_halo(int *fields, int depth)
         kernel_time = timer();
     }
 
-    // clover_exchange(fields, depth);
+    clover_exchange(fields, depth);
 
     if (profiler_on) {
         profiler.mpi_halo_exchange = profiler.mpi_halo_exchange + (timer() - kernel_time);

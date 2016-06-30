@@ -34,7 +34,7 @@ void advection()
     fields[FIELD_VOL_FLUX_X] = 1;
     fields[FIELD_VOL_FLUX_Y] = 1;
     update_halo(fields, 2);
-    // fprintf(stderr, "4.1\n");
+
     if (profiler_on) kernel_time = timer();
     for (int tile  = 0; tile < tiles_per_chunk; tile++) {
         advec_cell_driver(tile, sweep_number, direction);
@@ -55,7 +55,7 @@ void advection()
     update_halo(fields, 2);
 
     if (profiler_on) kernel_time = timer();
-    // fprintf(stderr, "4.2\n");
+
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
         advec_mom_driver(tile, xvel, direction, sweep_number);
         advec_mom_driver(tile, yvel, direction, sweep_number);
@@ -87,7 +87,7 @@ void advection()
     fields[FIELD_MASS_FLUX_Y] = 1;
     update_halo(fields, 2);
     if (profiler_on) kernel_time = timer();
-    // fprintf(stderr, "4.3\n");
+
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
         advec_mom_driver(tile, xvel, direction, sweep_number);
         advec_mom_driver(tile, yvel, direction, sweep_number);

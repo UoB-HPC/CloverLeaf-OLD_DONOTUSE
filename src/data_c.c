@@ -31,6 +31,11 @@ int g_rect = 1,
 FILE *g_in, // File for input data.
      *g_out;
 
+int CELL_DATA   = 1,
+    VERTEX_DATA = 2,
+    X_FACE_DATA = 3,
+    Y_FACE_DATA = 4;
+
 
 
 struct parallel_t parallel;

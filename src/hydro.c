@@ -10,6 +10,7 @@
 #include "visit.h"
 #include "field_summary.h"
 #include "accelerate.h"
+#include "clover.h"
 
 #include <xmmintrin.h>
 
@@ -62,8 +63,8 @@ void hydro()
 
             wall_clock = timer() - timerstart;
 
-            fprintf(g_out, "\n\nCalculation complete\nClover is finishing\nWall clock %f\nFirst step overhead %f\n", wall_clock, first_step - second_step);
-            printf("Wall clock %f\nFirst step overhead %f\n", wall_clock, first_step - second_step);
+            BOSSPRINT(g_out, "\n\nCalculation complete\nClover is finishing\nWall clock %f\nFirst step overhead %f\n", wall_clock, first_step - second_step);
+            BOSSPRINT(stdout, "Wall clock %f\nFirst step overhead %f\n", wall_clock, first_step - second_step);
 
             if (profiler_on) {
                 // TODO

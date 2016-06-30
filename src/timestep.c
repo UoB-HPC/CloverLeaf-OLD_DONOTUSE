@@ -8,8 +8,8 @@
 #include "timer_c.h"
 #include "update_halo.h"
 #include "string.h"
+#include "clover.h"
 
-void clover_min(double val);
 
 void timestep()
 {
@@ -75,22 +75,17 @@ void timestep()
 
     dt = MIN(dt, MIN((dtold * dtrise), dtmax));
 
-    clover_min(dt);
+    clover_min(&dt);
     if (profiler_on) profiler.timestep += timer() - kernel_time;
 
     if (dt < dtmin) small = 1;
 
-    fprintf(g_out, " Step %d time %.7e control %-11s timestep %.5e %d, %d x=%.2e y=%.2e\n", step, _time, dt_control, dt, jdt, kdt, x_pos, y_pos);
-    fprintf(stdout, " Step %d time %.7e control %-11s timestep %.5e %d, %d x=%.2e y=%.2e\n", step, _time, dt_control, dt, jdt, kdt, x_pos, y_pos);
+    BOSSPRINT(g_out, " Step %d time %.7e control %-11s timestep %.5e %d, %d x=%.2e y=%.2e\n", step, _time, dt_control, dt, jdt, kdt, x_pos, y_pos);
+    BOSSPRINT(stdout, " Step %d time %.7e control %-11s timestep %.5e %d, %d x=%.2e y=%.2e\n", step, _time, dt_control, dt, jdt, kdt, x_pos, y_pos);
 
     if (small == 1) {
         report_error("timestep", "small timestep");
     }
 
     dtold = dt;
-}
-
-void clover_min(double val)
-{
-
 }

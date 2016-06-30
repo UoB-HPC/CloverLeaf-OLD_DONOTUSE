@@ -51,17 +51,17 @@ enum field_enum {
       NUM_FIELDS       ,
 };
 
-// extern int CELL_DATA     ,
-//        VERTEX_DATA   ,
-//        X_FACE_DATA   ,
-//        y_FACE_DATA   ;
+extern int CELL_DATA     ,
+       VERTEX_DATA   ,
+       X_FACE_DATA   ,
+       Y_FACE_DATA   ;
 
-enum some_enum {
-      CELL_DATA     ,
-      VERTEX_DATA   ,
-      X_FACE_DATA   ,
-      y_FACE_DATA
-};
+// enum some_enum {
+//       CELL_DATA     ,
+//       VERTEX_DATA   ,
+//       X_FACE_DATA   ,
+//       Y_FACE_DATA
+// };
 
 // Time step control constants
 extern int SOUND ,

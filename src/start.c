@@ -7,6 +7,7 @@
 #include "update_halo.h"
 #include "field_summary.h"
 #include "visit.h"
+#include "clover.h"
 
 void clover_decompose(int x_cells,
                       int y_cells,
@@ -19,13 +20,15 @@ void clover_allocate_buffers();
 
 void start()
 {
-    fprintf(g_out, "\nSetting up initial geometry\n");
+    BOSSPRINT(g_out, "\nSetting up initial geometry\n");
     _time = 0.0;
     step = 0;
     dtold = dtinit;
     dt = dtinit;
 
-    number_of_chunks = 1;
+    clover_barrier();
+
+    clover_get_num_chunks(&number_of_chunks);
     int left, right, bottom, top;
     clover_decompose(grid.x_cells,
                      grid.y_cells,
@@ -35,7 +38,7 @@ void start()
                      &top);
 
 
-    chunk.task = 0;
+    chunk.task = parallel.task;
     int x_cells = right - left + 1;
     int y_cells = top - bottom + 1;
 
@@ -59,13 +62,16 @@ void start()
     build_field();
     clover_allocate_buffers();
 
-    fprintf(g_out, "Generating chunks\n");
+    BOSSPRINT(g_out, "Generating chunks\n");
 
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
         initialise_chunk(tile);
         generate_chunk(tile);
     }
     advect_x = true;
+
+    clover_barrier();
+
     bool profiler_off = profiler_on;
     profiler_on = false;
 
@@ -93,9 +99,10 @@ void start()
 
     update_halo(fields, 2);
 
-    fprintf(g_out, "Problem initialised and generated\n");
+    BOSSPRINT(g_out, "Problem initialised and generated\n");
 
     field_summary();
+    clover_barrier();
 
     if (visit_frequency != 0) visit();
 
@@ -256,7 +263,7 @@ void clover_decompose(int x_cells,
             factor_x = number_of_chunks / (double)c;
             factor_y = c;
 
-            if (factor_x / factor_y < mesh_ratio) {
+            if (factor_x / factor_y <= mesh_ratio) {
                 chunk_y = c;
                 chunk_x = number_of_chunks / c;
                 split_found = 1;
@@ -266,7 +273,7 @@ void clover_decompose(int x_cells,
 
 
     if (split_found == 0 || chunk_y == number_of_chunks) {
-        if (mesh_ratio > 1.0) {
+        if (mesh_ratio >= 1.0) {
             chunk_x = number_of_chunks;
             chunk_y = 1;
         } else {
@@ -276,7 +283,7 @@ void clover_decompose(int x_cells,
     }
 
     int delta_x = x_cells / chunk_x;
-    int delta_y = y_cells / chunk_x;
+    int delta_y = y_cells / chunk_y;
 
     int mod_x = x_cells % chunk_x;
     int mod_y = y_cells % chunk_y;
@@ -291,10 +298,10 @@ void clover_decompose(int x_cells,
             add_x = 0;
             add_y = 0;
 
-            if (cx < mod_x) add_x = 1;
-            if (cy < mod_y) add_y = 1;
+            if (cx <= mod_x) add_x = 1;
+            if (cy <= mod_y) add_y = 1;
 
-            if (cnk == 1) {
+            if (cnk == parallel.task + 1) {
                 *left = (cx - 1) * delta_x + 1 + add_x_prev;
                 *right = *left + delta_x - 1 + add_x;
                 *bottom = (cy - 1) * delta_y + 1 + add_y_prev;
@@ -311,15 +318,14 @@ void clover_decompose(int x_cells,
                 if (cy == chunk_y) chunk.chunk_neighbours[CHUNK_TOP] = EXTERNAL_FACE;
             }
 
-            if (cx < mod_x) add_x_prev++;
+            if (cx <= mod_x) add_x_prev++;
             cnk = cnk + 1;
         }
         add_x_prev = 0;
-        if (cy < mod_y) add_y_prev++;
+        if (cy <= mod_y) add_y_prev++;
     }
 
-    fprintf(g_out, "\nMesh ratio of %.4f\n", mesh_ratio);
-    fprintf(g_out, "Decomposing the mesh into %d by %d chunks\n", chunk_x, chunk_y);
-    fprintf(g_out, "Decomposing the chunk with %d tiles\n\n", tiles_per_chunk);
-
+    BOSSPRINT(g_out, "\nMesh ratio of %.4f\n", mesh_ratio);
+    BOSSPRINT(g_out, "Decomposing the mesh into %d by %d chunks\n", chunk_x, chunk_y);
+    BOSSPRINT(g_out, "Decomposing the chunk with %d tiles\n\n", tiles_per_chunk);
 }

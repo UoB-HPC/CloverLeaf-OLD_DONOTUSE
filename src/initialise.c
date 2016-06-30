@@ -7,6 +7,8 @@
 #include <ctype.h>
 #include <string.h>
 #include "start.h"
+#include "clover.h"
+#include <sys/types.h>
 
 void read_config(FILE* in);
 
@@ -20,10 +22,10 @@ void initialise()
         report_error("initialise", "Error opening clover.out file.");
     }
 
-    fprintf(g_out, "Clover Version %.3f", g_version);
-    fprintf(stdout, "Output file clover.out opened. All output will go there.\n");
-
-    fprintf(g_out, "Clover will run from the following input:-\n");
+    BOSSPRINT(g_out, "Clover Version %.3f", g_version);
+    BOSSPRINT(stdout, "Output file clover.out opened. All output will go there.\n");
+    clover_barrier();
+    BOSSPRINT(g_out, "Clover will run from the following input:-\n");
 
     uin = fopen("./clover.in", "r");
     if (uin == NULL) {
@@ -45,12 +47,17 @@ void initialise()
         fprintf(out_unit, "*endclover");
         uin = fopen("./clover.in", "r");
     }
+    clover_barrier();
 
     read_config(uin);
 
+    clover_barrier();
+
     start();
 
-    fprintf(g_out, "Starting calculation\n");
+    clover_barrier();
+
+    BOSSPRINT(g_out, "Starting calculation\n");
 
     fclose(uin);
 }
@@ -116,7 +123,7 @@ void read_config(FILE* in)
     profiler.self_halo_exchange = 0.0;
     profiler.mpi_halo_exchange = 0.0;
 
-    fprintf(g_out, "Reading input file\n");
+    BOSSPRINT(g_out, "Reading input file\n");
 
     char *line = NULL;
     ssize_t n;
@@ -154,77 +161,77 @@ void read_config(FILE* in)
             char *word = strtok(trimmedline, "=");
             double val = atof(&trimmedline[strlen(word) + 1]);
             dtinit = val;
-            fprintf(g_out, "%25s %.4e\n", "initial_timestep", val);
+            BOSSPRINT(g_out, "%25s %.4e\n", "initial_timestep", val);
         } else if (strIsEqual(trimmedline, "max_timestep")) {
             char *word = strtok(trimmedline, "=");
             double val = atof(&trimmedline[strlen(word) + 1]);
             dtmax = val;
-            fprintf(g_out, "%25s %.4e\n", "max_timestep", val);
+            BOSSPRINT(g_out, "%25s %.4e\n", "max_timestep", val);
         } else if (strIsEqual(trimmedline, "timestep_rise")) {
             char *word = strtok(trimmedline, "=");
             double val = atof(&trimmedline[strlen(word) + 1]);
             dtrise = val;
-            fprintf(g_out, "%25s %.4e\n", "timestep_rise", val);
+            BOSSPRINT(g_out, "%25s %.4e\n", "timestep_rise", val);
         } else if (strIsEqual(trimmedline, "end_time")) {
             char *word = strtok(trimmedline, "=");
             double val = atof(&trimmedline[strlen(word) + 1]);
             end_time = val;
-            fprintf(g_out, "%25s %.4e\n", "end_time", val);
+            BOSSPRINT(g_out, "%25s %.4e\n", "end_time", val);
         } else if (strIsEqual(trimmedline, "end_step")) {
             char *word = strtok(trimmedline, "=");
             int val = atoi(&trimmedline[strlen(word) + 1]);
             end_step = val;
-            fprintf(g_out, "%25s %d\n", "end_step", val);
+            BOSSPRINT(g_out, "%25s %d\n", "end_step", val);
         } else if (strIsEqual(trimmedline, "xmin")) {
             char *word = strtok(trimmedline, "=");
             double val = atof(&trimmedline[strlen(word) + 1]);
             grid.xmin = val;
-            fprintf(g_out, "%25s %.4e\n", "xmin", val);
+            BOSSPRINT(g_out, "%25s %.4e\n", "xmin", val);
         } else if (strIsEqual(trimmedline, "xmax")) {
             char *word = strtok(trimmedline, "=");
             double val = atof(&trimmedline[strlen(word) + 1]);
             grid.xmax = val;
-            fprintf(g_out, "%25s %.4e\n", "xmax", val);
+            BOSSPRINT(g_out, "%25s %.4e\n", "xmax", val);
         } else if (strIsEqual(trimmedline, "ymin")) {
             char *word = strtok(trimmedline, "=");
             double val = atof(&trimmedline[strlen(word) + 1]);
             grid.ymin = val;
-            fprintf(g_out, "%25s %.4e\n", "ymin", val);
+            BOSSPRINT(g_out, "%25s %.4e\n", "ymin", val);
         } else if (strIsEqual(trimmedline, "ymax")) {
             char *word = strtok(trimmedline, "=");
             double val = atof(&trimmedline[strlen(word) + 1]);
             grid.ymax = val;
-            fprintf(g_out, "%25s %.4e\n", "ymax", val);
+            BOSSPRINT(g_out, "%25s %.4e\n", "ymax", val);
         } else if (strIsEqual(trimmedline, "x_cells")) {
             char *word = strtok(trimmedline, "=");
             int val = atoi(&trimmedline[strlen(word) + 1]);
             grid.x_cells = val;
-            fprintf(g_out, "%25s %d\n", "x_cells", val);
+            BOSSPRINT(g_out, "%25s %d\n", "x_cells", val);
         } else if (strIsEqual(trimmedline, "y_cells")) {
             char *word = strtok(trimmedline, "=");
             int val = atoi(&trimmedline[strlen(word) + 1]);
             grid.y_cells = val;
-            fprintf(g_out, "%25s %d\n", "y_cells", val);
+            BOSSPRINT(g_out, "%25s %d\n", "y_cells", val);
         } else if (strIsEqual(trimmedline, "visit_frequency")) {
             char *word = strtok(trimmedline, "=");
             int val = atoi(&trimmedline[strlen(word) + 1]);
             visit_frequency = val;
-            fprintf(g_out, "%25s %d\n", "visit_frequency", val);
+            BOSSPRINT(g_out, "%25s %d\n", "visit_frequency", val);
         } else if (strIsEqual(trimmedline, "summary_frequency")) {
             char *word = strtok(trimmedline, "=");
             int val = atoi(&trimmedline[strlen(word) + 1]);
             summary_frequency = val;
-            fprintf(g_out, "%25s %d\n", "summary_frequency", val);
+            BOSSPRINT(g_out, "%25s %d\n", "summary_frequency", val);
         } else if (strIsEqual(trimmedline, "tiles_per_chunk")) {
             char *word = strtok(trimmedline, " ");
             int val = atoi(&trimmedline[strlen(word) + 1]);
             tiles_per_chunk = val;
-            fprintf(g_out, "%25s %d\n", "tiles_per_chunk", val);
+            BOSSPRINT(g_out, "%25s %d\n", "tiles_per_chunk", val);
         } else if (strIsEqual(trimmedline, "tiles_per_problem")) {
             char *word = strtok(trimmedline, "=");
             int val = atoi(&trimmedline[strlen(word) + 1]);
             tiles_per_chunk = val / 1;
-            fprintf(g_out, "%25s %d\n", "tiles_per_problem", val);
+            BOSSPRINT(g_out, "%25s %d\n", "tiles_per_problem", val);
         } else if (strIsEqual(trimmedline, "use_fortran_kernels")) {
 
         } else if (strIsEqual(trimmedline, "use_c_kernels")) {
@@ -233,12 +240,12 @@ void read_config(FILE* in)
 
         } else if (strIsEqual(trimmedline, "profiler_on")) {
             profiler_on = true;
-            fprintf(g_out, "%25s\n", "Profiler on");
+            BOSSPRINT(g_out, "%25s\n", "Profiler on");
         } else if (strIsEqual(trimmedline, "test_problem")) {
             char *word = strtok(trimmedline, " ");
             int val = atoi(&trimmedline[strlen(word) + 1]);
             test_problem = val;
-            fprintf(g_out, "%25s %d\n", "test_problem", val);
+            BOSSPRINT(g_out, "%25s %d\n", "test_problem", val);
         } else if (strIsEqual(trimmedline, "state")) {
             // char *word = strtok(trimmedline, " ");
 
@@ -247,7 +254,7 @@ void read_config(FILE* in)
             token = strsep(&trimmedline, " ");
             int state = atoi(token) - 1;
 
-            fprintf(g_out, "%25s %d\n", "Reading specification for state", state + 1);
+            BOSSPRINT(g_out, "%25s %d\n", "Reading specification for state", state + 1);
 
             if (states[state].defined) report_error("read_input", "State defined twice.");
             states[state].defined = true;
@@ -259,53 +266,53 @@ void read_config(FILE* in)
 
                 if (strIsEqual(name, "density")) {
                     states[state].density = atof(val);
-                    fprintf(g_out, "%25s %.4e\n", "density", atof(val));
+                    BOSSPRINT(g_out, "%25s %.4e\n", "density", atof(val));
                 } else if (strIsEqual(name, "energy")) {
                     states[state].energy = atof(val);
-                    fprintf(g_out, "%25s %.4e\n", "energy", atof(val));
+                    BOSSPRINT(g_out, "%25s %.4e\n", "energy", atof(val));
                 } else if (strIsEqual(name, "geometry")) {
-                    fprintf(g_out, "%25s ", "State geometry");
+                    BOSSPRINT(g_out, "%25s ", "State geometry");
                     if (strIsEqual(val, "rectangle")) {
                         states[state].geometry = g_rect;
-                        fprintf(g_out, "rectangular\n");
+                        BOSSPRINT(g_out, "rectangular\n");
                     } else if (strIsEqual(val, "circle")) {
                         states[state].geometry = g_circ;
-                        fprintf(g_out, "circular\n");
+                        BOSSPRINT(g_out, "circular\n");
                     } else if (strIsEqual(val, "point")) {
                         states[state].geometry = g_point;
-                        fprintf(g_out, "point\n");
+                        BOSSPRINT(g_out, "point\n");
                     } else {
-                        fprintf(g_out, "Unknown geometry %s\n", val);
+                        BOSSPRINT(g_out, "Unknown geometry %s\n", val);
                     }
                 } else if (strIsEqual(name, "xmin")) {
                     states[state].xmin = atof(val);
-                    fprintf(g_out, "%25s %.4e\n", "xmin", atof(val));
+                    BOSSPRINT(g_out, "%25s %.4e\n", "xmin", atof(val));
                 } else if (strIsEqual(name, "xmax")) {
                     states[state].xmax = atof(val);
-                    fprintf(g_out, "%25s %.4e\n", "xmax", atof(val));
+                    BOSSPRINT(g_out, "%25s %.4e\n", "xmax", atof(val));
                 } else if (strIsEqual(name, "ymin")) {
                     states[state].ymin = atof(val);
-                    fprintf(g_out, "%25s %.4e\n", "ymin", atof(val));
+                    BOSSPRINT(g_out, "%25s %.4e\n", "ymin", atof(val));
                 } else if (strIsEqual(name, "ymax")) {
                     states[state].ymax = atof(val);
-                    fprintf(g_out, "%25s %.4e\n", "ymax", atof(val));
+                    BOSSPRINT(g_out, "%25s %.4e\n", "ymax", atof(val));
                 } else if (strIsEqual(name, "radius")) {
                     states[state].radius = atof(val);
-                    fprintf(g_out, "%25s %.4e\n", "radius", atof(val));
+                    BOSSPRINT(g_out, "%25s %.4e\n", "radius", atof(val));
                 } else if (strIsEqual(name, "density")) {
                     states[state].density = atof(val);
-                    fprintf(g_out, "%25s %.4e\n", "density", atof(val));
+                    BOSSPRINT(g_out, "%25s %.4e\n", "density", atof(val));
                 } else if (strIsEqual(name, "xvel")) {
                     states[state].xvel = atof(val);
-                    fprintf(g_out, "%25s %.4e\n", "xvel", atof(val));
+                    BOSSPRINT(g_out, "%25s %.4e\n", "xvel", atof(val));
                 } else if (strIsEqual(name, "yvel")) {
                     states[state].yvel = atof(val);
-                    fprintf(g_out, "%25s %.4e\n", "yvel", atof(val));
+                    BOSSPRINT(g_out, "%25s %.4e\n", "yvel", atof(val));
                 } else {
-                    fprintf(g_out, "Uknown param %s\n", name);
+                    BOSSPRINT(g_out, "Uknown param %s\n", name);
                 }
             }
-            fprintf(g_out, "\n");
+            BOSSPRINT(g_out, "\n");
         } else if (strIsEqual(trimmedline, "*clover")) {
 
         } else if (strIsEqual(trimmedline, "*endclover")) {
@@ -362,10 +369,3 @@ char *trimwhitespace(char *str)
     return str;
 }
 
-
-
-void parse_line(char *line, ssize_t n)
-{
-    char *trimmedline = trimwhitespace(line);
-    printf("%s\n", trimmedline);
-}

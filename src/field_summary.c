@@ -4,13 +4,14 @@
 #include "timer_c.h"
 #include "stdlib.h"
 #include "ideal_gas.h"
+#include "clover.h"
 
 void field_summary()
 {
     double kernel_time = 0.0,
            vol, mass, ie, ke, press;
-    fprintf(g_out, "\nTime %.13f\n", _time); // TODO
-    fprintf(g_out, "%13s%16s%16s%16s%16s%16s%16s%16s\n", "", "Volume", "Mass", "Density", "Pressure", "Internal Energy", "Kinetic Energy", "Total Energy");
+    BOSSPRINT(g_out, "\nTime %.13f\n", _time); // TODO
+    BOSSPRINT(g_out, "%13s%16s%16s%16s%16s%16s%16s%16s\n", "", "Volume", "Mass", "Density", "Pressure", "Internal Energy", "Kinetic Energy", "Total Energy");
 
     if (profiler_on)
         kernel_time = timer();
@@ -50,7 +51,6 @@ void field_summary()
         t_ke = t_ke + ke;
         t_press = t_press + press;
     }
-    if (profiler_on) profiler.summary += timer() - kernel_time;
 
     vol = t_vol;
     ie = t_ie;
@@ -58,7 +58,14 @@ void field_summary()
     mass = t_mass;
     press = t_press;
 
-    fprintf(g_out, "%6s%7d%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e\n\n", " step:", step, vol, mass, mass / vol, press / vol, ie, ke, ie + ke);
+    clover_sum(&vol);
+    clover_sum(&mass);
+    clover_sum(&press);
+    clover_sum(&ie);
+    clover_sum(&ke);
+
+    if (profiler_on) profiler.summary += timer() - kernel_time;
+    BOSSPRINT(g_out, "%6s%7d%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e\n\n", " step:", step, vol, mass, mass / vol, press / vol, ie, ke, ie + ke);
     double qa_diff = 4.0;
     if (complete) {
         if (test_problem >= 1) {
@@ -68,21 +75,16 @@ void field_summary()
             if (test_problem == 4) qa_diff = fabs((100.0 * (ke / 0.307475452287895)) - 100.0);
             if (test_problem == 5) qa_diff = fabs((100.0 * (ke / 4.85350315783719)) - 100.0);
 
-            fprintf(stdout, "%s %d %s %16.7e %s\n", "Test problem", test_problem, "is within", qa_diff, "% of the expected solution");
-            fprintf(g_out, "%s %d %s %16.7e %s\n", "Test problem", test_problem, "is within", qa_diff, "% of the expected solution");
+            BOSSPRINT(stdout, "%s %d %s %16.7e %s\n", "Test problem", test_problem, "is within", qa_diff, "% of the expected solution");
+            BOSSPRINT(g_out, "%s %d %s %16.7e %s\n", "Test problem", test_problem, "is within", qa_diff, "% of the expected solution");
             if (qa_diff < 0.001) {
-                fprintf(stdout, "This test is considered PASSED\n");
-                fprintf(g_out, "This test is considered PASSED\n");
+                BOSSPRINT(stdout, "This test is considered PASSED\n");
+                BOSSPRINT(g_out, "This test is considered PASSED\n");
             } else {
-                fprintf(stdout, "This test is considered NOT PASSED\n");
-                fprintf(g_out, "This test is considered NOT PASSED\n");
+                BOSSPRINT(stdout, "This test is considered NOT PASSED\n");
+                BOSSPRINT(g_out, "This test is considered NOT PASSED\n");
             }
         }
     }
 }
 
-
-void clover_sum(double val)
-{
-    // TODO MPI stuff
-}

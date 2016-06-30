@@ -9,7 +9,6 @@ struct state_type *states;
 
 int number_of_states;
 
-
 int step;
 
 bool advect_x;
@@ -58,7 +57,6 @@ struct chunk_type chunk;
 int number_of_chunks;
 
 struct grid_type grid;
-
 
 
 #endif
