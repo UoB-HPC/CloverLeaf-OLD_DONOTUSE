@@ -21,8 +21,8 @@ void hydro()
            first_step = 0.0, second_step = 0.0,
            wall_clock;
 
-    _MM_SET_EXCEPTION_MASK(_MM_GET_EXCEPTION_MASK() & ~_MM_MASK_INVALID);
 
+    // _MM_SET_EXCEPTION_MASK(_MM_GET_EXCEPTION_MASK() & ~_MM_MASK_INVALID);
     while (true) {
         step_time = timer();
         step++;

@@ -253,26 +253,27 @@ void clover_pack_message_top_c_(int *xmin, int *xmax, int *ymin, int *ymax, doub
     int depth = dpth;
     int buffer_offset = bffr_ffst;
 
-    int j, k, index, x_inc, y_inc;
+    int j, k, index, x_inc;
+    // y_inc;
 
 //Pack
 
 // These array modifications still need to be added on, plus the donor data location changes as in update_halo
     if (field_type == CELL_DATA) {
         x_inc = 0;
-        y_inc = 0;
+        // y_inc = 0;
     }
     if (field_type == VERTEX_DATA) {
         x_inc = 1;
-        y_inc = 1;
+        // y_inc = 1;
     }
     if (field_type == X_FACE_DATA) {
         x_inc = 1;
-        y_inc = 0;
+        // y_inc = 0;
     }
     if (field_type == Y_FACE_DATA) {
         x_inc = 0;
-        y_inc = 1;
+        // y_inc = 1;
     }
 
     for (k = 1; k <= depth; k++) {
@@ -355,26 +356,27 @@ void clover_unpack_message_bottom_c_(int *xmin, int *xmax, int *ymin, int *ymax,
     int depth = dpth;
     int buffer_offset = bffr_ffst;
 
-    int j, k, index, x_inc, y_inc;
+    int j, k, index, x_inc;
+    // y_inc;
 
 //Unpack
 
 // These array modifications still need to be added on, plus the donor data location changes as in update_halo
     if (field_type == CELL_DATA) {
         x_inc = 0;
-        y_inc = 0;
+        // y_inc = 0;
     }
     if (field_type == VERTEX_DATA) {
         x_inc = 1;
-        y_inc = 1;
+        // y_inc = 1;
     }
     if (field_type == X_FACE_DATA) {
         x_inc = 1;
-        y_inc = 0;
+        // y_inc = 0;
     }
     if (field_type == Y_FACE_DATA) {
         x_inc = 0;
-        y_inc = 1;
+        // y_inc = 1;
     }
 
     for (k = 1; k <= depth; k++) {

@@ -27,72 +27,69 @@
 #include "ftocmacros.h"
 #include <math.h>
 
-void accelerate_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
-                          double *dbyt,
-                          double *xarea,
-                          double *yarea,
-                          double *volume,
-                          double *density0,
-                          double *pressure,
-                          double *viscosity,
-                          double *xvel0,
-                          double *yvel0,
-                          double *xvel1,
-                          double *yvel1)
+void accelerate_kernel_c_(
+    struct tile_type *tile,
+    double dt)
 {
-  int x_min = *xmin;
-  int x_max = *xmax;
-  int y_min = *ymin;
-  int y_max = *ymax;
-  double dt = *dbyt;
+    int x_min = tile->t_xmin;
+    int x_max = tile->t_xmax;
+    int y_min = tile->t_ymin;
+    int y_max = tile->t_ymax;
 
-  int j, k;
-  double nodal_mass;
-  double stepby_mass_s;
+    double *xarea = tile->field.xarea,
+            *yarea = tile->field.yarea,
+             *volume = tile->field.volume,
+              *density0 = tile->field.density0,
+               *pressure = tile->field.pressure,
+                *viscosity = tile->field.viscosity,
+                 *xvel0 = tile->field.xvel0,
+                  *yvel0 = tile->field.yvel0,
+                   *xvel1 = tile->field.xvel1,
+                    *yvel1 = tile->field.yvel1;
+
+    int j, k;
+    double nodal_mass;
+    double stepby_mass_s;
 
 
-
-  for (k = y_min; k <= y_max + 1; k++) {
+    for (k = y_min; k <= y_max + 1; k++) {
 #pragma ivdep
-    for (j = x_min; j <= x_max + 1; j++) {
-      nodal_mass = (density0[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]
-                    + density0[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)]
-                    + density0[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
-                    + density0[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)])
-                   * 0.25;
-      stepby_mass_s = 0.5 * dt / nodal_mass;
-      xvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = xvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-          - stepby_mass_s
-          * (xarea[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-             * (pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)])
-             + xarea[FTNREF2D(j  , k - 1, x_max + 5, x_min - 2, y_min - 2)]
-             * (pressure[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
+        for (j = x_min; j <= x_max + 1; j++) {
+            nodal_mass = (density0[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]
+                          + density0[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)]
+                          + density0[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
+                          + density0[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)])
+                         * 0.25;
+            stepby_mass_s = 0.5 * dt / nodal_mass;
+            xvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = xvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
+                    - stepby_mass_s
+                    * (xarea[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
+                       * (pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)])
+                       + xarea[FTNREF2D(j  , k - 1, x_max + 5, x_min - 2, y_min - 2)]
+                       * (pressure[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
 
-      yvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = yvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-          - stepby_mass_s
-          * (yarea[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
-             * (pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)])
-             + yarea[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)]
-             * (pressure[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
+            yvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = yvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
+                    - stepby_mass_s
+                    * (yarea[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
+                       * (pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)])
+                       + yarea[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)]
+                       * (pressure[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
 
-      xvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = xvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-          - stepby_mass_s
-          * (xarea[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-             * (viscosity[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)])
-             + xarea[FTNREF2D(j  , k - 1, x_max + 5, x_min - 2, y_min - 2)]
-             * (viscosity[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
+            xvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = xvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
+                    - stepby_mass_s
+                    * (xarea[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
+                       * (viscosity[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)])
+                       + xarea[FTNREF2D(j  , k - 1, x_max + 5, x_min - 2, y_min - 2)]
+                       * (viscosity[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
 
-      yvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = yvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-          - stepby_mass_s
-          * (yarea[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
-             * (viscosity[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)])
-             + yarea[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)]
-             * (viscosity[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
+            yvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = yvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
+                    - stepby_mass_s
+                    * (yarea[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
+                       * (viscosity[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)])
+                       + yarea[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)]
+                       * (viscosity[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
 
 
+        }
     }
-  }
-
-
-
 }

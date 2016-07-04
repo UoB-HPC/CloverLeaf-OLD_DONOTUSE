@@ -28,28 +28,23 @@ void timestep()
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
         ideal_gas(tile, false);
     }
-
-    if (profiler_on) {
-        profiler.ideal_gas += timer() - kernel_time;
-    }
+    if (profiler_on) profiler.ideal_gas += timer() - kernel_time;
 
     int fields[NUM_FIELDS];
     for (int i = 0; i < NUM_FIELDS; i++) {
         fields[i] = 0;
     }
-
-    fields[FIELD_PRESSURE] =
-        fields[FIELD_ENERGY0] =
-            fields[FIELD_DENSITY0] =
-                fields[FIELD_XVEL0] =
-                    fields[FIELD_YVEL0] = 1;
-
+    fields[FIELD_PRESSURE] = 1;
+    fields[FIELD_ENERGY0]  = 1;
+    fields[FIELD_DENSITY0] = 1;
+    fields[FIELD_XVEL0]    = 1;
+    fields[FIELD_YVEL0]    = 1;
     update_halo(fields, 1);
+
 
     if (profiler_on) kernel_time = timer();
     viscosity();
-    if (profiler_on)
-        profiler.viscosity += timer() - kernel_time;
+    if (profiler_on) profiler.viscosity += timer() - kernel_time;
 
 
     for (int i = 0; i < NUM_FIELDS; i++) {
@@ -59,12 +54,17 @@ void timestep()
     update_halo(fields, 1);
 
     if (profiler_on) kernel_time = timer();
-
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
-        calc_dt(&tile, &dtlp, dtl_control, &xl_pos, &yl_pos, &jldt, &kldt);
+        calc_dt(tile,
+                &dtlp,
+                dtl_control,
+                &xl_pos,
+                &yl_pos,
+                &jldt,
+                &kldt);
+
         if (dtlp < dt) {
             dt = dtlp;
-            // dt_control = dtl_control;
             memcpy(dt_control, dtl_control, 8 * sizeof(char));
             x_pos = xl_pos;
             y_pos = yl_pos;
