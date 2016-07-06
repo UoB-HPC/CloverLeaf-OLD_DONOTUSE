@@ -11,7 +11,7 @@ void checkMPIerror(int err)
         int length_of_error_string;
 
         MPI_Error_string(err, error_string, &length_of_error_string);
-        // fprintf(stderr, "%3d: %s\n", parallel.task, error_string);
+
         exit(1);
     }
 }
@@ -24,23 +24,12 @@ void clover_barrier()
 
 void clover_abort()
 {
-
-//     INTEGER :: ierr,err
-
     checkMPIerror(MPI_Abort(MPI_COMM_WORLD, 4));
-
 }
 
 void clover_finalize()
 {
-
-//     INTEGER :: err
-
-//     CLOSE(g_out)
-//      FLUSH(0)
-//      FLUSH(6)
-//      FLUSH(g_out)
-//      MPI_FINALIZE(err)
+    checkMPIerror(MPI_Finalize());
 
 }
 
@@ -67,33 +56,16 @@ void clover_init_comms(int argc, char **argv)
 
 void clover_get_num_chunks(int *count)
 {
-
-//     IMPLICIT NONE
-
-//     INTEGER :: count
-
     // Should be changed so there can be more than one chunk per mpi task
-
     *count = parallel.max_task;
 
 }
 
 void clover_exchange(int *fields, int depth)
 {
-
-//     IMPLICIT NONE
-
-//     INTEGER      :: fields(:),depth, tile, cnk
-//     INTEGER      :: left_right_offset[15],bottom_top_offset[15]
-//     INTEGER      :: request[4]
-//     INTEGER      :: message_count,err
-//     INTEGER      :: status(MPI_STATUS_SIZE,4)
-//     INTEGER      :: end_pack_index_left_right, end_pack_index_bottom_top,field
-
     MPI_Status status[4];
 
     // Assuming 1 patch per task, this will be changed
-
     MPI_Request request[4] = {0, 0, 0, 0};
     int message_count = 0;
     int left_right_offset[NUM_FIELDS],
@@ -102,7 +74,6 @@ void clover_exchange(int *fields, int depth)
     int end_pack_index_left_right = 0;
     int end_pack_index_bottom_top = 0;
 
-    // printf("1\n");
     for (int  field = 0; field < NUM_FIELDS; field++) {
         if (fields[field] == 1)  {
             left_right_offset[field] = end_pack_index_left_right;
@@ -112,7 +83,6 @@ void clover_exchange(int *fields, int depth)
         }
     }
 
-    // printf("2\n");
     if (chunk.chunk_neighbours[CHUNK_LEFT] != EXTERNAL_FACE)  {
         // do left exchanges
         // Find left hand tiles
@@ -130,7 +100,6 @@ void clover_exchange(int *fields, int depth)
                                       &request[message_count], &request[message_count + 1]);
         message_count = message_count + 2;
     }
-    // printf("3\n");
 
     if (chunk.chunk_neighbours[CHUNK_RIGHT] != EXTERNAL_FACE)  {
         // do right exchanges
@@ -149,7 +118,6 @@ void clover_exchange(int *fields, int depth)
         message_count = message_count + 2;
     }
 
-    // printf("4\n");
     //make a call to wait / sync
     checkMPIerror(MPI_Waitall(message_count, request, status));
 
@@ -165,7 +133,6 @@ void clover_exchange(int *fields, int depth)
     }
 
 
-    // printf("5\n");
     //unpack in right direction
     if (chunk.chunk_neighbours[CHUNK_RIGHT] != EXTERNAL_FACE)  {
         for (int  tile = 0; tile < tiles_per_chunk; tile++) {
@@ -180,7 +147,6 @@ void clover_exchange(int *fields, int depth)
     message_count = 0;
     request[0] = request[1] = request[2] = request[3] = 0;
 
-    // printf("6\n");
     if (chunk.chunk_neighbours[CHUNK_BOTTOM] != EXTERNAL_FACE)  {
         // do bottom exchanges
         for (int  tile = 0; tile < tiles_per_chunk; tile++) {
@@ -197,7 +163,6 @@ void clover_exchange(int *fields, int depth)
                                         &request[message_count], &request[message_count + 1]);
         message_count = message_count + 2;
     }
-    // printf("7\n");
 
     if (chunk.chunk_neighbours[CHUNK_TOP] != EXTERNAL_FACE)  {
         // do top exchanges
@@ -215,7 +180,6 @@ void clover_exchange(int *fields, int depth)
                                      &request[message_count], &request[message_count + 1]);
         message_count = message_count + 2;
     }
-    // printf("8 %d %d\n", chunk.chunk_neighbours[CHUNK_TOP], chunk.chunk_neighbours[CHUNK_BOTTOM]);
 
     //need to make a call to wait / sync
     checkMPIerror(MPI_Waitall(message_count, request, status));
@@ -231,7 +195,6 @@ void clover_exchange(int *fields, int depth)
         }
     }
 
-    // printf("9\n");
     //unpack in bottom direction
     if (chunk.chunk_neighbours[CHUNK_BOTTOM] != EXTERNAL_FACE)  {
         for (int  tile = 0; tile < tiles_per_chunk; tile++) {
@@ -242,8 +205,6 @@ void clover_exchange(int *fields, int depth)
             }
         }
     }
-    // printf("10\n");
-
 }
 
 void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
@@ -259,7 +220,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.density0,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, CELL_DATA,
                                     left_right_offset[FIELD_DENSITY0] + t_offset);
 
@@ -271,7 +231,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.density1,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, CELL_DATA,
                                     left_right_offset[FIELD_DENSITY1] + t_offset);
 
@@ -283,7 +242,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.energy0,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, CELL_DATA,
                                     left_right_offset[FIELD_ENERGY0] + t_offset);
 
@@ -295,7 +253,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.energy1,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, CELL_DATA,
                                     left_right_offset[FIELD_ENERGY1] + t_offset);
 
@@ -307,7 +264,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.pressure,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, CELL_DATA,
                                     left_right_offset[FIELD_PRESSURE] + t_offset);
 
@@ -319,7 +275,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.viscosity,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, CELL_DATA,
                                     left_right_offset[FIELD_VISCOSITY] + t_offset);
 
@@ -331,7 +286,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.soundspeed,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, CELL_DATA,
                                     left_right_offset[FIELD_SOUNDSPEED] + t_offset);
 
@@ -343,7 +297,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.xvel0,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, VERTEX_DATA,
                                     left_right_offset[FIELD_XVEL0] + t_offset);
 
@@ -355,7 +308,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.xvel1,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, VERTEX_DATA,
                                     left_right_offset[FIELD_XVEL1] + t_offset);
 
@@ -367,7 +319,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.yvel0,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, VERTEX_DATA,
                                     left_right_offset[FIELD_YVEL0] + t_offset);
 
@@ -379,7 +330,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.yvel1,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, VERTEX_DATA,
                                     left_right_offset[FIELD_YVEL1] + t_offset);
 
@@ -391,7 +341,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.vol_flux_x,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, X_FACE_DATA,
                                     left_right_offset[FIELD_VOL_FLUX_X] + t_offset);
 
@@ -403,7 +352,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.vol_flux_y,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, Y_FACE_DATA,
                                     left_right_offset[FIELD_VOL_FLUX_Y] + t_offset);
 
@@ -415,7 +363,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.mass_flux_x,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, X_FACE_DATA,
                                     left_right_offset[FIELD_MASS_FLUX_X] + t_offset);
 
@@ -427,7 +374,6 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
                                     &chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.mass_flux_y,
                                     chunk.left_snd_buffer,
-                                    CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                     depth, Y_FACE_DATA,
                                     left_right_offset[FIELD_MASS_FLUX_Y] + t_offset);
 
@@ -481,7 +427,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.density0,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       left_right_offset[FIELD_DENSITY0] + t_offset);
 
@@ -493,7 +438,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.density1,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       left_right_offset[FIELD_DENSITY1] + t_offset);
 
@@ -505,7 +449,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.energy0,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       left_right_offset[FIELD_ENERGY0] + t_offset);
 
@@ -517,7 +460,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.energy1,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       left_right_offset[FIELD_ENERGY1] + t_offset);
 
@@ -529,7 +471,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.pressure,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       left_right_offset[FIELD_PRESSURE] + t_offset);
 
@@ -541,7 +482,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.viscosity,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       left_right_offset[FIELD_VISCOSITY] + t_offset);
 
@@ -553,7 +493,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.soundspeed,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       left_right_offset[FIELD_SOUNDSPEED] + t_offset);
 
@@ -565,7 +504,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.xvel0,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, VERTEX_DATA,
                                       left_right_offset[FIELD_XVEL0] + t_offset);
 
@@ -577,7 +515,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.xvel1,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, VERTEX_DATA,
                                       left_right_offset[FIELD_XVEL1] + t_offset);
 
@@ -589,7 +526,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.yvel0,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, VERTEX_DATA,
                                       left_right_offset[FIELD_YVEL0] + t_offset);
 
@@ -601,7 +537,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.yvel1,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, VERTEX_DATA,
                                       left_right_offset[FIELD_YVEL1] + t_offset);
 
@@ -613,7 +548,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.vol_flux_x,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, X_FACE_DATA,
                                       left_right_offset[FIELD_VOL_FLUX_X] + t_offset);
 
@@ -625,7 +559,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.vol_flux_y,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, Y_FACE_DATA,
                                       left_right_offset[FIELD_VOL_FLUX_Y] + t_offset);
 
@@ -637,7 +570,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.mass_flux_x,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, X_FACE_DATA,
                                       left_right_offset[FIELD_MASS_FLUX_X] + t_offset);
 
@@ -649,7 +581,6 @@ void clover_unpack_left(int *fields, int tile, int depth,
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.mass_flux_y,
                                       chunk.left_rcv_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, Y_FACE_DATA,
                                       left_right_offset[FIELD_MASS_FLUX_Y] + t_offset);
 
@@ -670,7 +601,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.density0,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      left_right_offset[FIELD_DENSITY0] + t_offset);
 
@@ -682,7 +612,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.density1,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      left_right_offset[FIELD_DENSITY1] + t_offset);
 
@@ -694,7 +623,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.energy0,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      left_right_offset[FIELD_ENERGY0] + t_offset);
 
@@ -706,7 +634,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.energy1,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      left_right_offset[FIELD_ENERGY1] + t_offset);
 
@@ -718,7 +645,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.pressure,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      left_right_offset[FIELD_PRESSURE] + t_offset);
 
@@ -730,7 +656,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.viscosity,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      left_right_offset[FIELD_VISCOSITY] + t_offset);
 
@@ -742,7 +667,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.soundspeed,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      left_right_offset[FIELD_SOUNDSPEED] + t_offset);
 
@@ -754,7 +678,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.xvel0,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, VERTEX_DATA,
                                      left_right_offset[FIELD_XVEL0] + t_offset);
 
@@ -766,7 +689,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.xvel1,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, VERTEX_DATA,
                                      left_right_offset[FIELD_XVEL1] + t_offset);
 
@@ -779,7 +701,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.yvel0,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, VERTEX_DATA,
                                      left_right_offset[FIELD_YVEL0] + t_offset);
 //       ELSE
@@ -792,7 +713,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.yvel1,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, VERTEX_DATA,
                                      left_right_offset[FIELD_YVEL1] + t_offset);
 
@@ -804,7 +724,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.vol_flux_x,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, X_FACE_DATA,
                                      left_right_offset[FIELD_VOL_FLUX_X] + t_offset);
 
@@ -816,7 +735,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.vol_flux_y,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, Y_FACE_DATA,
                                      left_right_offset[FIELD_VOL_FLUX_Y] + t_offset);
 
@@ -828,7 +746,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.mass_flux_x,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, X_FACE_DATA,
                                      left_right_offset[FIELD_MASS_FLUX_X] + t_offset);
 
@@ -840,7 +757,6 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.mass_flux_y,
                                      chunk.right_snd_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, Y_FACE_DATA,
                                      left_right_offset[FIELD_MASS_FLUX_Y] + t_offset);
 
@@ -886,7 +802,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.density0,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, CELL_DATA,
                                        left_right_offset[FIELD_DENSITY0] + t_offset);
 
@@ -899,7 +814,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.density1,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, CELL_DATA,
                                        left_right_offset[FIELD_DENSITY1] + t_offset);
 
@@ -911,7 +825,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.energy0,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, CELL_DATA,
                                        left_right_offset[FIELD_ENERGY0] + t_offset);
 
@@ -923,7 +836,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.energy1,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, CELL_DATA,
                                        left_right_offset[FIELD_ENERGY1] + t_offset);
 
@@ -935,7 +847,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.pressure,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, CELL_DATA,
                                        left_right_offset[FIELD_PRESSURE] + t_offset);
 
@@ -947,7 +858,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.viscosity,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, CELL_DATA,
                                        left_right_offset[FIELD_VISCOSITY] + t_offset);
 
@@ -959,7 +869,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.soundspeed,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, CELL_DATA,
                                        left_right_offset[FIELD_SOUNDSPEED] + t_offset);
 
@@ -971,7 +880,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.xvel0,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, VERTEX_DATA,
                                        left_right_offset[FIELD_XVEL0] + t_offset);
 
@@ -983,7 +891,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.xvel1,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, VERTEX_DATA,
                                        left_right_offset[FIELD_XVEL1] + t_offset);
 
@@ -995,7 +902,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.yvel0,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, VERTEX_DATA,
                                        left_right_offset[FIELD_YVEL0] + t_offset);
 
@@ -1007,7 +913,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.yvel1,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, VERTEX_DATA,
                                        left_right_offset[FIELD_YVEL1] + t_offset);
 
@@ -1019,7 +924,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.vol_flux_x,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, X_FACE_DATA,
                                        left_right_offset[FIELD_VOL_FLUX_X] + t_offset);
 
@@ -1031,7 +935,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.vol_flux_y,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, Y_FACE_DATA,
                                        left_right_offset[FIELD_VOL_FLUX_Y] + t_offset);
 
@@ -1043,7 +946,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.mass_flux_x,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, X_FACE_DATA,
                                        left_right_offset[FIELD_MASS_FLUX_X] + t_offset);
 
@@ -1055,7 +957,6 @@ void clover_unpack_right(int *fields, int tile, int depth,
                                        &chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.mass_flux_y,
                                        chunk.right_rcv_buffer,
-                                       CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                        depth, Y_FACE_DATA,
                                        left_right_offset[FIELD_MASS_FLUX_Y] + t_offset);
 
@@ -1076,7 +977,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.density0,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, CELL_DATA,
                                    bottom_top_offset[FIELD_DENSITY0] + t_offset);
 
@@ -1088,7 +988,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.density1,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, CELL_DATA,
                                    bottom_top_offset[FIELD_DENSITY1] + t_offset);
 
@@ -1100,7 +999,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.energy0,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, CELL_DATA,
                                    bottom_top_offset[FIELD_ENERGY0] + t_offset);
 
@@ -1112,7 +1010,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.energy1,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, CELL_DATA,
                                    bottom_top_offset[FIELD_ENERGY1] + t_offset);
 
@@ -1124,7 +1021,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.pressure,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, CELL_DATA,
                                    bottom_top_offset[FIELD_PRESSURE] + t_offset);
 
@@ -1136,7 +1032,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.viscosity,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, CELL_DATA,
                                    bottom_top_offset[FIELD_VISCOSITY] + t_offset);
 
@@ -1148,7 +1043,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.soundspeed,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, CELL_DATA,
                                    bottom_top_offset[FIELD_SOUNDSPEED] + t_offset);
 
@@ -1160,7 +1054,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.xvel0,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, VERTEX_DATA,
                                    bottom_top_offset[FIELD_XVEL0] + t_offset);
 
@@ -1172,7 +1065,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.xvel1,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, VERTEX_DATA,
                                    bottom_top_offset[FIELD_XVEL1] + t_offset);
 
@@ -1184,7 +1076,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.yvel0,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, VERTEX_DATA,
                                    bottom_top_offset[FIELD_YVEL0] + t_offset);
 
@@ -1196,7 +1087,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.yvel1,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, VERTEX_DATA,
                                    bottom_top_offset[FIELD_YVEL1] + t_offset);
 
@@ -1208,7 +1098,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.vol_flux_x,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, X_FACE_DATA,
                                    bottom_top_offset[FIELD_VOL_FLUX_X] + t_offset);
 
@@ -1220,7 +1109,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.vol_flux_y,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, Y_FACE_DATA,
                                    bottom_top_offset[FIELD_VOL_FLUX_Y] + t_offset);
 
@@ -1232,7 +1120,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.mass_flux_x,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, X_FACE_DATA,
                                    bottom_top_offset[FIELD_MASS_FLUX_X] + t_offset);
 
@@ -1244,7 +1131,6 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
                                    &chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.mass_flux_y,
                                    chunk.top_snd_buffer,
-                                   CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                    depth, Y_FACE_DATA,
                                    bottom_top_offset[FIELD_MASS_FLUX_Y] + t_offset);
 
@@ -1290,7 +1176,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.density0,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      bottom_top_offset[FIELD_DENSITY0] + t_offset);
 
@@ -1302,7 +1187,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.density1,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      bottom_top_offset[FIELD_DENSITY1] + t_offset);
 
@@ -1314,7 +1198,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.energy0,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      bottom_top_offset[FIELD_ENERGY0] + t_offset);
 
@@ -1326,7 +1209,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.energy1,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      bottom_top_offset[FIELD_ENERGY1] + t_offset);
 
@@ -1338,7 +1220,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.pressure,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      bottom_top_offset[FIELD_PRESSURE] + t_offset);
 
@@ -1350,7 +1231,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.viscosity,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      bottom_top_offset[FIELD_VISCOSITY] + t_offset);
 
@@ -1362,7 +1242,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.soundspeed,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, CELL_DATA,
                                      bottom_top_offset[FIELD_SOUNDSPEED] + t_offset);
 
@@ -1374,7 +1253,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.xvel0,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, VERTEX_DATA,
                                      bottom_top_offset[FIELD_XVEL0] + t_offset);
 
@@ -1386,7 +1264,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.xvel1,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, VERTEX_DATA,
                                      bottom_top_offset[FIELD_XVEL1] + t_offset);
 
@@ -1398,7 +1275,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.yvel0,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, VERTEX_DATA,
                                      bottom_top_offset[FIELD_YVEL0] + t_offset);
 
@@ -1410,7 +1286,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.yvel1,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, VERTEX_DATA,
                                      bottom_top_offset[FIELD_YVEL1] + t_offset);
 
@@ -1422,7 +1297,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.vol_flux_x,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, X_FACE_DATA,
                                      bottom_top_offset[FIELD_VOL_FLUX_X] + t_offset);
 
@@ -1434,7 +1308,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.vol_flux_y,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, Y_FACE_DATA,
                                      bottom_top_offset[FIELD_VOL_FLUX_Y] + t_offset);
 
@@ -1446,7 +1319,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.mass_flux_x,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, X_FACE_DATA,
                                      bottom_top_offset[FIELD_MASS_FLUX_X] + t_offset);
 
@@ -1458,7 +1330,6 @@ void clover_unpack_top(int *fields, int tile, int depth,
                                      &chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.mass_flux_y,
                                      chunk.top_rcv_buffer,
-                                     CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                      depth, Y_FACE_DATA,
                                      bottom_top_offset[FIELD_MASS_FLUX_Y] + t_offset);
 
@@ -1479,7 +1350,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.density0,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       bottom_top_offset[FIELD_DENSITY0] + t_offset);
 //       ELSE
@@ -1492,7 +1362,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.density1,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       bottom_top_offset[FIELD_DENSITY1] + t_offset);
 
@@ -1504,7 +1373,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.energy0,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       bottom_top_offset[FIELD_ENERGY0] + t_offset);
 
@@ -1516,7 +1384,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.energy1,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       bottom_top_offset[FIELD_ENERGY1] + t_offset);
 
@@ -1528,7 +1395,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.pressure,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       bottom_top_offset[FIELD_PRESSURE] + t_offset);
 
@@ -1540,7 +1406,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.viscosity,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       bottom_top_offset[FIELD_VISCOSITY] + t_offset);
 
@@ -1552,7 +1417,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.soundspeed,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, CELL_DATA,
                                       bottom_top_offset[FIELD_SOUNDSPEED] + t_offset);
 
@@ -1564,7 +1428,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.xvel0,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, VERTEX_DATA,
                                       bottom_top_offset[FIELD_XVEL0] + t_offset);
 
@@ -1576,7 +1439,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.xvel1,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, VERTEX_DATA,
                                       bottom_top_offset[FIELD_XVEL1] + t_offset);
 
@@ -1588,7 +1450,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.yvel0,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, VERTEX_DATA,
                                       bottom_top_offset[FIELD_YVEL0] + t_offset);
 
@@ -1600,7 +1461,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.yvel1,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, VERTEX_DATA,
                                       bottom_top_offset[FIELD_YVEL1] + t_offset);
 
@@ -1612,7 +1472,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.vol_flux_x,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, X_FACE_DATA,
                                       bottom_top_offset[FIELD_VOL_FLUX_X] + t_offset);
 
@@ -1624,7 +1483,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.vol_flux_y,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, Y_FACE_DATA,
                                       bottom_top_offset[FIELD_VOL_FLUX_Y] + t_offset);
 
@@ -1636,7 +1494,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.mass_flux_x,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, X_FACE_DATA,
                                       bottom_top_offset[FIELD_MASS_FLUX_X] + t_offset);
 
@@ -1648,7 +1505,6 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
                                       &chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.mass_flux_y,
                                       chunk.bottom_snd_buffer,
-                                      CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                       depth, Y_FACE_DATA,
                                       bottom_top_offset[FIELD_MASS_FLUX_Y] + t_offset);
 
@@ -1692,7 +1548,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.density0,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, CELL_DATA,
                                         bottom_top_offset[FIELD_DENSITY0] + t_offset);
 
@@ -1704,7 +1559,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.density1,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, CELL_DATA,
                                         bottom_top_offset[FIELD_DENSITY1] + t_offset);
 
@@ -1716,7 +1570,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.energy0,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, CELL_DATA,
                                         bottom_top_offset[FIELD_ENERGY0] + t_offset);
 
@@ -1728,7 +1581,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.energy1,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, CELL_DATA,
                                         bottom_top_offset[FIELD_ENERGY1] + t_offset);
 
@@ -1740,7 +1592,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.pressure,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, CELL_DATA,
                                         bottom_top_offset[FIELD_PRESSURE] + t_offset);
 
@@ -1752,7 +1603,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.viscosity,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, CELL_DATA,
                                         bottom_top_offset[FIELD_VISCOSITY] + t_offset);
 
@@ -1764,7 +1614,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.soundspeed,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, CELL_DATA,
                                         bottom_top_offset[FIELD_SOUNDSPEED] + t_offset);
 
@@ -1776,7 +1625,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.xvel0,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, VERTEX_DATA,
                                         bottom_top_offset[FIELD_XVEL0] + t_offset);
 
@@ -1788,7 +1636,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.xvel1,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, VERTEX_DATA,
                                         bottom_top_offset[FIELD_XVEL1] + t_offset);
 
@@ -1800,7 +1647,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.yvel0,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, VERTEX_DATA,
                                         bottom_top_offset[FIELD_YVEL0] + t_offset);
 
@@ -1812,7 +1658,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.yvel1,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, VERTEX_DATA,
                                         bottom_top_offset[FIELD_YVEL1] + t_offset);
 
@@ -1824,7 +1669,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.vol_flux_x,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, X_FACE_DATA,
                                         bottom_top_offset[FIELD_VOL_FLUX_X] + t_offset);
 
@@ -1836,7 +1680,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.vol_flux_y,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, Y_FACE_DATA,
                                         bottom_top_offset[FIELD_VOL_FLUX_Y] + t_offset);
 
@@ -1848,7 +1691,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.mass_flux_x,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, X_FACE_DATA,
                                         bottom_top_offset[FIELD_MASS_FLUX_X] + t_offset);
 
@@ -1860,7 +1702,6 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
                                         &chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.mass_flux_y,
                                         chunk.bottom_rcv_buffer,
-                                        CELL_DATA, VERTEX_DATA, X_FACE_DATA, Y_FACE_DATA,
                                         depth, Y_FACE_DATA,
                                         bottom_top_offset[FIELD_MASS_FLUX_Y] + t_offset);
 
