@@ -2,6 +2,9 @@
 #include "build_field.h"
 #include "definitions_c.h"
 #include <stdlib.h>
+#include <Kokkos_Core.hpp>
+
+using namespace Kokkos;
 
 int size2d(int xmin, int xmax, int ymin, int ymax)
 {
@@ -61,43 +64,45 @@ void build_field()
         int xareaSize    = size2d(xmin - 2, xmax + 3, ymin - 2, ymax + 2);
         int yareaSize    = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 3);
 
-        chunk.tiles[tile].field.density0  = calloc(sizeof(double), density0Size);
-        chunk.tiles[tile].field.density1  = calloc(sizeof(double), density1Size);
-        chunk.tiles[tile].field.energy0   = calloc(sizeof(double), energy0Size);
-        chunk.tiles[tile].field.energy1   = calloc(sizeof(double), energy1Size);
-        chunk.tiles[tile].field.pressure  = calloc(sizeof(double), pressureSize);
-        chunk.tiles[tile].field.viscosity = calloc(sizeof(double), viscositySize);
-        chunk.tiles[tile].field.soundspeed = calloc(sizeof(double), soundspeedSize);
+        // View<double**> density0("denisty0", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 2));
 
-        chunk.tiles[tile].field.xvel0 = calloc(sizeof(double), xvel0Size);
-        chunk.tiles[tile].field.xvel1 = calloc(sizeof(double), xvel1Size);
-        chunk.tiles[tile].field.yvel0 = calloc(sizeof(double), yvel0Size);
-        chunk.tiles[tile].field.yvel1 = calloc(sizeof(double), yvel1Size);
+        chunk.tiles[tile].field.density0  = (double*)calloc(sizeof(double), density0Size);
+        chunk.tiles[tile].field.density1  = (double*)calloc(sizeof(double), density1Size);
+        chunk.tiles[tile].field.energy0   = (double*)calloc(sizeof(double), energy0Size);
+        chunk.tiles[tile].field.energy1   = (double*)calloc(sizeof(double), energy1Size);
+        chunk.tiles[tile].field.pressure  = (double*)calloc(sizeof(double), pressureSize);
+        chunk.tiles[tile].field.viscosity = (double*)calloc(sizeof(double), viscositySize);
+        chunk.tiles[tile].field.soundspeed = (double*)calloc(sizeof(double), soundspeedSize);
 
-        chunk.tiles[tile].field.vol_flux_x  = calloc(sizeof(double), vol_flux_xSize);
-        chunk.tiles[tile].field.mass_flux_x = calloc(sizeof(double), mass_flux_xSize);
-        chunk.tiles[tile].field.vol_flux_y  = calloc(sizeof(double), vol_flux_ySize);
-        chunk.tiles[tile].field.mass_flux_y = calloc(sizeof(double), mass_flux_ySize);
+        chunk.tiles[tile].field.xvel0 = (double*)calloc(sizeof(double), xvel0Size);
+        chunk.tiles[tile].field.xvel1 = (double*)calloc(sizeof(double), xvel1Size);
+        chunk.tiles[tile].field.yvel0 = (double*)calloc(sizeof(double), yvel0Size);
+        chunk.tiles[tile].field.yvel1 = (double*)calloc(sizeof(double), yvel1Size);
 
-        chunk.tiles[tile].field.work_array1 = calloc(sizeof(double), work_array1Size);
-        chunk.tiles[tile].field.work_array2 = calloc(sizeof(double), work_array2Size);
-        chunk.tiles[tile].field.work_array3 = calloc(sizeof(double), work_array3Size);
-        chunk.tiles[tile].field.work_array4 = calloc(sizeof(double), work_array4Size);
-        chunk.tiles[tile].field.work_array5 = calloc(sizeof(double), work_array5Size);
-        chunk.tiles[tile].field.work_array6 = calloc(sizeof(double), work_array6Size);
-        chunk.tiles[tile].field.work_array7 = calloc(sizeof(double), work_array7Size);
+        chunk.tiles[tile].field.vol_flux_x  = (double*)calloc(sizeof(double), vol_flux_xSize);
+        chunk.tiles[tile].field.mass_flux_x = (double*)calloc(sizeof(double), mass_flux_xSize);
+        chunk.tiles[tile].field.vol_flux_y  = (double*)calloc(sizeof(double), vol_flux_ySize);
+        chunk.tiles[tile].field.mass_flux_y = (double*)calloc(sizeof(double), mass_flux_ySize);
 
-        chunk.tiles[tile].field.cellx    = calloc(sizeof(double), cellxSize);
-        chunk.tiles[tile].field.celly    = calloc(sizeof(double), cellySize);
-        chunk.tiles[tile].field.vertexx  = calloc(sizeof(double), vertexxSize);
-        chunk.tiles[tile].field.vertexy  = calloc(sizeof(double), vertexySize);
-        chunk.tiles[tile].field.celldx   = calloc(sizeof(double), celldxSize);
-        chunk.tiles[tile].field.celldy   = calloc(sizeof(double), celldySize);
-        chunk.tiles[tile].field.vertexdx = calloc(sizeof(double), vertexdxSize);
-        chunk.tiles[tile].field.vertexdy = calloc(sizeof(double), vertexdySize);
-        chunk.tiles[tile].field.volume   = calloc(sizeof(double), volumeSize);
-        chunk.tiles[tile].field.xarea    = calloc(sizeof(double), xareaSize);
-        chunk.tiles[tile].field.yarea    = calloc(sizeof(double), yareaSize);
+        chunk.tiles[tile].field.work_array1 = (double*)calloc(sizeof(double), work_array1Size);
+        chunk.tiles[tile].field.work_array2 = (double*)calloc(sizeof(double), work_array2Size);
+        chunk.tiles[tile].field.work_array3 = (double*)calloc(sizeof(double), work_array3Size);
+        chunk.tiles[tile].field.work_array4 = (double*)calloc(sizeof(double), work_array4Size);
+        chunk.tiles[tile].field.work_array5 = (double*)calloc(sizeof(double), work_array5Size);
+        chunk.tiles[tile].field.work_array6 = (double*)calloc(sizeof(double), work_array6Size);
+        chunk.tiles[tile].field.work_array7 = (double*)calloc(sizeof(double), work_array7Size);
+
+        chunk.tiles[tile].field.cellx    = (double*)calloc(sizeof(double), cellxSize);
+        chunk.tiles[tile].field.celly    = (double*)calloc(sizeof(double), cellySize);
+        chunk.tiles[tile].field.vertexx  = (double*)calloc(sizeof(double), vertexxSize);
+        chunk.tiles[tile].field.vertexy  = (double*)calloc(sizeof(double), vertexySize);
+        chunk.tiles[tile].field.celldx   = (double*)calloc(sizeof(double), celldxSize);
+        chunk.tiles[tile].field.celldy   = (double*)calloc(sizeof(double), celldySize);
+        chunk.tiles[tile].field.vertexdx = (double*)calloc(sizeof(double), vertexdxSize);
+        chunk.tiles[tile].field.vertexdy = (double*)calloc(sizeof(double), vertexdySize);
+        chunk.tiles[tile].field.volume   = (double*)calloc(sizeof(double), volumeSize);
+        chunk.tiles[tile].field.xarea    = (double*)calloc(sizeof(double), xareaSize);
+        chunk.tiles[tile].field.yarea    = (double*)calloc(sizeof(double), yareaSize);
 
 
         // TODO first touch
