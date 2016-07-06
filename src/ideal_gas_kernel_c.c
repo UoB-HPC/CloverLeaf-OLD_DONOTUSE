@@ -41,8 +41,13 @@ void ideal_gas_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
     int y_min = *ymin;
     int y_max = *ymax;
 
-    parallel_for(y_max - y_min, KOKKOS_LAMBDA (const int& i) {
+#ifdef USE_KOKKOS
+    parallel_for(y_max - y_min + 1, KOKKOS_LAMBDA (const int& i) {
         int k = i + y_min;
+#else
+    for (int k = y_min; k <= y_max; k++) {
+#endif
+
 #pragma ivdep
         for (int j = x_min; j <= x_max; j++) {
             double v = 1.0 / density[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
@@ -59,5 +64,8 @@ void ideal_gas_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
 
             soundspeed[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] = sqrt(sound_speed_squared);
         }
-    });
+    }
+#ifdef USE_KOKKOS
+                );
+#endif
 }

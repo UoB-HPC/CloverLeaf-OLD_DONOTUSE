@@ -158,4 +158,6 @@ extern struct grid_type grid;
 
 #define BOSSPRINT(...) if(parallel.boss) fprintf(__VA_ARGS__)
 
+#define USE_KOKKOS
+
 #endif
