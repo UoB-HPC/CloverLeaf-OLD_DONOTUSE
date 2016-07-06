@@ -1,10 +1,10 @@
 
-CC_INTEL = mpiicc
-CC_GNU = mpicc
-CC_ = cc
+CC_INTEL = mpiicpc
+CC_GNU = mpic++
+CC_ = mpic++
 
-FLAGS_GNU = -std=gnu99 -Wall -Wpedantic -g -Wno-unknown-pragmas -O3 -march=native -lm
-FLAGS_INTEL = -std=gnu99 -O3 -fp-model strict
+FLAGS_GNU = -std=c++11 -Wall -Wpedantic -g -Wno-unknown-pragmas -O3 -march=native -lm
+FLAGS_INTEL = -std=c++11 -O3 -g -fp-model strict -march=native
 FLAGS_ = 
 
 FLAGS = $(FLAGS_$(COMPILER))
@@ -37,20 +37,33 @@ OBJECTS = data_c.o \
 	clover.o
 
 
+
+default: build
+
+CXX = mpic++
+# CXX = 
+# KOKKOS_PATH=/usr/local/lib/kokkos
+# KOKKOS_PATH=/Users/jamus/kokkos-tutorial/kokkos
+
+include $(KOKKOS_PATH)/Makefile.kokkos
+
 OBJDIR = obj
 SRCDIR = src
 
 COBJECTS = $(addprefix $(OBJDIR)/, $(OBJECTS))
 CSOURCES = $(addprefix $(SRCDIR)/, $(OBJECTS:.o=.c))
 
-default: $(COBJECTS) $(FOBJECTS) Makefile
-	$(CC) $(FLAGS) $(COBJECTS) $(FOBJECTS) $(SRCDIR)/clover_leaf.c -o clover_leaf
+build: $(COBJECTS) Makefile $(KOKKOS_LINK_DEPENDS) $(KERNELS)
+	$(CC) $(KOKKOS_LDFLAGS) $(FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(COBJECTS) $(KOKKOS_LIBS) $(SRCDIR)/clover_leaf.c -o clover_leaf
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) $(FLAGS) -c $< -o $@
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(KOKKOS_CPP_DEPENDS)
+	$(CC) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(FLAGS) $(EXTRA_INC) -c $< -o $@
 
-fast: $(CSOURCES) $(FOBJECTS)
-	$(CC) $(FLAGS) $(CSOURCES) $(FOBJECTS) $(SRCDIR)/clover_leaf.c -o clover_leaf
 
-clean:
+fast: $(CSOURCES)
+	$(CC) $(FLAGS) $(CSOURCES) $(SRCDIR)/clover_leaf.c -o clover_leaf
+
+clean: kokkos-clean
 	rm -f $(OBJDIR)/* *.o clover_leaf
+
+print-%  : ; @echo $* = $($*)
