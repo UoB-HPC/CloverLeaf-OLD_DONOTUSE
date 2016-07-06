@@ -53,8 +53,8 @@ void calc_dt_kernel_c_(
 
     double *xarea = tile->field.xarea;
     double *yarea = tile->field.yarea;
-    double *cellx = tile->field.cellx;
-    double *celly = tile->field.celly;
+    // double *cellx = tile->field.cellx;
+    // double *celly = tile->field.celly;
     double *celldx = tile->field.celldx;
     double *celldy = tile->field.celldy;
     double *volume = tile->field.volume;

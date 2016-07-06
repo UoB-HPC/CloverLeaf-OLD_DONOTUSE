@@ -29,6 +29,8 @@ void start()
     clover_barrier();
 
     clover_get_num_chunks(&number_of_chunks);
+
+    BOSSPRINT(g_out, "Number of chunks: %d\n", number_of_chunks);
     int left, right, bottom, top;
     clover_decompose(grid.x_cells,
                      grid.y_cells,
@@ -55,7 +57,7 @@ void start()
     chunk.x_max = x_cells;
     chunk.y_max = y_cells;
 
-    chunk.tiles = malloc(sizeof(struct tile_type) * tiles_per_chunk);
+    chunk.tiles = (struct tile_type*)malloc(sizeof(struct tile_type) * tiles_per_chunk);
 
     clover_tile_decompose(x_cells, y_cells);
 
@@ -113,20 +115,20 @@ void clover_allocate_buffers()
 {
     if (parallel.task == chunk.task) {
         // !IF(chunk.chunk_neighbours(chunk_left).NE.external_face) THEN
-        chunk.left_snd_buffer = calloc(sizeof(double), (10 * 2 * (chunk.y_max + 5)));
-        chunk.left_rcv_buffer = calloc(sizeof(double), (10 * 2 * (chunk.y_max + 5)));
+        chunk.left_snd_buffer = (double*)calloc(sizeof(double), (10 * 2 * (chunk.y_max + 5)));
+        chunk.left_rcv_buffer = (double*)calloc(sizeof(double), (10 * 2 * (chunk.y_max + 5)));
         // !ENDIF
         // !IF(chunk.chunk_neighbours(chunk_right).NE.external_face) THEN
-        chunk.right_snd_buffer = calloc(sizeof(double), (10 * 2 * (chunk.y_max + 5)));
-        chunk.right_rcv_buffer = calloc(sizeof(double), (10 * 2 * (chunk.y_max + 5)));
+        chunk.right_snd_buffer = (double*)calloc(sizeof(double), (10 * 2 * (chunk.y_max + 5)));
+        chunk.right_rcv_buffer = (double*)calloc(sizeof(double), (10 * 2 * (chunk.y_max + 5)));
         // !ENDIF
         // !IF(chunk.chunk_neighbours(chunk_bottom).NE.external_face) THEN
-        chunk.bottom_snd_buffer = calloc(sizeof(double), (10 * 2 * (chunk.x_max + 5)));
-        chunk.bottom_rcv_buffer = calloc(sizeof(double), (10 * 2 * (chunk.x_max + 5)));
+        chunk.bottom_snd_buffer = (double*)calloc(sizeof(double), (10 * 2 * (chunk.x_max + 5)));
+        chunk.bottom_rcv_buffer = (double*)calloc(sizeof(double), (10 * 2 * (chunk.x_max + 5)));
         // !ENDIF
         // !IF(chunk.chunk_neighbours(chunk_top).NE.external_face) THEN
-        chunk.top_snd_buffer = calloc(sizeof(double), (10 * 2 * (chunk.x_max + 5)));
-        chunk.top_rcv_buffer = calloc(sizeof(double), (10 * 2 * (chunk.x_max + 5)));
+        chunk.top_snd_buffer = (double*)calloc(sizeof(double), (10 * 2 * (chunk.x_max + 5)));
+        chunk.top_rcv_buffer = (double*)calloc(sizeof(double), (10 * 2 * (chunk.x_max + 5)));
         // !ENDIF
     }
 }
@@ -307,10 +309,10 @@ void clover_decompose(int x_cells,
                 *bottom = (cy - 1) * delta_y + 1 + add_y_prev;
                 *top = *bottom + delta_y - 1 + add_y;
 
-                chunk.chunk_neighbours[CHUNK_LEFT] = chunk_x * (cy - 1) + cx - 1;
-                chunk.chunk_neighbours[CHUNK_RIGHT] = chunk_x * (cy - 1) + cx + 1;
+                chunk.chunk_neighbours[CHUNK_LEFT]   = chunk_x * (cy - 1) + cx - 1;
+                chunk.chunk_neighbours[CHUNK_RIGHT]  = chunk_x * (cy - 1) + cx + 1;
                 chunk.chunk_neighbours[CHUNK_BOTTOM] = chunk_x * (cy - 2) + cx;
-                chunk.chunk_neighbours[CHUNK_TOP] = chunk_x * (cy) + cx;
+                chunk.chunk_neighbours[CHUNK_TOP]    = chunk_x * (cy) + cx;
 
                 if (cx == 1) chunk.chunk_neighbours[CHUNK_LEFT] = EXTERNAL_FACE;
                 if (cx == chunk_x) chunk.chunk_neighbours[CHUNK_RIGHT] = EXTERNAL_FACE;

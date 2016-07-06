@@ -22,7 +22,7 @@ void initialise()
         report_error("initialise", "Error opening clover.out file.");
     }
 
-    BOSSPRINT(g_out, "Clover Version %.3f", g_version);
+    BOSSPRINT(g_out, "Clover Version %.3f\n", g_version);
     BOSSPRINT(stdout, "Output file clover.out opened. All output will go there.\n");
     clover_barrier();
     BOSSPRINT(g_out, "Clover will run from the following input:-\n");
@@ -141,7 +141,7 @@ void read_config(FILE* in)
     }
     number_of_states = maxState;
 
-    states = malloc(sizeof(struct state_type) * maxState);
+    states = (struct state_type *)malloc(sizeof(struct state_type) * maxState);
     for (int i = 0; i < maxState; i++) {
         states[i].defined = false;
         states[i].energy = 0.0;

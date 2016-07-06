@@ -4,16 +4,16 @@
 
 void generate_chunk(int tile)
 {
-    double *state_density = malloc(sizeof(double) * number_of_states),
-            *state_energy = malloc(sizeof(double) * number_of_states),
-             *state_xvel = malloc(sizeof(double) * number_of_states),
-              *state_yvel = malloc(sizeof(double) * number_of_states),
-               *state_xmin = malloc(sizeof(double) * number_of_states),
-                *state_xmax = malloc(sizeof(double) * number_of_states),
-                 *state_ymin = malloc(sizeof(double) * number_of_states),
-                  *state_ymax = malloc(sizeof(double) * number_of_states),
-                   *state_radius = malloc(sizeof(double) * number_of_states);
-    int *state_geometry = malloc(sizeof(int) * number_of_states);
+    double *state_density = (double*)malloc(sizeof(double) * number_of_states),
+            *state_energy = (double*)malloc(sizeof(double) * number_of_states),
+             *state_xvel = (double*)malloc(sizeof(double) * number_of_states),
+              *state_yvel = (double*)malloc(sizeof(double) * number_of_states),
+               *state_xmin = (double*)malloc(sizeof(double) * number_of_states),
+                *state_xmax = (double*)malloc(sizeof(double) * number_of_states),
+                 *state_ymin = (double*)malloc(sizeof(double) * number_of_states),
+                  *state_ymax = (double*)malloc(sizeof(double) * number_of_states),
+                   *state_radius = (double*)malloc(sizeof(double) * number_of_states);
+    int *state_geometry = (int*)malloc(sizeof(int) * number_of_states);
 
     for (int state = 0; state < number_of_states; state++) {
         state_density[state] = states[state].density;
