@@ -26,9 +26,11 @@
 #include <stdlib.h>
 #include "ftocmacros.h"
 #include <math.h>
-#include <Kokkos_Core.hpp>
+#include "definitions_c.h"
 
-using namespace Kokkos;
+#ifdef USE_KOKKOS
+#include <Kokkos_Core.hpp>
+#endif
 
 void ideal_gas_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
                          double *density,
@@ -40,21 +42,15 @@ void ideal_gas_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
     int x_max = *xmax;
     int y_min = *ymin;
     int y_max = *ymax;
-
-#ifdef USE_KOKKOS
-    parallel_for(y_max - y_min + 1, KOKKOS_LAMBDA (const int& i) {
-        int k = i + y_min;
-#else
-    for (int k = y_min; k <= y_max; k++) {
-#endif
-
-#pragma ivdep
-        for (int j = x_min; j <= x_max; j++) {
+    #pragma omp parallel
+    {
+        DOUBLEFOR(y_min, y_max,
+        x_min, x_max, {
             double v = 1.0 / density[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
 
             pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] =
-                (1.4 - 1.0) * density[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
-                * energy[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
+            (1.4 - 1.0) * density[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
+            * energy[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
 
             double pressurebyenergy = (1.4 - 1.0) * density[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
 
@@ -63,9 +59,10 @@ void ideal_gas_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             double sound_speed_squared = v * v * (pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] * pressurebyenergy - pressurebyvolume);
 
             soundspeed[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] = sqrt(sound_speed_squared);
-        }
+        });
     }
+
 #ifdef USE_KOKKOS
-                );
+    Kokkos::fence();
 #endif
 }

@@ -2,9 +2,6 @@
 #include "build_field.h"
 #include "definitions_c.h"
 #include <stdlib.h>
-#include <Kokkos_Core.hpp>
-
-using namespace Kokkos;
 
 int size2d(int xmin, int xmax, int ymin, int ymax)
 {
