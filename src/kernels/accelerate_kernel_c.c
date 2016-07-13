@@ -16,9 +16,9 @@
 * CloverLeaf. If not, see http://www.gnu.org/licenses/. */
 
 /**
- *  @brief C acceleration kernel
- *  @author Wayne Gaudin
- *  @details The pressure and viscosity gradients are used to update the
+ *@brief C acceleration kernel
+ *@author Wayne Gaudin
+ *@details The pressure and viscosity gradients are used to update the
  *  velocity field.
  */
 
@@ -29,50 +29,49 @@
 void accelerate_kernel_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    const double * __restrict__ xarea,
-    const double * __restrict__ yarea,
-    const double * __restrict__ volume,
-    const double * __restrict__ density0 ,
-    const double * __restrict__ pressure ,
-    const double * __restrict__ viscosity,
-    double * __restrict__ xvel0,
-    double * __restrict__ yvel0,
-    double * __restrict__ xvel1,
-    double * __restrict__ yvel1,
+    const double* __restrict__ xarea,
+    const double* __restrict__ yarea,
+    const double* __restrict__ volume,
+    const double* __restrict__ density0 ,
+    const double* __restrict__ pressure ,
+    const double* __restrict__ viscosity,
+    double* __restrict__ xvel0,
+    double* __restrict__ yvel0,
+    double* __restrict__ xvel1,
+    double* __restrict__ yvel1,
     double dt)
-
 {
-    double nodal_mass = (density0[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]
-                         + density0[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)]
-                         + density0[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
-                         + density0[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)] * volume[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)])
+    double nodal_mass = (DENSITY0(density0, j - 1, k - 1) * VOLUME(volume, j - 1, k - 1)
+                         + DENSITY0(density0, j, k - 1) * VOLUME(volume, j, k - 1)
+                         + DENSITY0(density0, j, k) * VOLUME(volume, j, k)
+                         + DENSITY0(density0, j - 1, k) * VOLUME(volume, j - 1, k))
                         * 0.25;
     double stepby_mass_s = 0.5 * dt / nodal_mass;
-    xvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = xvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-            - stepby_mass_s
-            * (xarea[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-               * (pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)])
-               + xarea[FTNREF2D(j  , k - 1, x_max + 5, x_min - 2, y_min - 2)]
-               * (pressure[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
+    XVEL1(xvel1, j, k) = XVEL0(xvel0, j, k)
+                         - stepby_mass_s
+                         * (XAREA(xarea, j, k)
+                            * (PRESSURE(pressure, j, k) - PRESSURE(pressure, j - 1, k))
+                            + XAREA(xarea, j, k - 1)
+                            * (PRESSURE(pressure, j, k - 1) - PRESSURE(pressure, j - 1, k - 1)));
 
-    yvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = yvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-            - stepby_mass_s
-            * (yarea[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
-               * (pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)])
-               + yarea[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)]
-               * (pressure[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)] - pressure[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
+    YVEL1(yvel1, j, k) = YVEL0(yvel0, j, k)
+                         - stepby_mass_s
+                         * (YAREA(yarea, j, k)
+                            * (PRESSURE(pressure, j, k) - PRESSURE(pressure, j, k - 1))
+                            + YAREA(yarea, j - 1, k)
+                            * (PRESSURE(pressure, j - 1, k) - PRESSURE(pressure, j - 1, k - 1)));
 
-    xvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = xvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-            - stepby_mass_s
-            * (xarea[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-               * (viscosity[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)])
-               + xarea[FTNREF2D(j  , k - 1, x_max + 5, x_min - 2, y_min - 2)]
-               * (viscosity[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
+    XVEL1(xvel1, j, k) = XVEL1(xvel1, j, k)
+                         - stepby_mass_s
+                         * (XAREA(xarea, j, k)
+                            * (VISCOSITY(viscosity, j, k) - VISCOSITY(viscosity, j - 1, k))
+                            + XAREA(xarea, j, k - 1)
+                            * (VISCOSITY(viscosity, j, k - 1) - VISCOSITY(viscosity, j - 1, k - 1)));
 
-    yvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] = yvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-            - stepby_mass_s
-            * (yarea[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
-               * (viscosity[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)])
-               + yarea[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)]
-               * (viscosity[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)] - viscosity[FTNREF2D(j - 1, k - 1, x_max + 4, x_min - 2, y_min - 2)]));
+    YVEL1(yvel1, j, k) = YVEL1(yvel1, j, k)
+                         - stepby_mass_s
+                         * (YAREA(yarea, j, k)
+                            * (VISCOSITY(viscosity, j, k) - VISCOSITY(viscosity, j, k - 1))
+                            + YAREA(yarea, j - 1, k)
+                            * (VISCOSITY(viscosity, j - 1, k) - VISCOSITY(viscosity, j - 1, k - 1)));
 }

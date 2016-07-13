@@ -16,9 +16,9 @@
 * CloverLeaf. If not, see http://www.gnu.org/licenses/. */
 
 /**
- *  @brief C ideal gas kernel.
- *  @author Wayne Gaudin
- *  @details Calculates the pressure and sound speed for the mesh chunk using
+ *@brief C ideal gas kernel.
+ *@author Wayne Gaudin
+ *@details Calculates the pressure and sound speed for the mesh chunk using
  *  the ideal gas equation of state, with a fixed gamma of 1.4.
  */
 
@@ -35,17 +35,17 @@
 void ideal_gas_kernel_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    const double * __restrict__ density,
-    const double * __restrict__ energy,
-    double * __restrict__ pressure,
-    double * __restrict__ soundspeed)
+    const double* __restrict__ density,
+    const double* __restrict__ energy,
+    double* __restrict__ pressure,
+    double* __restrict__ soundspeed)
 {
-    double v = 1.0 / density[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
-    pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] =
-        (1.4 - 1.0) * density[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
-        * energy[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
-    double pressurebyenergy = (1.4 - 1.0) * density[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
-    double pressurebyvolume = -density[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] * pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
-    double sound_speed_squared = v * v * (pressure[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] * pressurebyenergy - pressurebyvolume);
-    soundspeed[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] = sqrt(sound_speed_squared);
+    double v = 1.0 / DENSITY0(density, j, k);
+    PRESSURE(pressure, j, k) =
+        (1.4 - 1.0) * DENSITY0(density, j, k)
+        * ENERGY0(energy, j, k);
+    double pressurebyenergy = (1.4 - 1.0) * DENSITY0(density, j, k);
+    double pressurebyvolume = -DENSITY0(density, j, k) * PRESSURE(pressure, j, k);
+    double sound_speed_squared = v * v * (PRESSURE(pressure, j, k) * pressurebyenergy - pressurebyvolume);
+    SOUNDSPEED(soundspeed, j, k) = sqrt(sound_speed_squared);
 }

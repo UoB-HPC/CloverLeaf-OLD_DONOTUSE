@@ -16,9 +16,9 @@
 * CloverLeaf. If not, see http://www.gnu.org/licenses/. */
 
 /**
- *  @brief C kernel to update the external halo cells in a chunk.
- *  @author Wayne Gaudin
- *  @details Updates halo cells for the required fields at the required depth
+ *@brief C kernel to update the external halo cells in a chunk.
+ *@author Wayne Gaudin
+ *@details Updates halo cells for the required fields at the required depth
  *  for any halo cells that lie on an external boundary. The location and type
  *  of data governs how this is carried out. External boundaries are always
  *  reflective.
@@ -29,26 +29,26 @@
 #include "ftocmacros.h"
 #include <math.h>
 
-void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
-                           int *chunk_neighbours,
-                           int *tile_neighbours,
-                           double * __restrict__ density0,
-                           double * __restrict__ energy0,
-                           double * __restrict__ pressure,
-                           double * __restrict__ viscosity,
-                           double * __restrict__ soundspeed,
-                           double * __restrict__ density1,
-                           double * __restrict__ energy1,
-                           double * __restrict__ xvel0,
-                           double * __restrict__ yvel0,
-                           double * __restrict__ xvel1,
-                           double * __restrict__ yvel1,
-                           double * __restrict__ vol_flux_x,
-                           double * __restrict__ vol_flux_y,
-                           double * __restrict__ mass_flux_x,
-                           double *mass_flux_y,
-                           int *fields,
-                           int *dpth)
+void update_halo_kernel_c_(int* xmin, int* xmax, int* ymin, int* ymax,
+                           int* chunk_neighbours,
+                           int* tile_neighbours,
+                           double* __restrict__ density0,
+                           double* __restrict__ energy0,
+                           double* __restrict__ pressure,
+                           double* __restrict__ viscosity,
+                           double* __restrict__ soundspeed,
+                           double* __restrict__ density1,
+                           double* __restrict__ energy1,
+                           double* __restrict__ xvel0,
+                           double* __restrict__ yvel0,
+                           double* __restrict__ xvel1,
+                           double* __restrict__ yvel1,
+                           double* __restrict__ vol_flux_x,
+                           double* __restrict__ vol_flux_y,
+                           double* __restrict__ mass_flux_x,
+                           double* mass_flux_y,
+                           int* fields,
+                           int* dpth)
 {
 
     int x_min = *xmin;
@@ -61,17 +61,17 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
     int CHUNK_LEFT = 1, CHUNK_RIGHT = 2, CHUNK_BOTTOM = 3, CHUNK_TOP = 4, EXTERNAL_FACE = -1;
     int TILE_LEFT = 1, TILE_RIGHT = 2, TILE_BOTTOM = 3, TILE_TOP = 4, EXTERNAL_TILE = -1;
 
-    int FIELD_DENSITY0   = 1;
-    int FIELD_DENSITY1   = 2;
-    int FIELD_ENERGY0    = 3;
-    int FIELD_ENERGY1    = 4;
-    int FIELD_PRESSURE   = 5;
-    int FIELD_VISCOSITY  = 6;
+    int FIELD_DENSITY0 = 1;
+    int FIELD_DENSITY1 = 2;
+    int FIELD_ENERGY0 = 3;
+    int FIELD_ENERGY1 = 4;
+    int FIELD_PRESSURE = 5;
+    int FIELD_VISCOSITY = 6;
     int FIELD_SOUNDSPEED = 7;
-    int FIELD_XVEL0      = 8;
-    int FIELD_XVEL1      = 9;
-    int FIELD_YVEL0      = 10;
-    int FIELD_YVEL1      = 11;
+    int FIELD_XVEL0 = 8;
+    int FIELD_XVEL1 = 9;
+    int FIELD_YVEL0 = 10;
+    int FIELD_YVEL1 = 11;
     int FIELD_VOL_FLUX_X = 12;
     int FIELD_VOL_FLUX_Y = 13;
     int FIELD_MASS_FLUX_X = 14;
@@ -89,7 +89,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    density0[FTNREF2D(j  , 1 - k, x_max + 4, x_min - 2, y_min - 2)] = density0[FTNREF2D(j  , 0 + k, x_max + 4, x_min - 2, y_min - 2)];
+                    DENSITY0(density0, j, 1 - k) = DENSITY0(density0, j, 0 + k);
                 }
             }
         }
@@ -99,7 +99,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    density0[FTNREF2D(j  , y_max + k, x_max + 4, x_min - 2, y_min - 2)] = density0[FTNREF2D(j  , y_max + 1 - k, x_max + 4, x_min - 2, y_min - 2)];
+                    DENSITY0(density0, j, y_max + k) = DENSITY0(density0, j, y_max + 1 - k);
                 }
             }
         }
@@ -109,7 +109,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    density0[FTNREF2D(1 - j, k, x_max + 4, x_min - 2, y_min - 2)] = density0[FTNREF2D(0 + j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    DENSITY0(density0, 1 - j, k) = DENSITY0(density0, 0 + j, k);
                 }
             }
         }
@@ -119,7 +119,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    density0[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] = density0[FTNREF2D(x_max + 1 - j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    DENSITY0(density0, x_max + j, k) = DENSITY0(density0, x_max + 1 - j, k);
                 }
             }
         }
@@ -131,7 +131,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    density1[FTNREF2D(j  , 1 - k, x_max + 4, x_min - 2, y_min - 2)] = density1[FTNREF2D(j  , 0 + k, x_max + 4, x_min - 2, y_min - 2)];
+                    DENSITY1(density1, j, 1 - k) = DENSITY1(density1, j, 0 + k);
                 }
             }
         }
@@ -141,7 +141,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    density1[FTNREF2D(j  , y_max + k, x_max + 4, x_min - 2, y_min - 2)] = density1[FTNREF2D(j  , y_max + 1 - k, x_max + 4, x_min - 2, y_min - 2)];
+                    DENSITY1(density1, j, y_max + k) = DENSITY1(density1, j, y_max + 1 - k);
                 }
             }
         }
@@ -151,7 +151,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    density1[FTNREF2D(1 - j, k, x_max + 4, x_min - 2, y_min - 2)] = density1[FTNREF2D(0 + j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    DENSITY1(density1, 1 - j, k) = DENSITY1(density1, 0 + j, k);
                 }
             }
         }
@@ -161,7 +161,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    density1[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] = density1[FTNREF2D(x_max + 1 - j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    DENSITY1(density1, x_max + j, k) = DENSITY1(density1, x_max + 1 - j, k);
                 }
             }
         }
@@ -173,7 +173,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    energy0[FTNREF2D(j  , 1 - k, x_max + 4, x_min - 2, y_min - 2)] = energy0[FTNREF2D(j  , 0 + k, x_max + 4, x_min - 2, y_min - 2)];
+                    ENERGY0(energy0, j, 1 - k) = ENERGY0(energy0, j, 0 + k);
                 }
             }
         }
@@ -183,7 +183,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    energy0[FTNREF2D(j  , y_max + k, x_max + 4, x_min - 2, y_min - 2)] = energy0[FTNREF2D(j  , y_max + 1 - k, x_max + 4, x_min - 2, y_min - 2)];
+                    ENERGY0(energy0, j, y_max + k) = ENERGY0(energy0, j, y_max + 1 - k);
                 }
             }
         }
@@ -193,7 +193,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    energy0[FTNREF2D(1 - j, k, x_max + 4, x_min - 2, y_min - 2)] = energy0[FTNREF2D(0 + j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    ENERGY0(energy0, 1 - j, k) = ENERGY0(energy0, 0 + j, k);
                 }
             }
         }
@@ -203,7 +203,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    energy0[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] = energy0[FTNREF2D(x_max + 1 - j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    ENERGY0(energy0, x_max + j, k) = ENERGY0(energy0, x_max + 1 - j, k);
                 }
             }
         }
@@ -215,7 +215,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    energy1[FTNREF2D(j  , 1 - k, x_max + 4, x_min - 2, y_min - 2)] = energy1[FTNREF2D(j  , 0 + k, x_max + 4, x_min - 2, y_min - 2)];
+                    ENERGY1(energy1, j, 1 - k) = ENERGY1(energy1, j, 0 + k);
                 }
             }
         }
@@ -225,7 +225,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    energy1[FTNREF2D(j  , y_max + k, x_max + 4, x_min - 2, y_min - 2)] = energy1[FTNREF2D(j  , y_max + 1 - k, x_max + 4, x_min - 2, y_min - 2)];
+                    ENERGY1(energy1, j, y_max + k) = ENERGY1(energy1, j, y_max + 1 - k);
                 }
             }
         }
@@ -235,7 +235,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    energy1[FTNREF2D(1 - j, k, x_max + 4, x_min - 2, y_min - 2)] = energy1[FTNREF2D(0 + j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    ENERGY1(energy1, 1 - j, k) = ENERGY1(energy1, 0 + j, k);
                 }
             }
         }
@@ -245,7 +245,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    energy1[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] = energy1[FTNREF2D(x_max + 1 - j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    ENERGY1(energy1, x_max + j, k) = ENERGY1(energy1, x_max + 1 - j, k);
                 }
             }
         }
@@ -257,7 +257,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    pressure[FTNREF2D(j  , 1 - k, x_max + 4, x_min - 2, y_min - 2)] = pressure[FTNREF2D(j  , 0 + k, x_max + 4, x_min - 2, y_min - 2)];
+                    PRESSURE(pressure, j, 1 - k) = PRESSURE(pressure, j, 0 + k);
                 }
             }
         }
@@ -267,7 +267,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    pressure[FTNREF2D(j  , y_max + k, x_max + 4, x_min - 2, y_min - 2)] = pressure[FTNREF2D(j  , y_max + 1 - k, x_max + 4, x_min - 2, y_min - 2)];
+                    PRESSURE(pressure, j, y_max + k) = PRESSURE(pressure, j, y_max + 1 - k);
                 }
             }
         }
@@ -277,7 +277,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    pressure[FTNREF2D(1 - j, k, x_max + 4, x_min - 2, y_min - 2)] = pressure[FTNREF2D(0 + j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    PRESSURE(pressure, 1 - j, k) = PRESSURE(pressure, 0 + j, k);
                 }
             }
         }
@@ -287,7 +287,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    pressure[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] = pressure[FTNREF2D(x_max + 1 - j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    PRESSURE(pressure, x_max + j, k) = PRESSURE(pressure, x_max + 1 - j, k);
                 }
             }
         }
@@ -299,7 +299,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    viscosity[FTNREF2D(j  , 1 - k, x_max + 4, x_min - 2, y_min - 2)] = viscosity[FTNREF2D(j  , 0 + k, x_max + 4, x_min - 2, y_min - 2)];
+                    VISCOSITY(viscosity, j, 1 - k) = VISCOSITY(viscosity, j, 0 + k);
                 }
             }
         }
@@ -309,7 +309,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    viscosity[FTNREF2D(j  , y_max + k, x_max + 4, x_min - 2, y_min - 2)] = viscosity[FTNREF2D(j  , y_max + 1 - k, x_max + 4, x_min - 2, y_min - 2)];
+                    VISCOSITY(viscosity, j, y_max + k) = VISCOSITY(viscosity, j, y_max + 1 - k);
                 }
             }
         }
@@ -319,7 +319,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    viscosity[FTNREF2D(1 - j, k, x_max + 4, x_min - 2, y_min - 2)] = viscosity[FTNREF2D(0 + j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    VISCOSITY(viscosity, 1 - j, k) = VISCOSITY(viscosity, 0 + j, k);
                 }
             }
         }
@@ -329,7 +329,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    viscosity[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] = viscosity[FTNREF2D(x_max + 1 - j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    VISCOSITY(viscosity, x_max + j, k) = VISCOSITY(viscosity, x_max + 1 - j, k);
                 }
             }
         }
@@ -341,7 +341,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    soundspeed[FTNREF2D(j  , 1 - k, x_max + 4, x_min - 2, y_min - 2)] = soundspeed[FTNREF2D(j  , 0 + k, x_max + 4, x_min - 2, y_min - 2)];
+                    SOUNDSPEED(soundspeed, j, 1 - k) = SOUNDSPEED(soundspeed, j, 0 + k);
                 }
             }
         }
@@ -351,7 +351,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    soundspeed[FTNREF2D(j  , y_max + k, x_max + 4, x_min - 2, y_min - 2)] = soundspeed[FTNREF2D(j  , y_max + 1 - k, x_max + 4, x_min - 2, y_min - 2)];
+                    SOUNDSPEED(soundspeed, j, y_max + k) = SOUNDSPEED(soundspeed, j, y_max + 1 - k);
                 }
             }
         }
@@ -361,7 +361,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    soundspeed[FTNREF2D(1 - j, k, x_max + 4, x_min - 2, y_min - 2)] = soundspeed[FTNREF2D(0 + j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    SOUNDSPEED(soundspeed, 1 - j, k) = SOUNDSPEED(soundspeed, 0 + j, k);
                 }
             }
         }
@@ -371,7 +371,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    soundspeed[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] = soundspeed[FTNREF2D(x_max + 1 - j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    SOUNDSPEED(soundspeed, x_max + j, k) = SOUNDSPEED(soundspeed, x_max + 1 - j, k);
                 }
             }
         }
@@ -382,7 +382,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    xvel0[FTNREF2D(j  , 1 - k, x_max + 5, x_min - 2, y_min - 2)] = xvel0[FTNREF2D(j  , 1 + k, x_max + 5, x_min - 2, y_min - 2)];
+                    XVEL0(xvel0, j, 1 - k) = XVEL0(xvel0, j, 1 + k);
                 }
             }
         }
@@ -392,7 +392,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    xvel0[FTNREF2D(j  , y_max + 1 + k, x_max + 5, x_min - 2, y_min - 2)] = xvel0[FTNREF2D(j  , y_max + 1 - k, x_max + 5, x_min - 2, y_min - 2)];
+                    XVEL0(xvel0, j, y_max + 1 + k) = XVEL0(xvel0, j, y_max + 1 - k);
                 }
             }
         }
@@ -402,7 +402,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    xvel0[FTNREF2D(1 - j, k, x_max + 5, x_min - 2, y_min - 2)] = -xvel0[FTNREF2D(1 + j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    XVEL0(xvel0, 1 - j, k) = -XVEL0(xvel0, 1 + j, k);
                 }
             }
         }
@@ -412,7 +412,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    xvel0[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] = -xvel0[FTNREF2D(x_max + 1 - j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    XVEL0(xvel0, x_max + 1 + j, k) = -XVEL0(xvel0, x_max + 1 - j, k);
                 }
             }
         }
@@ -424,7 +424,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    xvel1[FTNREF2D(j  , 1 - k, x_max + 5, x_min - 2, y_min - 2)] = xvel1[FTNREF2D(j  , 1 + k, x_max + 5, x_min - 2, y_min - 2)];
+                    XVEL1(xvel1, j, 1 - k) = XVEL1(xvel1, j, 1 + k);
                 }
             }
         }
@@ -434,7 +434,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    xvel1[FTNREF2D(j  , y_max + 1 + k, x_max + 5, x_min - 2, y_min - 2)] = xvel1[FTNREF2D(j  , y_max + 1 - k, x_max + 5, x_min - 2, y_min - 2)];
+                    XVEL1(xvel1, j, y_max + 1 + k) = XVEL1(xvel1, j, y_max + 1 - k);
                 }
             }
         }
@@ -444,7 +444,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    xvel1[FTNREF2D(1 - j, k, x_max + 5, x_min - 2, y_min - 2)] = -xvel1[FTNREF2D(1 + j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    XVEL1(xvel1, 1 - j, k) = -XVEL1(xvel1, 1 + j, k);
                 }
             }
         }
@@ -454,7 +454,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    xvel1[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] = -xvel1[FTNREF2D(x_max + 1 - j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    XVEL1(xvel1, x_max + 1 + j, k) = -XVEL1(xvel1, x_max + 1 - j, k);
                 }
             }
         }
@@ -466,7 +466,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    yvel0[FTNREF2D(j  , 1 - k, x_max + 5, x_min - 2, y_min - 2)] = -yvel0[FTNREF2D(j  , 1 + k, x_max + 5, x_min - 2, y_min - 2)];
+                    YVEL0(yvel0, j, 1 - k) = -YVEL0(yvel0, j, 1 + k);
                 }
             }
         }
@@ -476,7 +476,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    yvel0[FTNREF2D(j  , y_max + 1 + k, x_max + 5, x_min - 2, y_min - 2)] = -yvel0[FTNREF2D(j  , y_max + 1 - k, x_max + 5, x_min - 2, y_min - 2)];
+                    YVEL0(yvel0, j, y_max + 1 + k) = -YVEL0(yvel0, j, y_max + 1 - k);
                 }
             }
         }
@@ -486,7 +486,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    yvel0[FTNREF2D(1 - j, k, x_max + 5, x_min - 2, y_min - 2)] = yvel0[FTNREF2D(1 + j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    YVEL0(yvel0, 1 - j, k) = YVEL0(yvel0, 1 + j, k);
                 }
             }
         }
@@ -496,7 +496,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    yvel0[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] = yvel0[FTNREF2D(x_max + 1 - j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    YVEL0(yvel0, x_max + 1 + j, k) = YVEL0(yvel0, x_max + 1 - j, k);
                 }
             }
         }
@@ -508,7 +508,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    yvel1[FTNREF2D(j  , 1 - k, x_max + 5, x_min - 2, y_min - 2)] = -yvel1[FTNREF2D(j  , 1 + k, x_max + 5, x_min - 2, y_min - 2)];
+                    YVEL1(yvel1, j, 1 - k) = -YVEL1(yvel1, j, 1 + k);
                 }
             }
         }
@@ -518,7 +518,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    yvel1[FTNREF2D(j  , y_max + 1 + k, x_max + 5, x_min - 2, y_min - 2)] = -yvel1[FTNREF2D(j  , y_max + 1 - k, x_max + 5, x_min - 2, y_min - 2)];
+                    YVEL1(yvel1, j, y_max + 1 + k) = -YVEL1(yvel1, j, y_max + 1 - k);
                 }
             }
         }
@@ -528,7 +528,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    yvel1[FTNREF2D(1 - j, k, x_max + 5, x_min - 2, y_min - 2)] = yvel1[FTNREF2D(1 + j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    YVEL1(yvel1, 1 - j, k) = YVEL1(yvel1, 1 + j, k);
                 }
             }
         }
@@ -538,7 +538,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    yvel1[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] = yvel1[FTNREF2D(x_max + 1 - j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    YVEL1(yvel1, x_max + 1 + j, k) = YVEL1(yvel1, x_max + 1 - j, k);
                 }
             }
         }
@@ -550,7 +550,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    vol_flux_x[FTNREF2D(j  , 1 - k, x_max + 5, x_min - 2, y_min - 2)] = vol_flux_x[FTNREF2D(j  , 1 + k, x_max + 5, x_min - 2, y_min - 2)];
+                    VOL_FLUX_X(vol_flux_x, j, 1 - k) = VOL_FLUX_X(vol_flux_x, j, 1 + k);
                 }
             }
         }
@@ -560,7 +560,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    vol_flux_x[FTNREF2D(j  , y_max + k, x_max + 5, x_min - 2, y_min - 2)] = vol_flux_x[FTNREF2D(j  , y_max - k, x_max + 5, x_min - 2, y_min - 2)];
+                    VOL_FLUX_X(vol_flux_x, j, y_max + k) = VOL_FLUX_X(vol_flux_x, j, y_max - k);
                 }
             }
         }
@@ -570,7 +570,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    vol_flux_x[FTNREF2D(1 - j, k, x_max + 5, x_min - 2, y_min - 2)] = -vol_flux_x[FTNREF2D(1 + j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    VOL_FLUX_X(vol_flux_x, 1 - j, k) = -VOL_FLUX_X(vol_flux_x, 1 + j, k);
                 }
             }
         }
@@ -579,7 +579,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    vol_flux_x[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] = -vol_flux_x[FTNREF2D(x_max + 1 - j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    VOL_FLUX_X(vol_flux_x, x_max + 1 + j, k) = -VOL_FLUX_X(vol_flux_x, x_max + 1 - j, k);
                 }
             }
         }
@@ -591,7 +591,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    mass_flux_x[FTNREF2D(j  , 1 - k, x_max + 5, x_min - 2, y_min - 2)] = mass_flux_x[FTNREF2D(j  , 1 + k, x_max + 5, x_min - 2, y_min - 2)];
+                    MASS_FLUX_X(mass_flux_x, j, 1 - k) = MASS_FLUX_X(mass_flux_x, j, 1 + k);
                 }
             }
         }
@@ -601,7 +601,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    mass_flux_x[FTNREF2D(j  , y_max + k, x_max + 5, x_min - 2, y_min - 2)] = mass_flux_x[FTNREF2D(j  , y_max - k, x_max + 5, x_min - 2, y_min - 2)];
+                    MASS_FLUX_X(mass_flux_x, j, y_max + k) = MASS_FLUX_X(mass_flux_x, j, y_max - k);
                 }
             }
         }
@@ -611,7 +611,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    mass_flux_x[FTNREF2D(1 - j, k, x_max + 5, x_min - 2, y_min - 2)] = -mass_flux_x[FTNREF2D(1 + j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    MASS_FLUX_X(mass_flux_x, 1 - j, k) = -MASS_FLUX_X(mass_flux_x, 1 + j, k);
                 }
             }
         }
@@ -621,7 +621,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    mass_flux_x[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] = -mass_flux_x[FTNREF2D(x_max + 1 - j, k, x_max + 5, x_min - 2, y_min - 2)];
+                    MASS_FLUX_X(mass_flux_x, x_max + 1 + j, k) = -MASS_FLUX_X(mass_flux_x, x_max + 1 - j, k);
                 }
             }
         }
@@ -633,7 +633,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    vol_flux_y[FTNREF2D(j  , 1 - k, x_max + 4, x_min - 2, y_min - 2)] = -vol_flux_y[FTNREF2D(j  , 1 + k, x_max + 4, x_min - 2, y_min - 2)];
+                    VOL_FLUX_Y(vol_flux_y, j, 1 - k) = -VOL_FLUX_Y(vol_flux_y, j, 1 + k);
                 }
             }
         }
@@ -643,7 +643,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    vol_flux_y[FTNREF2D(j  , y_max + k + 1, x_max + 4, x_min - 2, y_min - 2)] = -vol_flux_y[FTNREF2D(j  , y_max + 1 - k, x_max + 4, x_min - 2, y_min - 2)];
+                    VOL_FLUX_Y(vol_flux_y, j, y_max + k + 1) = -VOL_FLUX_Y(vol_flux_y, j, y_max + 1 - k);
                 }
             }
         }
@@ -653,7 +653,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    vol_flux_y[FTNREF2D(1 - j, k, x_max + 4, x_min - 2, y_min - 2)] = vol_flux_y[FTNREF2D(1 + j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    VOL_FLUX_Y(vol_flux_y, 1 - j, k) = VOL_FLUX_Y(vol_flux_y, 1 + j, k);
                 }
             }
         }
@@ -663,7 +663,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    vol_flux_y[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] = vol_flux_y[FTNREF2D(x_max - j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    VOL_FLUX_Y(vol_flux_y, x_max + j, k) = VOL_FLUX_Y(vol_flux_y, x_max - j, k);
                 }
             }
         }
@@ -675,7 +675,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    mass_flux_y[FTNREF2D(j  , 1 - k, x_max + 4, x_min - 2, y_min - 2)] = -mass_flux_y[FTNREF2D(j  , 1 + k, x_max + 4, x_min - 2, y_min - 2)];
+                    MASS_FLUX_Y(mass_flux_y, j, 1 - k) = -MASS_FLUX_Y(mass_flux_y, j, 1 + k);
                 }
             }
         }
@@ -685,7 +685,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (j = x_min - depth; j <= x_max + depth; j++) {
 #pragma ivdep
                 for (k = 1; k <= depth; k++) {
-                    mass_flux_y[FTNREF2D(j  , y_max + k + 1, x_max + 4, x_min - 2, y_min - 2)] = -mass_flux_y[FTNREF2D(j  , y_max + 1 - k, x_max + 4, x_min - 2, y_min - 2)];
+                    MASS_FLUX_Y(mass_flux_y, j, y_max + k + 1) = -MASS_FLUX_Y(mass_flux_y, j, y_max + 1 - k);
                 }
             }
         }
@@ -695,7 +695,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    mass_flux_y[FTNREF2D(1 - j, k, x_max + 4, x_min - 2, y_min - 2)] = mass_flux_y[FTNREF2D(1 + j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    MASS_FLUX_Y(mass_flux_y, 1 - j, k) = MASS_FLUX_Y(mass_flux_y, 1 + j, k);
                 }
             }
         }
@@ -705,7 +705,7 @@ void update_halo_kernel_c_(int *xmin, int *xmax, int *ymin, int *ymax,
             for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
 #pragma ivdep
                 for (j = 1; j <= depth; j++) {
-                    mass_flux_y[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] = mass_flux_y[FTNREF2D(x_max - j, k, x_max + 4, x_min - 2, y_min - 2)];
+                    MASS_FLUX_Y(mass_flux_y, x_max + j, k) = MASS_FLUX_Y(mass_flux_y, x_max - j, k);
                 }
             }
         }

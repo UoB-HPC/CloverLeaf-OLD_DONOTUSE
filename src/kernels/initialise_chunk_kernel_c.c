@@ -16,15 +16,16 @@
 * CloverLeaf. If not, see http://www.gnu.org/licenses/. */
 
 /**
- *  @brief Driver for chunk initialisation.
- *  @author Wayne Gaudin
- *  @details Invokes the user specified chunk initialisation kernel.
+ *@brief Driver for chunk initialisation.
+ *@author Wayne Gaudin
+ *@details Invokes the user specified chunk initialisation kernel.
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "ftocmacros.h"
 #include <math.h>
+#include "../definitions_c.h"
 
 void initialise_chunk_kernel_c_(
     int x_min, int x_max, int y_min, int y_max,
@@ -32,17 +33,17 @@ void initialise_chunk_kernel_c_(
     double min_y,
     double d_x,
     double d_y,
-    double * __restrict__ vertexx,
-    double * __restrict__ vertexdx,
-    double * __restrict__ vertexy,
-    double * __restrict__ vertexdy,
-    double * __restrict__ cellx,
-    double * __restrict__ celldx,
-    double * __restrict__ celly,
-    double * __restrict__ celldy,
-    double * __restrict__ volume,
-    double * __restrict__ xarea,
-    double * __restrict__ yarea)
+    double* __restrict__ vertexx,
+    double* __restrict__ vertexdx,
+    double* __restrict__ vertexy,
+    double* __restrict__ vertexdy,
+    double* __restrict__ cellx,
+    double* __restrict__ celldx,
+    double* __restrict__ celly,
+    double* __restrict__ celldy,
+    double* __restrict__ volume,
+    double* __restrict__ xarea,
+    double* __restrict__ yarea)
 {
     int j, k;
 
@@ -97,7 +98,7 @@ void initialise_chunk_kernel_c_(
     for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
         for (j = x_min - 2; j <= x_max + 2; j++) {
-            volume[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = d_x * d_y;
+            VOLUME(volume, j, k) = d_x * d_y;
         }
     }
 
@@ -105,7 +106,7 @@ void initialise_chunk_kernel_c_(
     for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
         for (j = x_min - 2; j <= x_max + 2; j++) {
-            xarea[FTNREF2D(j, k, x_max + 5, x_min - 2, y_min - 2)] = celldy[FTNREF1D(k, y_min - 2)];
+            XAREA(xarea, j, k) = celldy[FTNREF1D(k, y_min - 2)];
         }
     }
 
@@ -113,7 +114,7 @@ void initialise_chunk_kernel_c_(
     for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
         for (j = x_min - 2; j <= x_max + 2; j++) {
-            yarea[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = celldx[FTNREF1D(j, x_min - 2)];
+            YAREA(yarea, j, k) = celldx[FTNREF1D(j, x_min - 2)];
         }
     }
 }

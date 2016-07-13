@@ -16,9 +16,9 @@
 * CloverLeaf. If not, see http://www.gnu.org/licenses/. */
 
 /**
- *  @brief C mpi buffer packing kernel
- *  @author Wayne Gaudin
- *  @details Packs/unpacks mpi send and receive buffers
+ *@brief C mpi buffer packing kernel
+ *@author Wayne Gaudin
+ *@details Packs/unpacks mpi send and receive buffers
  */
 
 #include <stdio.h>
@@ -27,9 +27,9 @@
 #include <math.h>
 #include "../definitions_c.h"
 
-void clover_pack_message_left_c_(int *xmin, int *xmax, int *ymin, int *ymax,
-                                 double * __restrict__ field,
-                                 double * __restrict__ left_snd_buffer,
+void clover_pack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax,
+                                 double* __restrict__ field,
+                                 double* __restrict__ left_snd_buffer,
                                  int dpth, int fld_typ,
                                  int bffr_ffst)
 
@@ -44,9 +44,9 @@ void clover_pack_message_left_c_(int *xmin, int *xmax, int *ymin, int *ymax,
 
     int j, k, index, x_inc, y_inc;
 
-    //Pack
+//Pack
 
-    // These array modifications still need to be added on, plus the donor data location changes as in update_halo
+// These array modifications still need to be added on, plus the donor data location changes as in update_halo
     if (field_type == CELL_DATA) {
         x_inc = 0;
         y_inc = 0;
@@ -75,8 +75,8 @@ void clover_pack_message_left_c_(int *xmin, int *xmax, int *ymin, int *ymax,
 
 }
 
-void clover_unpack_message_left_c_(int *xmin, int *xmax, int *ymin, int *ymax, double *field,
-                                   double *left_rcv_buffer,
+void clover_unpack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+                                   double* left_rcv_buffer,
                                    int dpth, int fld_typ,
                                    int bffr_ffst)
 
@@ -91,9 +91,9 @@ void clover_unpack_message_left_c_(int *xmin, int *xmax, int *ymin, int *ymax, d
 
     int j, k, index, x_inc, y_inc;
 
-    //Unpack
+//Unpack
 
-    // These array modifications still need to be added on, plus the donor data location changes as in update_halo
+// These array modifications still need to be added on, plus the donor data location changes as in update_halo
     if (field_type == CELL_DATA) {
         x_inc = 0;
         y_inc = 0;
@@ -122,8 +122,8 @@ void clover_unpack_message_left_c_(int *xmin, int *xmax, int *ymin, int *ymax, d
 
 }
 
-void clover_pack_message_right_c_(int *xmin, int *xmax, int *ymin, int *ymax, double *field,
-                                  double *right_snd_buffer,
+void clover_pack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+                                  double* right_snd_buffer,
                                   int dpth, int fld_typ,
                                   int bffr_ffst)
 
@@ -138,9 +138,9 @@ void clover_pack_message_right_c_(int *xmin, int *xmax, int *ymin, int *ymax, do
 
     int j, k, index, x_inc, y_inc;
 
-    //Pack
+//Pack
 
-    // These array modifications still need to be added on, plus the donor data location changes as in update_halo
+// These array modifications still need to be added on, plus the donor data location changes as in update_halo
     if (field_type == CELL_DATA) {
         x_inc = 0;
         y_inc = 0;
@@ -169,8 +169,8 @@ void clover_pack_message_right_c_(int *xmin, int *xmax, int *ymin, int *ymax, do
 
 }
 
-void clover_unpack_message_right_c_(int *xmin, int *xmax, int *ymin, int *ymax, double *field,
-                                    double *right_rcv_buffer,
+void clover_unpack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+                                    double* right_rcv_buffer,
                                     int dpth, int fld_typ,
                                     int bffr_ffst)
 
@@ -185,9 +185,9 @@ void clover_unpack_message_right_c_(int *xmin, int *xmax, int *ymin, int *ymax, 
 
     int j, k, index, x_inc, y_inc;
 
-    //Pack
+//Pack
 
-    // These array modifications still need to be added on, plus the donor data location changes as in update_halo
+// These array modifications still need to be added on, plus the donor data location changes as in update_halo
     if (field_type == CELL_DATA) {
         x_inc = 0;
         y_inc = 0;
@@ -216,8 +216,8 @@ void clover_unpack_message_right_c_(int *xmin, int *xmax, int *ymin, int *ymax, 
 
 }
 
-void clover_pack_message_top_c_(int *xmin, int *xmax, int *ymin, int *ymax, double *field,
-                                double *top_snd_buffer,
+void clover_pack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+                                double* top_snd_buffer,
                                 int dpth, int fld_typ,
                                 int bffr_ffst)
 
@@ -231,26 +231,26 @@ void clover_pack_message_top_c_(int *xmin, int *xmax, int *ymin, int *ymax, doub
     int buffer_offset = bffr_ffst;
 
     int j, k, index, x_inc;
-    // y_inc;
+// y_inc;
 
-    //Pack
+//Pack
 
-    // These array modifications still need to be added on, plus the donor data location changes as in update_halo
+// These array modifications still need to be added on, plus the donor data location changes as in update_halo
     if (field_type == CELL_DATA) {
         x_inc = 0;
-        // y_inc = 0;
+// y_inc = 0;
     }
     if (field_type == VERTEX_DATA) {
         x_inc = 1;
-        // y_inc = 1;
+// y_inc = 1;
     }
     if (field_type == X_FACE_DATA) {
         x_inc = 1;
-        // y_inc = 0;
+// y_inc = 0;
     }
     if (field_type == Y_FACE_DATA) {
         x_inc = 0;
-        // y_inc = 1;
+// y_inc = 1;
     }
 
     for (k = 1; k <= depth; k++) {
@@ -263,8 +263,8 @@ void clover_pack_message_top_c_(int *xmin, int *xmax, int *ymin, int *ymax, doub
 
 }
 
-void clover_pack_message_bottom_c_(int *xmin, int *xmax, int *ymin, int *ymax, double *field,
-                                   double *bottom_snd_buffer,
+void clover_pack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+                                   double* bottom_snd_buffer,
                                    int dpth, int fld_typ,
                                    int bffr_ffst)
 
@@ -272,16 +272,16 @@ void clover_pack_message_bottom_c_(int *xmin, int *xmax, int *ymin, int *ymax, d
     int x_min = *xmin;
     int x_max = *xmax;
     int y_min = *ymin;
-    // int y_max = *ymax;
+// int y_max = *ymax;
     int field_type = fld_typ;
     int depth = dpth;
     int buffer_offset = bffr_ffst;
 
     int j, k, index, x_inc, y_inc;
 
-    //Pack
+//Pack
 
-    // These array modifications still need to be added on, plus the donor data location changes as in update_halo
+// These array modifications still need to be added on, plus the donor data location changes as in update_halo
     if (field_type == CELL_DATA) {
         x_inc = 0;
         y_inc = 0;
@@ -309,8 +309,8 @@ void clover_pack_message_bottom_c_(int *xmin, int *xmax, int *ymin, int *ymax, d
 
 }
 
-void clover_unpack_message_bottom_c_(int *xmin, int *xmax, int *ymin, int *ymax, double *field,
-                                     double *bottom_rcv_buffer,
+void clover_unpack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+                                     double* bottom_rcv_buffer,
                                      int dpth, int fld_typ,
                                      int bffr_ffst)
 
@@ -318,32 +318,32 @@ void clover_unpack_message_bottom_c_(int *xmin, int *xmax, int *ymin, int *ymax,
     int x_min = *xmin;
     int x_max = *xmax;
     int y_min = *ymin;
-    // int y_max = *ymax;
+// int y_max = *ymax;
     int field_type = fld_typ;
     int depth = dpth;
     int buffer_offset = bffr_ffst;
 
     int j, k, index, x_inc;
-    // y_inc;
+// y_inc;
 
-    //Unpack
+//Unpack
 
-    // These array modifications still need to be added on, plus the donor data location changes as in update_halo
+// These array modifications still need to be added on, plus the donor data location changes as in update_halo
     if (field_type == CELL_DATA) {
         x_inc = 0;
-        // y_inc = 0;
+// y_inc = 0;
     }
     if (field_type == VERTEX_DATA) {
         x_inc = 1;
-        // y_inc = 1;
+// y_inc = 1;
     }
     if (field_type == X_FACE_DATA) {
         x_inc = 1;
-        // y_inc = 0;
+// y_inc = 0;
     }
     if (field_type == Y_FACE_DATA) {
         x_inc = 0;
-        // y_inc = 1;
+// y_inc = 1;
     }
 
     for (k = 1; k <= depth; k++) {
@@ -356,8 +356,8 @@ void clover_unpack_message_bottom_c_(int *xmin, int *xmax, int *ymin, int *ymax,
 
 }
 
-void clover_unpack_message_top_c_(int *xmin, int *xmax, int *ymin, int *ymax, double *field,
-                                  double *top_rcv_buffer,
+void clover_unpack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+                                  double* top_rcv_buffer,
                                   int dpth, int fld_typ,
                                   int bffr_ffst)
 
@@ -372,9 +372,9 @@ void clover_unpack_message_top_c_(int *xmin, int *xmax, int *ymin, int *ymax, do
 
     int j, k, index, x_inc, y_inc;
 
-    //Unpack
+//Unpack
 
-    // These array modifications still need to be added on, plus the donor data location changes as in update_halo
+// These array modifications still need to be added on, plus the donor data location changes as in update_halo
     if (field_type == CELL_DATA) {
         x_inc = 0;
         y_inc = 0;

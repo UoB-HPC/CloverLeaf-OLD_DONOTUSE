@@ -16,9 +16,9 @@
 * CloverLeaf. If not, see http://www.gnu.org/licenses/. */
 
 /**
- *  @brief C viscosity kernel.
- *  @author Wayne Gaudin
- *  @details  Calculates an artificial viscosity using the Wilkin's method to
+ *@brief C viscosity kernel.
+ *@author Wayne Gaudin
+ *@details Calculates an artificial viscosity using the Wilkin's method to
  *  smooth out shock front and prevent oscillations around discontinuities.
  *  Only cells in compression will have a non-zero value.
  */
@@ -32,41 +32,41 @@
 void viscosity_kernel_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    const double * __restrict__ celldx,
-    const double * __restrict__ celldy,
-    const double * __restrict__ density0,
-    const double * __restrict__ pressure,
-    double * __restrict__ viscosity,
-    const double * __restrict__ xvel0,
-    const double * __restrict__ yvel0)
+    const double* __restrict__ celldx,
+    const double* __restrict__ celldy,
+    const double* __restrict__ density0,
+    const double* __restrict__ pressure,
+    double* __restrict__ viscosity,
+    const double* __restrict__ xvel0,
+    const double* __restrict__ yvel0)
 {
-    double ugrad = (xvel0[FTNREF2D(j + 1, k  , x_max + 5, x_min - 2, y_min - 2)]
-                    + xvel0[FTNREF2D(j + 1, k + 1, x_max + 5, x_min - 2, y_min - 2)])
-                   - (xvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-                      + xvel0[FTNREF2D(j  , k + 1, x_max + 5, x_min - 2, y_min - 2)]);
+    double ugrad = (XVEL0(xvel0, j + 1, k)
+                    + XVEL0(xvel0, j + 1, k + 1))
+                   - (XVEL0(xvel0, j, k)
+                      + XVEL0(xvel0, j, k + 1));
 
-    double vgrad = (yvel0[FTNREF2D(j  , k + 1, x_max + 5, x_min - 2, y_min - 2)]
-                    + yvel0[FTNREF2D(j + 1, k + 1, x_max + 5, x_min - 2, y_min - 2)])
-                   - (yvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-                      + yvel0[FTNREF2D(j + 1, k  , x_max + 5, x_min - 2, y_min - 2)]);
+    double vgrad = (YVEL0(yvel0, j, k + 1)
+                    + YVEL0(yvel0, j + 1, k + 1))
+                   - (YVEL0(yvel0, j, k)
+                      + YVEL0(yvel0, j + 1, k));
 
     double div = (celldx[FTNREF1D(j, x_min - 2)] * (ugrad)
                   + celldy[FTNREF1D(k, y_min - 2)] * (vgrad));
 
-    double strain2 = 0.5 * (xvel0[FTNREF2D(j  , k + 1, x_max + 5, x_min - 2, y_min - 2)]
-                            + xvel0[FTNREF2D(j + 1, k + 1, x_max + 5, x_min - 2, y_min - 2)]
-                            - xvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-                            - xvel0[FTNREF2D(j + 1, k  , x_max + 5, x_min - 2, y_min - 2)]) / celldy[FTNREF1D(k, y_min - 2)]
-                     + 0.5 * (yvel0[FTNREF2D(j + 1, k  , x_max + 5, x_min - 2, y_min - 2)]
-                              + yvel0[FTNREF2D(j + 1, k + 1, x_max + 5, x_min - 2, y_min - 2)]
-                              - yvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-                              - yvel0[FTNREF2D(j  , k + 1, x_max + 5, x_min - 2, y_min - 2)]) / celldx[FTNREF1D(j, x_min - 2)];
+    double strain2 = 0.5 * (XVEL0(xvel0, j, k + 1)
+                            + XVEL0(xvel0, j + 1, k + 1)
+                            - XVEL0(xvel0, j, k)
+                            - XVEL0(xvel0, j + 1, k)) / celldy[FTNREF1D(k, y_min - 2)]
+                     + 0.5 * (YVEL0(yvel0, j + 1, k)
+                              + YVEL0(yvel0, j + 1, k + 1)
+                              - YVEL0(yvel0, j, k)
+                              - YVEL0(yvel0, j, k + 1)) / celldx[FTNREF1D(j, x_min - 2)];
 
-    double pgradx = (pressure[FTNREF2D(j + 1, k  , x_max + 4, x_min - 2, y_min - 2)]
-                     - pressure[FTNREF2D(j - 1, k  , x_max + 4, x_min - 2, y_min - 2)])
+    double pgradx = (PRESSURE(pressure, j + 1, k)
+                     - PRESSURE(pressure, j - 1, k))
                     / (celldx[FTNREF1D(j, x_min - 2)] + celldx[FTNREF1D(j + 1, x_min - 2)]);
-    double pgrady = (pressure[FTNREF2D(j  , k + 1, x_max + 4, x_min - 2, y_min - 2)]
-                     - pressure[FTNREF2D(j  , k - 1, x_max + 4, x_min - 2, y_min - 2)])
+    double pgrady = (PRESSURE(pressure, j, k + 1)
+                     - PRESSURE(pressure, j, k - 1))
                     / (celldy[FTNREF1D(k, y_min - 2)] + celldy[FTNREF1D(k + 1, y_min - 2)]);
 
     double pgradx2 = pgradx * pgradx;
@@ -76,15 +76,15 @@ void viscosity_kernel_c_(
                      / MAX(pgradx2 + pgrady2, 1.0e-16);
 
     if (limiter > 0.0 || div >= 0.0) {
-        viscosity[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] = 0.0;
+        VISCOSITY(viscosity, j, k) = 0.0;
     } else {
         pgradx = SIGN(MAX(1.0e-16, fabs(pgradx)), pgradx);
         pgrady = SIGN(MAX(1.0e-16, fabs(pgrady)), pgrady);
         double pgrad = sqrt(pgradx * pgradx + pgrady * pgrady);
         double xgrad = fabs(celldx[FTNREF1D(j, x_min - 2)] * pgrad / pgradx);
         double ygrad = fabs(celldy[FTNREF1D(k, y_min - 2)] * pgrad / pgrady);
-        double grad  = MIN(xgrad, ygrad);
+        double grad = MIN(xgrad, ygrad);
         double grad2 = grad * grad;
-        viscosity[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] = 2.0 * density0[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] * grad2 * limiter * limiter;
+        VISCOSITY(viscosity, j, k) = 2.0 * DENSITY0(density0, j, k) * grad2 * limiter * limiter;
     }
 }

@@ -16,9 +16,9 @@
 * CloverLeaf. If not, see http://www.gnu.org/licenses/. */
 
 /**
- *  @brief C flux kernel.
- *  @author Wayne Gaudin
- *  @details The edge volume fluxes are calculated based on the velocity fields.
+ *@brief C flux kernel.
+ *@author Wayne Gaudin
+ *@details The edge volume fluxes are calculated based on the velocity fields.
  */
 
 #include "ftocmacros.h"
@@ -29,17 +29,17 @@ void flux_calc_x_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
     double dt,
-    const double * __restrict__ xarea,
-    const double * __restrict__ xvel0,
-    const double * __restrict__ xvel1,
-    double * __restrict__ vol_flux_x)
+    const double* __restrict__ xarea,
+    const double* __restrict__ xvel0,
+    const double* __restrict__ xvel1,
+    double* __restrict__ vol_flux_x)
 {
-    vol_flux_x[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] =
-        0.25 * dt * xarea[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-        * (xvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-           + xvel0[FTNREF2D(j  , k + 1, x_max + 5, x_min - 2, y_min - 2)]
-           + xvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-           + xvel1[FTNREF2D(j  , k + 1, x_max + 5, x_min - 2, y_min - 2)]);
+    VOL_FLUX_X(vol_flux_x, j, k) =
+        0.25 * dt * XAREA(xarea, j, k)
+        * (XVEL0(xvel0, j, k)
+           + XVEL0(xvel0, j, k + 1)
+           + XVEL1(xvel1, j, k)
+           + XVEL1(xvel1, j, k + 1));
 }
 
 void flux_calc_y_kernel(
@@ -47,15 +47,15 @@ void flux_calc_y_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
     double dt,
-    const double * __restrict__ yarea,
-    const double * __restrict__ yvel0,
-    const double * __restrict__ yvel1,
-    double * __restrict__ vol_flux_y)
+    const double* __restrict__ yarea,
+    const double* __restrict__ yvel0,
+    const double* __restrict__ yvel1,
+    double* __restrict__ vol_flux_y)
 {
-    vol_flux_y[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] =
-        0.25 * dt * yarea[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)]
-        * (yvel0[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-           + yvel0[FTNREF2D(j + 1, k  , x_max + 5, x_min - 2, y_min - 2)]
-           + yvel1[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)]
-           + yvel1[FTNREF2D(j + 1, k  , x_max + 5, x_min - 2, y_min - 2)]);
+    VOL_FLUX_Y(vol_flux_y, j, k) =
+        0.25 * dt * YAREA(yarea, j, k)
+        * (YVEL0(yvel0, j, k)
+           + YVEL0(yvel0, j + 1, k)
+           + YVEL1(yvel1, j, k)
+           + YVEL1(yvel1, j + 1, k));
 }
