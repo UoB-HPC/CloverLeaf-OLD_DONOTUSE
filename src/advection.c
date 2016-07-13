@@ -12,7 +12,6 @@ void advec_mom_driver(int tile, int which_vel, int direction, int sweep_number);
 void advection()
 {
     int sweep_number, direction;
-    int xvel, yvel;
     int fields[NUM_FIELDS];
     double kernel_time = 0.0;
 
@@ -21,9 +20,6 @@ void advection()
         direction = g_xdir;
     else
         direction = g_ydir;
-
-    xvel = g_xdir;
-    yvel = g_ydir;
 
     for (int i = 0; i < NUM_FIELDS; i++) {
         fields[i] = 0;
@@ -38,7 +34,6 @@ void advection()
     for (int tile  = 0; tile < tiles_per_chunk; tile++) {
         advec_cell_driver(tile, sweep_number, direction);
     }
-
     if (profiler_on) profiler.cell_advection += timer() - kernel_time;
 
     for (int i = 0; i < NUM_FIELDS; i++) {
@@ -54,8 +49,8 @@ void advection()
 
     if (profiler_on) kernel_time = timer();
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
-        advec_mom_driver(tile, xvel, direction, sweep_number);
-        advec_mom_driver(tile, yvel, direction, sweep_number);
+        advec_mom_driver(tile, g_xdir, direction, sweep_number);
+        advec_mom_driver(tile, g_ydir, direction, sweep_number);
     }
     if (profiler_on) profiler.mom_advection += timer() - kernel_time;
 
@@ -83,8 +78,8 @@ void advection()
 
     if (profiler_on) kernel_time = timer();
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
-        advec_mom_driver(tile, xvel, direction, sweep_number);
-        advec_mom_driver(tile, yvel, direction, sweep_number);
+        advec_mom_driver(tile, g_xdir, direction, sweep_number);
+        advec_mom_driver(tile, g_ydir, direction, sweep_number);
     }
     if (profiler_on) profiler.mom_advection += timer() - kernel_time;
 }

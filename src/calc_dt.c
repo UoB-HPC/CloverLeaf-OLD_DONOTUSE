@@ -3,7 +3,6 @@
 #include "kernels/calc_dt_kernel_c.c"
 #include "string.h"
 
-
 void calc_dt(int tile,
              double *local_dt,
              char* local_control,
@@ -12,55 +11,59 @@ void calc_dt(int tile,
              int *jldt,
              int *kldt)
 {
-    *local_dt = g_big;
+    // *local_dt = g_big;
     int small = 0,
         l_control;
+    double mindt = g_big;
+    double lmin = g_big;
 
-    #pragma omp parallel
+    #pragma omp parallel reduction(min:lmin)
     {
-        DOUBLEFOR(
-            chunk.tiles[tile].t_ymin,
-            chunk.tiles[tile].t_ymax,
-            chunk.tiles[tile].t_xmin,
-            chunk.tiles[tile].t_xmax,
-        ({
-            calc_dt_kernel_c_(
-                j, k,
-                chunk.tiles[tile].t_xmin,
-                chunk.tiles[tile].t_xmax,
-                chunk.tiles[tile].t_ymin,
-                chunk.tiles[tile].t_ymax,
-                chunk.tiles[tile].field.xarea,
-                chunk.tiles[tile].field.yarea,
-                chunk.tiles[tile].field.celldx,
-                chunk.tiles[tile].field.celldy,
-                chunk.tiles[tile].field.volume,
-                chunk.tiles[tile].field.density0,
-                chunk.tiles[tile].field.energy0,
-                chunk.tiles[tile].field.pressure,
-                chunk.tiles[tile].field.viscosity,
-                chunk.tiles[tile].field.soundspeed,
-                chunk.tiles[tile].field.xvel0,
-                chunk.tiles[tile].field.yvel0,
-                chunk.tiles[tile].field.work_array1
-            );
-        }));
+
+#ifdef USE_KOKKOS
+        Kokkos::parallel_reduce(
+            (chunk.tiles[tile].t_ymax) - (chunk.tiles[tile].t_ymin) + 1,
+        KOKKOS_LAMBDA (const int& i, double & lmin) {
+            int k = i + (chunk.tiles[tile].t_ymin);
+#else
+        for (int k = chunk.tiles[tile].t_ymin; k <= chunk.tiles[tile].t_ymax; k++) {
+#endif
+            for (int j = chunk.tiles[tile].t_xmin; j <= chunk.tiles[tile].t_xmax; j++) {
+                double t = calc_dt_kernel_c_(
+                               j, k,
+                               chunk.tiles[tile].t_xmin,
+                               chunk.tiles[tile].t_xmax,
+                               chunk.tiles[tile].t_ymin,
+                               chunk.tiles[tile].t_ymax,
+                               chunk.tiles[tile].field.xarea,
+                               chunk.tiles[tile].field.yarea,
+                               chunk.tiles[tile].field.celldx,
+                               chunk.tiles[tile].field.celldy,
+                               chunk.tiles[tile].field.volume,
+                               chunk.tiles[tile].field.density0,
+                               chunk.tiles[tile].field.energy0,
+                               chunk.tiles[tile].field.pressure,
+                               chunk.tiles[tile].field.viscosity,
+                               chunk.tiles[tile].field.soundspeed,
+                               chunk.tiles[tile].field.xvel0,
+                               chunk.tiles[tile].field.yvel0
+                           );
+                if (t < lmin)
+                    lmin = t;
+            }
+        }
+#ifdef USE_KOKKOS
+        , mindt);
+#else
+        mindt = lmin;
+#endif
+
     }
+    *local_dt = mindt;
 
 #ifdef USE_KOKKOS
     Kokkos::fence();
 #endif
-
-    calc_dt_min_val(
-        chunk.tiles[tile].t_xmin,
-        chunk.tiles[tile].t_xmax,
-        chunk.tiles[tile].t_ymin,
-        chunk.tiles[tile].t_ymax,
-        chunk.tiles[tile].field.work_array1,
-        local_dt
-    );
-
-
 
 
     double jk_control = 1.1;
