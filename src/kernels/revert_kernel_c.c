@@ -29,38 +29,14 @@
 #include "ftocmacros.h"
 #include <math.h>
 
-void revert_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
-                      double *density0,
-                      double *density1,
-                      double *energy0,
-                      double *energy1)
-
+void revert_kernel_c_(
+    int j, int k,
+    int x_min, int x_max, int y_min, int y_max,
+    double * __restrict__ density0,
+    double * __restrict__ density1,
+    double * __restrict__ energy0,
+    double * __restrict__ energy1)
 {
-  int x_min=*xmin;
-  int x_max=*xmax;
-  int y_min=*ymin;
-  int y_max=*ymax;
-
-  int j,k;
-  
-
-
-
-  for (k=y_min;k<=y_max;k++) {
-#pragma ivdep
-    for (j=x_min;j<=x_max;j++) {
-      density1[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)]=density0[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)];
-    }
-  }
-  
-
-  for (k=y_min;k<=y_max;k++) {
-#pragma ivdep
-    for (j=x_min;j<=x_max;j++) {
-      energy1[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)]=energy0[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)];
-    }
-  }
-
-
-
+    density1[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] = density0[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
+    energy1[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)] = energy0[FTNREF2D(j  , k  , x_max + 4, x_min - 2, y_min - 2)];
 }

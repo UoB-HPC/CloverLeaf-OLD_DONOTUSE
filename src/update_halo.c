@@ -2,7 +2,7 @@
 #include "definitions_c.h"
 #include "timer_c.h"
 #include "update_tile_halo.h"
-#include "update_halo_kernel_c.c"
+#include "kernels/update_halo_kernel_c.c"
 #include "clover.h"
 
 void update_halo(int *fields, int depth)

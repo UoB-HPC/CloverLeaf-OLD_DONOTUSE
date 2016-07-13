@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include "data_c.h"
-#include <functional>
+// #include <functional>
 
 #ifdef USE_KOKKOS
 #include <Kokkos_Core.hpp>
@@ -51,33 +51,40 @@ struct profiler_type {
 };
 
 struct field_type {
-    double *density0, *density1,
-           *energy0,  *energy1,
-           *pressure,
-           *viscosity,
-           *soundspeed,
-           *xvel0, *xvel1,
-           *yvel0, *yvel1,
-           *vol_flux_x, *mass_flux_x,
-           *vol_flux_y, *mass_flux_y,
-           *work_array1, //node_flux, stepbymass, volume_change, pre_vo
-           *work_array2, //node_mass_post, post_vol
-           *work_array3, //node_mass_pre, pre_mass
-           *work_array4, //advec_vel, post_mass
-           *work_array5, //mom_flux, advec_vol
-           *work_array6, //pre_vol, post_ener
-           *work_array7; //post_vol, ener_flux
-    double *cellx,
-           *celly,
-           *vertexx,
-           *vertexy,
-           *celldx,
-           *celldy,
-           *vertexdx,
-           *vertexdy;
-    double *volume,
-           *xarea,
-           *yarea;
+    double * density0; double * density1;
+    double * energy0; double * energy1;
+    double * pressure;
+    double * viscosity;
+    double * soundspeed;
+    double * xvel0; double * xvel1;
+    double * yvel0; double * yvel1;
+    double * vol_flux_x; double * mass_flux_x;
+    double * vol_flux_y; double * mass_flux_y;
+    //node_flux; stepbymass; volume_change; pre_vo
+    double * work_array1;
+    //node_mass_post; post_vol
+    double * work_array2;
+    //node_mass_pre; pre_mass
+    double * work_array3;
+    //advec_vel; post_mass
+    double * work_array4;
+    //mom_flux; advec_vol
+    double * work_array5;
+    //pre_vol; post_ener
+    double * work_array6;
+    //post_vol; ener_flux
+    double * work_array7;
+    double * cellx;
+    double * celly;
+    double * vertexx;
+    double * vertexy;
+    double * celldx;
+    double * celldy;
+    double * vertexdx;
+    double * vertexdy;
+    double * volume;
+    double * xarea;
+    double * yarea;
 };
 
 struct tile_type {
@@ -163,39 +170,29 @@ extern struct grid_type grid;
 
 #define BOSSPRINT(...) if(parallel.boss) fprintf(__VA_ARGS__)
 
-// #define USE_KOKKOS
 
-// inclusive _to
-// inline void doublefor(int k_from, int k_to,
-//                       int j_from, int j_to,
-//                       std::function<void(int, int)> const& body)
-// {
-// #ifdef USE_KOKKOS
-//     Kokkos::parallel_for(k_to - k_from + 1, KOKKOS_LAMBDA (const int& i) {
-//         int k = i + k_from;
-// #else
-//     #pragma omp for
-//     for (int k = k_from; k <= k_to; k++) {
-// #endif
-
-// #pragma ivdep
-//         for (int j = j_from; j <= j_to; j++) {
-//             body(j, k);
-//         }
-//     }
-// #ifdef USE_KOKKOS
-//                         );
-// #endif
-
-// }
-
+#ifdef USE_KOKKOS
 
 #define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \
-for(int k = (k_from); k <= (k_to); k++) { \
-    _Pragma("ivdep") \
-    for(int j = (j_from); j <= (j_to); j++) { \
-        body ;\
-    } \
-}
+    Kokkos::parallel_for((k_to) - (k_from) + 1, KOKKOS_LAMBDA (const int& i) { \
+            int k = i + (k_from); \
+        _Pragma("ivdep") \
+        for(int j = (j_from); j <= (j_to); j++) { \
+            body ;\
+        } \
+    });
+
+#else
+
+#define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \
+    _Pragma("omp for") \
+    for(int k = (k_from); k <= (k_to); k++) { \
+        _Pragma("ivdep") \
+        for(int j = (j_from); j <= (j_to); j++) { \
+            body ;\
+        } \
+    }
+
+#endif
 
 #endif

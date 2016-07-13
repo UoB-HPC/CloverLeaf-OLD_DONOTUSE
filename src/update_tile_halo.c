@@ -1,8 +1,8 @@
 
 #include "update_tile_halo.h"
 #include "definitions_c.h"
-#include "ftocmacros.h"
-#include "update_tile_halo_kernel.c"
+// #include "ftocmacros.h"
+#include "kernels/update_tile_halo_kernel.c"
 
 // void __update_tile_halo_kernel_module_MOD_update_tile_halo_t_kernel();
 

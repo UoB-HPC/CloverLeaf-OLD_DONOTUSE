@@ -3,7 +3,7 @@
 #include "ideal_gas.h"
 #include "viscosity.h"
 #include "calc_dt.h"
-#include "ftocmacros.h"
+#include "kernels/ftocmacros.h"
 #include "report.h"
 #include "timer_c.h"
 #include "update_halo.h"

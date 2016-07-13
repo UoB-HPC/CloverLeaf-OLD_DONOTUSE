@@ -22,11 +22,11 @@
  *  with directional splitting.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+// #include <stdio.h>
+// #include <stdlib.h>
 #include "ftocmacros.h"
 #include <math.h>
-#include "definitions_c.h"
+#include "../definitions_c.h"
 
 #ifdef USE_KOKKOS
 #include <Kokkos_Core.hpp>
@@ -35,34 +35,27 @@
 
 
 void advec_cell_kernel_c_(
-    struct tile_type *tile,
+    // int j, int k,
+    int x_min, int x_max, int y_min, int y_max,
+    const double * __restrict__ vertexdx,
+    const double * __restrict__ vertexdy,
+    const double * __restrict__ volume,
+    double * __restrict__ density1,
+    double * __restrict__ energy1,
+    double * __restrict__ mass_flux_x,
+    const double * __restrict__ vol_flux_x,
+    double * __restrict__ mass_flux_y,
+    const double * __restrict__ vol_flux_y,
+    double * __restrict__ pre_vol,
+    double * __restrict__ post_vol,
+    double * __restrict__ pre_mass,
+    double * __restrict__ post_mass,
+    double * __restrict__ advec_vol,
+    double * __restrict__ post_ener,
+    double * __restrict__ ener_flux,
     int dir,
     int sweep_number)
 {
-    int x_min = tile->t_xmin,
-        x_max = tile->t_xmax,
-        y_min = tile->t_ymin,
-        y_max = tile->t_ymax;
-
-    double *vertexdx = tile->field.vertexdx;
-    double *vertexdy = tile->field.vertexdy;
-    double *volume = tile->field.volume;
-    double *density1 = tile->field.density1;
-    double *energy1 = tile->field.energy1;
-    double *mass_flux_x = tile->field.mass_flux_x;
-    double *vol_flux_x = tile->field.vol_flux_x;
-    double *mass_flux_y = tile->field.mass_flux_y;
-    double *vol_flux_y = tile->field.vol_flux_y;
-    double *pre_vol = tile->field.work_array1;
-    double *post_vol = tile->field.work_array2;
-    double *pre_mass = tile->field.work_array3;
-    double *post_mass = tile->field.work_array4;
-    double *advec_vol = tile->field.work_array5;
-    double *post_ener = tile->field.work_array6;
-    double *ener_flux = tile->field.work_array7;
-
-    int j, k, upwind, donor, downwind, dif;
-
     int g_xdir = 1, g_ydir = 2;
 
     double one_by_six;
@@ -97,7 +90,7 @@ void advec_cell_kernel_c_(
 
             }
 
-            DOUBLEFOR(y_min, y_max, x_min, x_max, ({
+            DOUBLEFOR(y_min, y_max, x_min, x_max + 2, ({
                 int upwind, donor, downwind, dif;
                 if (vol_flux_x[FTNREF2D(j  , k  , x_max + 5, x_min - 2, y_min - 2)] > 0.0)
                 {

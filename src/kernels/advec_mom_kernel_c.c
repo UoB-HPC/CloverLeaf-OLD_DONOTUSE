@@ -24,11 +24,9 @@
  *  leave it in the method.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "ftocmacros.h"
-#include <math.h>
-#include "definitions_c.h"
+// #include <math.h>
+#include "../definitions_c.h"
 
 #ifdef USE_KOKKOS
 #include <Kokkos_Core.hpp>
@@ -36,35 +34,29 @@
 
 
 void advec_mom_kernel_c_(
-    struct tile_type *tile,
     double *vel1,
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    const double * __restrict__ mass_flux_x    ,
+    const double * __restrict__ vol_flux_x     ,
+    const double * __restrict__ mass_flux_y    ,
+    const double * __restrict__ vol_flux_y     ,
+    const double * __restrict__ volume         ,
+    const double * __restrict__ density1       ,
+    double * __restrict__ node_flux      ,
+    double * __restrict__ node_mass_post ,
+    double * __restrict__ node_mass_pre  ,
+    double * __restrict__ mom_flux       ,
+    double * __restrict__ pre_vol        ,
+    double * __restrict__ post_vol       ,
+    const double * __restrict__ celldx,
+    const double * __restrict__ celldy,
     int sweep_number,
     int direction)
 {
-    int x_min = tile->t_xmin,
-        x_max = tile->t_xmax,
-        y_min = tile->t_ymin,
-        y_max = tile->t_ymax;
-
-    double *mass_flux_x = tile->field.mass_flux_x;
-    double *vol_flux_x = tile->field.vol_flux_x;
-    double *mass_flux_y = tile->field.mass_flux_y;
-    double *vol_flux_y = tile->field.vol_flux_y;
-    double *volume = tile->field.volume;
-    double *density1 = tile->field.density1;
-    double *node_flux = tile->field.work_array1;
-    double *node_mass_post = tile->field.work_array2;
-    double *node_mass_pre = tile->field.work_array3;
-    double *mom_flux = tile->field.work_array4;
-    double *pre_vol = tile->field.work_array5;
-    double *post_vol = tile->field.work_array6;
-
-    double *celldx = tile->field.celldx;
-    double *celldy = tile->field.celldy;
-
-    int k, mom_sweep;
-
-    mom_sweep = direction + 2 * (sweep_number - 1);
+    int mom_sweep = direction + 2 * (sweep_number - 1);
     #pragma omp parallel
     {
         if (mom_sweep == 1) {

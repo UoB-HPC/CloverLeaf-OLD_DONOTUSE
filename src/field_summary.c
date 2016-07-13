@@ -1,6 +1,6 @@
 #include "field_summary.h"
 #include "definitions_c.h"
-#include "field_summary_kernel_c.c"
+#include "kernels/field_summary_kernel_c.c"
 #include "timer_c.h"
 #include "stdlib.h"
 #include "ideal_gas.h"

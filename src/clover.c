@@ -1,7 +1,7 @@
 #include "clover.h"
 #include <mpi.h>
 #include "definitions_c.h"
-#include "pack_kernel_c.c"
+#include "kernels/pack_kernel_c.c"
 
 void checkMPIerror(int err)
 {

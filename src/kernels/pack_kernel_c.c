@@ -25,10 +25,11 @@
 #include <stdlib.h>
 #include "ftocmacros.h"
 #include <math.h>
-#include "definitions_c.h"
+#include "../definitions_c.h"
 
-void clover_pack_message_left_c_(int *xmin, int *xmax, int *ymin, int *ymax, double *field,
-                                 double *left_snd_buffer,
+void clover_pack_message_left_c_(int *xmin, int *xmax, int *ymin, int *ymax,
+                                 double * __restrict__ field,
+                                 double * __restrict__ left_snd_buffer,
                                  int dpth, int fld_typ,
                                  int bffr_ffst)
 
