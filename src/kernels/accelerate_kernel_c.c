@@ -32,13 +32,13 @@ void accelerate_kernel_c_(
     const double* __restrict__ xarea,
     const double* __restrict__ yarea,
     const double* __restrict__ volume,
-    const double* __restrict__ density0 ,
-    const double* __restrict__ pressure ,
-    const double* __restrict__ viscosity,
-    double* __restrict__ xvel0,
-    double* __restrict__ yvel0,
-    double* __restrict__ xvel1,
-    double* __restrict__ yvel1,
+    CONSTFIELDPARAM density0 ,
+    CONSTFIELDPARAM pressure ,
+    CONSTFIELDPARAM viscosity,
+    FIELDPARAM xvel0,
+    FIELDPARAM yvel0,
+    FIELDPARAM xvel1,
+    FIELDPARAM yvel1,
     double dt)
 {
     double nodal_mass = (DENSITY0(density0, j - 1, k - 1) * VOLUME(volume, j - 1, k - 1)

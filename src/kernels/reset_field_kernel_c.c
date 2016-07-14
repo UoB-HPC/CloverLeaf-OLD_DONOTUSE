@@ -30,14 +30,14 @@
 
 void reset_field_kernel_c_(
     int x_min, int x_max, int y_min, int y_max,
-    double* __restrict__ density0,
-    const double* __restrict__ density1,
-    double* __restrict__ energy0,
-    const double* __restrict__ energy1,
-    double* __restrict__ xvel0,
-    const double* __restrict__ xvel1,
-    double* __restrict__ yvel0,
-    const double* __restrict__ yvel1)
+    FIELDPARAM density0,
+    CONSTFIELDPARAM density1,
+    FIELDPARAM energy0,
+    CONSTFIELDPARAM energy1,
+    FIELDPARAM xvel0,
+    CONSTFIELDPARAM xvel1,
+    FIELDPARAM yvel0,
+    CONSTFIELDPARAM yvel1)
 {
     DOUBLEFOR(y_min, y_max, x_min, x_max, ({
         DENSITY0(density0, j, k) = DENSITY1(density1, j, k);

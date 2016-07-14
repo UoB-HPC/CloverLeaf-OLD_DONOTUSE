@@ -30,8 +30,5 @@ void reset_field()
         }
     }
 
-#ifdef USE_KOKKOS
-    Kokkos::fence();
-#endif
     if (profiler_on) profiler.reset += timer() - kernel_time;
 }

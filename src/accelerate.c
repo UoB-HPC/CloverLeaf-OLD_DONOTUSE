@@ -33,9 +33,6 @@ void accelerate()
                 dt);
             }));
         }
-#ifdef USE_KOKKOS
-        Kokkos::fence();
-#endif
     }
 
     if (profiler_on) profiler.acceleration += timer() - kernel_time;

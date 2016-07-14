@@ -40,12 +40,12 @@ void advec_cell_kernel_c_(
     const double* __restrict__ vertexdx,
     const double* __restrict__ vertexdy,
     const double* __restrict__ volume,
-    double* __restrict__ density1,
-    double* __restrict__ energy1,
-    double* __restrict__ mass_flux_x,
-    const double* __restrict__ vol_flux_x,
-    double* __restrict__ mass_flux_y,
-    const double* __restrict__ vol_flux_y,
+    FIELDPARAM density1,
+    FIELDPARAM energy1,
+    FIELDPARAM mass_flux_x,
+    CONSTFIELDPARAM vol_flux_x,
+    FIELDPARAM mass_flux_y,
+    CONSTFIELDPARAM vol_flux_y,
     double* __restrict__ pre_vol,
     double* __restrict__ post_vol,
     double* __restrict__ pre_mass,
@@ -261,8 +261,4 @@ void advec_cell_kernel_c_(
             });
         }
     }
-
-#ifdef USE_KOKKOS
-    Kokkos::fence();
-#endif
 }

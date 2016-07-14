@@ -50,8 +50,8 @@ void update_tile_halo_l_kernel_c_(
 // Density 0
     if (fields[FIELD_DENSITY0] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 density0[FTNREF2D(x_min - j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     left_density0[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 4, left_xmin - 2, left_ymin - 2)];
             }
@@ -62,8 +62,8 @@ void update_tile_halo_l_kernel_c_(
 // Density 1
     if (fields[FIELD_DENSITY1] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 density1[FTNREF2D(x_min - j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     left_density1[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 4, left_xmin - 2, left_ymin - 2)];
             }
@@ -75,8 +75,8 @@ void update_tile_halo_l_kernel_c_(
 // Energy 0
     if (fields[FIELD_ENERGY0] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 energy0[FTNREF2D(x_min - j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     left_energy0[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 4, left_xmin - 2, left_ymin - 2)];
             }
@@ -85,10 +85,10 @@ void update_tile_halo_l_kernel_c_(
     }
 
 // Energy 1
-    if (fields[FIELD_DENSITY1] == 1) {
+    if (fields[FIELD_ENERGY1] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 energy1[FTNREF2D(x_min - j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     left_energy1[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 4, left_xmin - 2, left_ymin - 2)];
             }
@@ -100,8 +100,8 @@ void update_tile_halo_l_kernel_c_(
 // Pressure
     if (fields[FIELD_PRESSURE] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 pressure[FTNREF2D(x_min - j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     left_pressure[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 4, left_xmin - 2, left_ymin - 2)];
             }
@@ -112,8 +112,8 @@ void update_tile_halo_l_kernel_c_(
 // Viscocity
     if (fields[FIELD_VISCOSITY] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 viscosity[FTNREF2D(x_min - j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     left_viscosity[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 4, left_xmin - 2, left_ymin - 2)];
             }
@@ -124,8 +124,8 @@ void update_tile_halo_l_kernel_c_(
 // Soundspeed
     if (fields[FIELD_SOUNDSPEED] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 soundspeed[FTNREF2D(x_min - j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     left_soundspeed[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 4, left_xmin - 2, left_ymin - 2)];
             }
@@ -137,8 +137,8 @@ void update_tile_halo_l_kernel_c_(
 // XVEL 0
     if (fields[FIELD_XVEL0] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 xvel0[FTNREF2D(x_min - j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     left_xvel0[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 5, left_xmin - 2, left_ymin - 2)];
             }
@@ -149,8 +149,8 @@ void update_tile_halo_l_kernel_c_(
 // XVEL 1
     if (fields[FIELD_XVEL1] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 xvel1[FTNREF2D(x_min - j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     left_xvel1[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 5, left_xmin - 2, left_ymin - 2)];
             }
@@ -161,8 +161,8 @@ void update_tile_halo_l_kernel_c_(
 // YVEL 0
     if (fields[FIELD_YVEL0] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 yvel0[FTNREF2D(x_min - j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     left_yvel0[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 5, left_xmin - 2, left_ymin - 2)];
             }
@@ -173,8 +173,8 @@ void update_tile_halo_l_kernel_c_(
 // YVEL 1
     if (fields[FIELD_YVEL1] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 yvel1[FTNREF2D(x_min - j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     left_yvel1[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 5, left_xmin - 2, left_ymin - 2)];
             }
@@ -185,8 +185,8 @@ void update_tile_halo_l_kernel_c_(
 // VOL_FLUX_X
     if (fields[FIELD_VOL_FLUX_X] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 vol_flux_x[FTNREF2D(x_min - j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     left_vol_flux_x[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 5, left_xmin - 2, left_ymin - 2)];
             }
@@ -197,8 +197,8 @@ void update_tile_halo_l_kernel_c_(
 // MASS_FLUX_X
     if (fields[FIELD_MASS_FLUX_X] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 mass_flux_x[FTNREF2D(x_min - j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     left_mass_flux_x[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 5, left_xmin - 2, left_ymin - 2)];
             }
@@ -209,8 +209,8 @@ void update_tile_halo_l_kernel_c_(
 // VOL_FLUX_Y
     if (fields[FIELD_VOL_FLUX_Y] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 vol_flux_y[FTNREF2D(x_min - j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     left_vol_flux_y[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 4, left_xmin - 2, left_ymin - 2)];
             }
@@ -221,8 +221,8 @@ void update_tile_halo_l_kernel_c_(
 // MASS_FLUX_Y
     if (fields[FIELD_MASS_FLUX_Y] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 mass_flux_y[FTNREF2D(x_min - j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     left_mass_flux_y[FTNREF2D(left_xmax + 1 - j, k, left_xmax + 4, left_xmin - 2, left_ymin - 2)];
             }
@@ -279,8 +279,8 @@ void update_tile_halo_r_kernel_c_(
 // Density 0
     if (fields[FIELD_DENSITY0] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 density0[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     right_density0[FTNREF2D(right_xmin - 1 + j, k, right_xmax + 4, right_xmin - 2, right_ymin - 2)];
             }
@@ -291,8 +291,8 @@ void update_tile_halo_r_kernel_c_(
 // Density 1
     if (fields[FIELD_DENSITY1] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 density1[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     right_density1[FTNREF2D(right_xmin - 1 + j, k, right_xmax + 4, right_xmin - 2, right_ymin - 2)];
             }
@@ -304,8 +304,8 @@ void update_tile_halo_r_kernel_c_(
 // Energy 0
     if (fields[FIELD_ENERGY0] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 energy0[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     right_energy0[FTNREF2D(right_xmin - 1 + j, k, right_xmax + 4, right_xmin - 2, right_ymin - 2)];
             }
@@ -314,10 +314,10 @@ void update_tile_halo_r_kernel_c_(
     }
 
 // Energy 1
-    if (fields[FIELD_DENSITY1] == 1) {
+    if (fields[FIELD_ENERGY1] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 energy1[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     right_energy1[FTNREF2D(right_xmin - 1 + j, k, right_xmax + 4, right_xmin - 2, right_ymin - 2)];
             }
@@ -329,8 +329,8 @@ void update_tile_halo_r_kernel_c_(
 // Pressure
     if (fields[FIELD_PRESSURE] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 pressure[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     right_pressure[FTNREF2D(right_xmin - 1 + j, k, right_xmax + 4, right_xmin - 2, right_ymin - 2)];
             }
@@ -341,8 +341,8 @@ void update_tile_halo_r_kernel_c_(
 // Viscocity
     if (fields[FIELD_VISCOSITY] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 viscosity[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     right_viscosity[FTNREF2D(right_xmin - 1 + j, k, right_xmax + 4, right_xmin - 2, right_ymin - 2)];
             }
@@ -353,8 +353,8 @@ void update_tile_halo_r_kernel_c_(
 // Soundspeed
     if (fields[FIELD_SOUNDSPEED] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 soundspeed[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     right_soundspeed[FTNREF2D(right_xmin - 1 + j, k, right_xmax + 4, right_xmin - 2, right_ymin - 2)];
             }
@@ -366,8 +366,8 @@ void update_tile_halo_r_kernel_c_(
 // XVEL 0
     if (fields[FIELD_XVEL0] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 xvel0[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     right_xvel0[FTNREF2D(right_xmin + 1 - 1 + j, k, right_xmax + 5, right_xmin - 2, right_ymin - 2)];
             }
@@ -378,8 +378,8 @@ void update_tile_halo_r_kernel_c_(
 // XVEL 1
     if (fields[FIELD_XVEL1] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 xvel1[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     right_xvel1[FTNREF2D(right_xmin + 1 - 1 + j, k, right_xmax + 5, right_xmin - 2, right_ymin - 2)];
             }
@@ -390,8 +390,8 @@ void update_tile_halo_r_kernel_c_(
 // YVEL 0
     if (fields[FIELD_YVEL0] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 yvel0[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     right_yvel0[FTNREF2D(right_xmin + 1 - 1 + j, k, right_xmax + 5, right_xmin - 2, right_ymin - 2)];
             }
@@ -402,8 +402,8 @@ void update_tile_halo_r_kernel_c_(
 // YVEL 1
     if (fields[FIELD_YVEL1] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 yvel1[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     right_yvel1[FTNREF2D(right_xmin + 1 - 1 + j, k, right_xmax + 5, right_xmin - 2, right_ymin - 2)];
             }
@@ -414,8 +414,8 @@ void update_tile_halo_r_kernel_c_(
 // VOL_FLUX_X
     if (fields[FIELD_VOL_FLUX_X] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 vol_flux_x[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     right_vol_flux_x[FTNREF2D(right_xmin + 1 - 1 + j, k, right_xmax + 5, right_xmin - 2, right_ymin - 2)];
             }
@@ -426,8 +426,8 @@ void update_tile_halo_r_kernel_c_(
 // MASS_FLUX_X
     if (fields[FIELD_MASS_FLUX_X] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 mass_flux_x[FTNREF2D(x_max + 1 + j, k, x_max + 5, x_min - 2, y_min - 2)] =
                     right_mass_flux_x[FTNREF2D(right_xmin + 1 - 1 + j, k, right_xmax + 5, right_xmin - 2, right_ymin - 2)];
             }
@@ -438,8 +438,8 @@ void update_tile_halo_r_kernel_c_(
 // VOL_FLUX_Y
     if (fields[FIELD_VOL_FLUX_Y] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 vol_flux_y[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     right_vol_flux_y[FTNREF2D(right_xmin - 1 + j, k, right_xmax + 4, right_xmin - 2, right_ymin - 2)];
             }
@@ -450,8 +450,8 @@ void update_tile_halo_r_kernel_c_(
 // MASS_FLUX_Y
     if (fields[FIELD_MASS_FLUX_Y] == 1) {
 
-        for (intk = y_min - depth; k <= y_max + 1 + depth; k ++) {
-            for (intj = 1; j <= depth; j ++) {
+        for (int k = y_min - depth; k <= y_max + 1 + depth; k ++) {
+            for (int j = 1; j <= depth; j ++) {
                 mass_flux_y[FTNREF2D(x_max + j, k, x_max + 4, x_min - 2, y_min - 2)] =
                     right_mass_flux_y[FTNREF2D(right_xmin - 1 + j, k, right_xmax + 4, right_xmin - 2, right_ymin - 2)];
             }
@@ -545,7 +545,7 @@ void update_tile_halo_t_kernel_c_(
     }
 
 // Energy 1
-    if (fields[FIELD_DENSITY1] == 1) {
+    if (fields[FIELD_ENERGY1] == 1) {
 
         for (int k = 1; k <= depth; k++) {
             for (int j = x_min - depth; j <= x_max + depth; j++) {
@@ -776,7 +776,7 @@ void update_tile_halo_b_kernel_c_(
     }
 
 // Energy 1
-    if (fields[FIELD_DENSITY1] == 1) {
+    if (fields[FIELD_ENERGY1] == 1) {
 
         for (int k = 1; k <= depth; k++) {
             for (int j = x_min - depth; j <= x_max + depth; j++) {

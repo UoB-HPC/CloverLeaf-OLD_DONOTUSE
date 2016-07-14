@@ -32,10 +32,10 @@
 void revert_kernel_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    double* __restrict__ density0,
-    double* __restrict__ density1,
-    double* __restrict__ energy0,
-    double* __restrict__ energy1)
+    FIELDPARAM density0,
+    FIELDPARAM density1,
+    FIELDPARAM energy0,
+    FIELDPARAM energy1)
 {
     DENSITY1(density1, j, k) = DENSITY0(density0, j, k);
     ENERGY1(energy1, j, k) = ENERGY0(energy0, j, k);

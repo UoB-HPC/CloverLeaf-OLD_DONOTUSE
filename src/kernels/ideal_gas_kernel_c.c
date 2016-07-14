@@ -35,10 +35,10 @@
 void ideal_gas_kernel_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    const double* __restrict__ density,
-    const double* __restrict__ energy,
-    double* __restrict__ pressure,
-    double* __restrict__ soundspeed)
+    CONSTFIELDPARAM density,
+    CONSTFIELDPARAM energy,
+    FIELDPARAM pressure,
+    FIELDPARAM soundspeed)
 {
     double v = 1.0 / DENSITY0(density, j, k);
     PRESSURE(pressure, j, k) =

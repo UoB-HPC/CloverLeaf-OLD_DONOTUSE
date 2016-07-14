@@ -42,7 +42,4 @@ void ideal_gas(int tile, bool predict)
             }
         }));
     }
-#ifdef USE_KOKKOS
-    Kokkos::fence();
-#endif
 }

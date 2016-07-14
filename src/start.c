@@ -1,6 +1,5 @@
 #include "definitions_c.h"
 #include <stdlib.h>
-#include "build_field.h"
 #include "initialise_chunk.h"
 #include "generate_chunk.h"
 #include "ideal_gas.h"
@@ -8,13 +7,14 @@
 #include "field_summary.h"
 #include "visit.h"
 #include "clover.h"
+#include "allocate.h"
 
 void clover_decompose(int x_cells,
                       int y_cells,
-                      int *left,
-                      int *right,
-                      int *bottom,
-                      int *top);
+                      int* left,
+                      int* right,
+                      int* bottom,
+                      int* top);
 void clover_tile_decompose(int, int);
 void clover_allocate_buffers();
 
@@ -61,7 +61,7 @@ void start()
 
     clover_tile_decompose(x_cells, y_cells);
 
-    build_field();
+    allocate();
     clover_allocate_buffers();
 
     BOSSPRINT(g_out, "Generating chunks\n");
@@ -133,7 +133,7 @@ void clover_allocate_buffers()
     }
 }
 
-void setArrayToVal(int *arr, int size, int val)
+void setArrayToVal(int* arr, int size, int val)
 {
     for (int i = 0; i < size; i++) {
         arr[i] = val;
@@ -161,7 +161,7 @@ void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells)
     split_found = 0;
 
     for (t = 1; t <= tiles_per_chunk; t++) {
-        if (tiles_per_chunk % t == 0 ) {
+        if (tiles_per_chunk % t == 0) {
             factor_x = tiles_per_chunk / (double)t;
             factor_y = t;
 
@@ -249,10 +249,10 @@ void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells)
 
 void clover_decompose(int x_cells,
                       int y_cells,
-                      int *left,
-                      int *right,
-                      int *bottom,
-                      int *top)
+                      int* left,
+                      int* right,
+                      int* bottom,
+                      int* top)
 {
     double mesh_ratio = (double)x_cells / y_cells;
     int chunk_x = number_of_chunks;

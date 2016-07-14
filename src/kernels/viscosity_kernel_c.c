@@ -34,11 +34,11 @@ void viscosity_kernel_c_(
     int x_min, int x_max, int y_min, int y_max,
     const double* __restrict__ celldx,
     const double* __restrict__ celldy,
-    const double* __restrict__ density0,
-    const double* __restrict__ pressure,
-    double* __restrict__ viscosity,
-    const double* __restrict__ xvel0,
-    const double* __restrict__ yvel0)
+    CONSTFIELDPARAM density0,
+    CONSTFIELDPARAM pressure,
+    FIELDPARAM viscosity,
+    CONSTFIELDPARAM xvel0,
+    CONSTFIELDPARAM yvel0)
 {
     double ugrad = (XVEL0(xvel0, j + 1, k)
                     + XVEL0(xvel0, j + 1, k + 1))

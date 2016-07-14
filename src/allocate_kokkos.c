@@ -1,5 +1,3 @@
-
-#include "build_field.h"
 #include "definitions_c.h"
 #include <stdlib.h>
 
@@ -13,7 +11,7 @@ int size1d(int min, int max)
     return max - min + 1;
 }
 
-void build_field()
+void allocate()
 {
 
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
@@ -21,24 +19,6 @@ void build_field()
             xmax = chunk.tiles[tile].t_xmax,
             ymin = chunk.tiles[tile].t_ymin,
             ymax = chunk.tiles[tile].t_ymax;
-
-        int density0Size        = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 2);
-        int density1Size        = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 2);
-        int energy0Size         = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 2);
-        int energy1Size         = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 2);
-        int pressureSize        = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 2);
-        int viscositySize       = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 2);
-        int soundspeedSize      = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 2);
-
-        int xvel0Size           = size2d(xmin - 2, xmax + 3, ymin - 2, ymax + 3);
-        int xvel1Size           = size2d(xmin - 2, xmax + 3, ymin - 2, ymax + 3);
-        int yvel0Size           = size2d(xmin - 2, xmax + 3, ymin - 2, ymax + 3);
-        int yvel1Size           = size2d(xmin - 2, xmax + 3, ymin - 2, ymax + 3);
-
-        int vol_flux_xSize      = size2d(xmin - 2, xmax + 3, ymin - 2, ymax + 2);
-        int mass_flux_xSize     = size2d(xmin - 2, xmax + 3, ymin - 2, ymax + 2);
-        int vol_flux_ySize      = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 3);
-        int mass_flux_ySize     = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 3);
 
         int work_array1Size     = size2d(xmin - 2, xmax + 3, ymin - 2, ymax + 3);
         int work_array2Size     = size2d(xmin - 2, xmax + 3, ymin - 2, ymax + 3);
@@ -61,25 +41,24 @@ void build_field()
         int xareaSize           = size2d(xmin - 2, xmax + 3, ymin - 2, ymax + 2);
         int yareaSize           = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 3);
 
-        // View<double**> density0("denisty0", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 2));
 
-        chunk.tiles[tile].field.density0  = (double*)calloc(sizeof(double), density0Size);
-        chunk.tiles[tile].field.density1  = (double*)calloc(sizeof(double), density1Size);
-        chunk.tiles[tile].field.energy0   = (double*)calloc(sizeof(double), energy0Size);
-        chunk.tiles[tile].field.energy1   = (double*)calloc(sizeof(double), energy1Size);
-        chunk.tiles[tile].field.pressure  = (double*)calloc(sizeof(double), pressureSize);
-        chunk.tiles[tile].field.viscosity = (double*)calloc(sizeof(double), viscositySize);
-        chunk.tiles[tile].field.soundspeed = (double*)calloc(sizeof(double), soundspeedSize);
+        chunk.tiles[tile].field.density0  = new Kokkos::View<double**>("density0", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 2));
+        chunk.tiles[tile].field.density1  = new Kokkos::View<double**>("density1", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 2));
+        chunk.tiles[tile].field.energy0   = new Kokkos::View<double**>("energy0", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 2));
+        chunk.tiles[tile].field.energy1   = new Kokkos::View<double**>("energy1", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 2));
+        chunk.tiles[tile].field.pressure  = new Kokkos::View<double**>("pressure", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 2));
+        chunk.tiles[tile].field.viscosity = new Kokkos::View<double**>("viscosity", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 2));
+        chunk.tiles[tile].field.soundspeed = new Kokkos::View<double**>("soundspeed", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 2));
 
-        chunk.tiles[tile].field.xvel0 = (double*)calloc(sizeof(double), xvel0Size);
-        chunk.tiles[tile].field.xvel1 = (double*)calloc(sizeof(double), xvel1Size);
-        chunk.tiles[tile].field.yvel0 = (double*)calloc(sizeof(double), yvel0Size);
-        chunk.tiles[tile].field.yvel1 = (double*)calloc(sizeof(double), yvel1Size);
+        chunk.tiles[tile].field.xvel0 = new Kokkos::View<double**>("xvel0", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
+        chunk.tiles[tile].field.xvel1 = new Kokkos::View<double**>("xvel1", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
+        chunk.tiles[tile].field.yvel0 = new Kokkos::View<double**>("yvel0", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
+        chunk.tiles[tile].field.yvel1 = new Kokkos::View<double**>("yvel1", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
 
-        chunk.tiles[tile].field.vol_flux_x  = (double*)calloc(sizeof(double), vol_flux_xSize);
-        chunk.tiles[tile].field.mass_flux_x = (double*)calloc(sizeof(double), mass_flux_xSize);
-        chunk.tiles[tile].field.vol_flux_y  = (double*)calloc(sizeof(double), vol_flux_ySize);
-        chunk.tiles[tile].field.mass_flux_y = (double*)calloc(sizeof(double), mass_flux_ySize);
+        chunk.tiles[tile].field.vol_flux_x  = new Kokkos::View<double**>("vol_flux_x",  size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 2));
+        chunk.tiles[tile].field.mass_flux_x = new Kokkos::View<double**>("mass_flux_x", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 2));
+        chunk.tiles[tile].field.vol_flux_y  = new Kokkos::View<double**>("vol_flux_y",  size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 3));
+        chunk.tiles[tile].field.mass_flux_y = new Kokkos::View<double**>("mass_flux_y", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 3));
 
         chunk.tiles[tile].field.work_array1 = (double*)calloc(sizeof(double), work_array1Size);
         chunk.tiles[tile].field.work_array2 = (double*)calloc(sizeof(double), work_array2Size);

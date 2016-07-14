@@ -38,8 +38,8 @@ void ms1(
     double* __restrict__ pre_vol,
     double* __restrict__ post_vol ,
     const double* __restrict__ volume ,
-    const double* __restrict__ vol_flux_x ,
-    const double* __restrict__ vol_flux_y)
+    CONSTFIELDPARAM vol_flux_x ,
+    CONSTFIELDPARAM vol_flux_y)
 {
     WORK_ARRAY(post_vol, j, k) = VOLUME(volume, j, k)
                                  + VOL_FLUX_Y(vol_flux_y, j, k + 1)
@@ -55,8 +55,8 @@ void ms2(
     double* __restrict__ pre_vol,
     double* __restrict__ post_vol ,
     const double* __restrict__ volume ,
-    const double* __restrict__ vol_flux_x ,
-    const double* __restrict__ vol_flux_y)
+    CONSTFIELDPARAM vol_flux_x ,
+    CONSTFIELDPARAM vol_flux_y)
 {
     WORK_ARRAY(post_vol, j, k) = VOLUME(volume, j, k)
                                  + VOL_FLUX_X(vol_flux_x, j + 1, k)
@@ -72,8 +72,8 @@ void ms3(
     double* __restrict__ pre_vol,
     double* __restrict__ post_vol ,
     const double* __restrict__ volume ,
-    const double* __restrict__ vol_flux_x ,
-    const double* __restrict__ vol_flux_y)
+    CONSTFIELDPARAM vol_flux_x ,
+    CONSTFIELDPARAM vol_flux_y)
 {
     WORK_ARRAY(post_vol, j, k) = VOLUME(volume, j, k);
     WORK_ARRAY(pre_vol, j, k) = WORK_ARRAY(post_vol, j, k)
@@ -87,8 +87,8 @@ void ms4(
     double* __restrict__ pre_vol,
     double* __restrict__ post_vol ,
     const double* __restrict__ volume ,
-    const double* __restrict__ vol_flux_x ,
-    const double* __restrict__ vol_flux_y)
+    CONSTFIELDPARAM vol_flux_x ,
+    CONSTFIELDPARAM vol_flux_y)
 {
     WORK_ARRAY(post_vol, j, k) = VOLUME(volume, j, k);
     WORK_ARRAY(pre_vol, j, k) = WORK_ARRAY(post_vol, j, k)
@@ -97,17 +97,17 @@ void ms4(
 }
 
 void advec_mom_kernel_c_(
-    double* vel1,
+    FIELDPARAM vel1,
     int x_min,
     int x_max,
     int y_min,
     int y_max,
-    const double* __restrict__ mass_flux_x,
-    const double* __restrict__ vol_flux_x ,
-    const double* __restrict__ mass_flux_y,
-    const double* __restrict__ vol_flux_y ,
+    CONSTFIELDPARAM mass_flux_x,
+    CONSTFIELDPARAM vol_flux_x ,
+    CONSTFIELDPARAM mass_flux_y,
+    CONSTFIELDPARAM vol_flux_y ,
     const double* __restrict__ volume ,
-    const double* __restrict__ density1 ,
+    CONSTFIELDPARAM density1 ,
     double* __restrict__ node_flux,
     double* __restrict__ node_mass_post ,
     double* __restrict__ node_mass_pre,
@@ -284,10 +284,6 @@ void advec_mom_kernel_c_(
             });
         }
     }
-
-#ifdef USE_KOKKOS
-    Kokkos::fence();
-#endif
 
 
 }

@@ -2,6 +2,9 @@
 #include <mpi.h>
 #include "definitions_c.h"
 #include "kernels/pack_kernel_c.c"
+#ifdef USE_KOKKOS
+#include "kernels/pack_kernel_kokkos.cpp"
+#endif
 
 void checkMPIerror(int err)
 {
@@ -34,7 +37,7 @@ void clover_finalize()
 }
 
 
-void clover_init_comms(int argc, char **argv)
+void clover_init_comms(int argc, char** argv)
 {
     int rank = 0,
         size = 1;
@@ -54,14 +57,14 @@ void clover_init_comms(int argc, char **argv)
     parallel.max_task = size;
 }
 
-void clover_get_num_chunks(int *count)
+void clover_get_num_chunks(int* count)
 {
     // Should be changed so there can be more than one chunk per mpi task
     *count = parallel.max_task;
 
 }
 
-void clover_exchange(int *fields, int depth)
+void clover_exchange(int* fields, int depth)
 {
     MPI_Status status[4];
 
@@ -185,7 +188,7 @@ void clover_exchange(int *fields, int depth)
     checkMPIerror(MPI_Waitall(message_count, request, status));
 
     //unpack in top direction
-    if ( chunk.chunk_neighbours[CHUNK_TOP] != EXTERNAL_FACE )  {
+    if (chunk.chunk_neighbours[CHUNK_TOP] != EXTERNAL_FACE)  {
         for (int  tile = 0; tile < tiles_per_chunk; tile++) {
             if (chunk.tiles[tile].external_tile_mask[TILE_TOP] == 1)  {
                 clover_unpack_top(fields, tile, depth,
@@ -207,7 +210,7 @@ void clover_exchange(int *fields, int depth)
     }
 }
 
-void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
+void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 {
 
     int t_offset = (chunk.tiles[tile].t_bottom - chunk.bottom) * depth;
@@ -383,10 +386,10 @@ void clover_pack_left(int tile, int *fields, int depth, int *left_right_offset)
 
 }
 
-void clover_send_recv_message_left(double *left_snd_buffer, double *left_rcv_buffer,
+void clover_send_recv_message_left(double* left_snd_buffer, double* left_rcv_buffer,
                                    int total_size,
                                    int tag_send, int tag_recv,
-                                   MPI_Request *req_send, MPI_Request *req_recv)
+                                   MPI_Request* req_send, MPI_Request* req_recv)
 {
 
 //     REAL(KIND=8)    :: left_snd_buffer(:), left_rcv_buffer(:)
@@ -404,9 +407,9 @@ void clover_send_recv_message_left(double *left_snd_buffer, double *left_rcv_buf
 
 }
 
-void clover_unpack_left(int *fields, int tile, int depth,
-                        double *left_rcv_buffer,
-                        int *left_right_offset)
+void clover_unpack_left(int* fields, int tile, int depth,
+                        double* left_rcv_buffer,
+                        int* left_right_offset)
 {
 
 //     USE pack_kernel_module
@@ -589,7 +592,7 @@ void clover_unpack_left(int *fields, int tile, int depth,
 
 }
 
-void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
+void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 {
 
     int t_offset = (chunk.tiles[tile].t_bottom - chunk.bottom) * depth;
@@ -765,10 +768,10 @@ void clover_pack_right(int tile, int *fields, int depth, int *left_right_offset)
 
 }
 
-void clover_send_recv_message_right(double *right_snd_buffer, double *right_rcv_buffer,
+void clover_send_recv_message_right(double* right_snd_buffer, double* right_rcv_buffer,
                                     int total_size,
                                     int tag_send, int tag_recv,
-                                    MPI_Request *req_send, MPI_Request *req_recv)
+                                    MPI_Request* req_send, MPI_Request* req_recv)
 {
 
 //     IMPLICIT NONE
@@ -788,9 +791,9 @@ void clover_send_recv_message_right(double *right_snd_buffer, double *right_rcv_
 
 }
 
-void clover_unpack_right(int *fields, int tile, int depth,
-                         double *right_rcv_buffer,
-                         int *left_right_offset)
+void clover_unpack_right(int* fields, int tile, int depth,
+                         double* right_rcv_buffer,
+                         int* left_right_offset)
 {
 
     int t_offset = (chunk.tiles[tile].t_bottom - chunk.bottom) * depth;
@@ -965,7 +968,7 @@ void clover_unpack_right(int *fields, int tile, int depth,
 
 }
 
-void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
+void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 {
 
     int t_offset = (chunk.tiles[tile].t_left - chunk.left) * depth;
@@ -1138,10 +1141,10 @@ void clover_pack_top(int tile, int *fields, int depth, int *bottom_top_offset)
 
 }
 
-void clover_send_recv_message_top(double *top_snd_buffer, double *top_rcv_buffer,
+void clover_send_recv_message_top(double* top_snd_buffer, double* top_rcv_buffer,
                                   int total_size,
                                   int tag_send, int tag_recv,
-                                  MPI_Request *req_send, MPI_Request *req_recv)
+                                  MPI_Request* req_send, MPI_Request* req_recv)
 {
 
 //     IMPLICIT NONE
@@ -1163,9 +1166,9 @@ void clover_send_recv_message_top(double *top_snd_buffer, double *top_rcv_buffer
 
 }
 
-void clover_unpack_top(int *fields, int tile, int depth,
-                       double *top_rcv_buffer,
-                       int *bottom_top_offset)
+void clover_unpack_top(int* fields, int tile, int depth,
+                       double* top_rcv_buffer,
+                       int* bottom_top_offset)
 {
     int t_offset = (chunk.tiles[tile].t_left - chunk.left) * depth;
 
@@ -1339,7 +1342,7 @@ void clover_unpack_top(int *fields, int tile, int depth,
 
 }
 
-void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset)
+void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset)
 {
     int t_offset = (chunk.tiles[tile].t_left - chunk.left) * depth;
 
@@ -1513,10 +1516,10 @@ void clover_pack_bottom(int tile, int *fields, int depth, int *bottom_top_offset
 
 }
 
-void clover_send_recv_message_bottom(double *bottom_snd_buffer, double *bottom_rcv_buffer,
+void clover_send_recv_message_bottom(double* bottom_snd_buffer, double* bottom_rcv_buffer,
                                      int total_size,
                                      int tag_send, int tag_recv,
-                                     MPI_Request *req_send, MPI_Request *req_recv)
+                                     MPI_Request* req_send, MPI_Request* req_recv)
 {
 //     IMPLICIT NONE
 
@@ -1535,9 +1538,9 @@ void clover_send_recv_message_bottom(double *bottom_snd_buffer, double *bottom_r
 
 }
 
-void clover_unpack_bottom(int *fields, int tile, int depth,
-                          double * bottom_rcv_buffer,
-                          int * bottom_top_offset)
+void clover_unpack_bottom(int* fields, int tile, int depth,
+                          double* bottom_rcv_buffer,
+                          int* bottom_top_offset)
 {
     int t_offset = (chunk.tiles[tile].t_left - chunk.left) * depth;
 
@@ -1711,7 +1714,7 @@ void clover_unpack_bottom(int *fields, int tile, int depth,
 
 }
 
-void clover_sum(double *value)
+void clover_sum(double* value)
 {
 
     // Only sums to the master
@@ -1731,7 +1734,7 @@ void clover_sum(double *value)
     *value = total;
 }
 
-void clover_min(double *value)
+void clover_min(double* value)
 {
 
 //     IMPLICIT NONE
@@ -1750,7 +1753,7 @@ void clover_min(double *value)
 
 }
 
-void clover_max(double *value)
+void clover_max(double* value)
 {
 
     //     IMPLICIT NONE
@@ -1769,7 +1772,7 @@ void clover_max(double *value)
 
 }
 
-void clover_allgather(double *value, double * values)
+void clover_allgather(double* value, double* values)
 {
 
     //     IMPLICIT NONE
@@ -1787,7 +1790,7 @@ void clover_allgather(double *value, double * values)
 
 }
 
-void clover_check_error(int *error)
+void clover_check_error(int* error)
 {
 
     //     IMPLICIT NONE

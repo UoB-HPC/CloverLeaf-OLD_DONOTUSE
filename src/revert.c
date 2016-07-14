@@ -27,8 +27,5 @@ void revert()
                     chunk.tiles[tile].field.energy1);
             }));
         }
-#ifdef USE_KOKKOS
-        Kokkos::fence();
-#endif
     }
 }

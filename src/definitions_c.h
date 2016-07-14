@@ -6,7 +6,16 @@
 // #include <functional>
 
 #ifdef USE_KOKKOS
+
 #include <Kokkos_Core.hpp>
+
+#endif
+
+
+#ifdef USE_KOKKOS
+#include "kokkosdefs.h"
+#else
+#include "openmpdefs.h"
 #endif
 
 struct state_type {
@@ -50,43 +59,6 @@ struct profiler_type {
            mpi_halo_exchange;
 };
 
-struct field_type {
-    double * density0; double * density1;
-    double * energy0; double * energy1;
-    double * pressure;
-    double * viscosity;
-    double * soundspeed;
-    double * xvel0; double * xvel1;
-    double * yvel0; double * yvel1;
-    double * vol_flux_x; double * mass_flux_x;
-    double * vol_flux_y; double * mass_flux_y;
-    //node_flux; stepbymass; volume_change; pre_vo
-    double * work_array1;
-    //node_mass_post; post_vol
-    double * work_array2;
-    //node_mass_pre; pre_mass
-    double * work_array3;
-    //advec_vel; post_mass
-    double * work_array4;
-    //mom_flux; advec_vol
-    double * work_array5;
-    //pre_vol; post_ener
-    double * work_array6;
-    //post_vol; ener_flux
-    double * work_array7;
-    double * cellx;
-    double * celly;
-    double * vertexx;
-    double * vertexy;
-    double * celldx;
-    double * celldy;
-    double * vertexdx;
-    double * vertexdy;
-    double * volume;
-    double * xarea;
-    double * yarea;
-};
-
 struct tile_type {
     struct field_type field;
     int tile_neighbours[4];
@@ -99,9 +71,9 @@ struct tile_type {
 struct chunk_type {
     int task;
     int chunk_neighbours[4];
-    double *left_rcv_buffer, *right_rcv_buffer, *bottom_rcv_buffer, *top_rcv_buffer,
-           *left_snd_buffer, *right_snd_buffer, *bottom_snd_buffer, *top_snd_buffer;
-    struct tile_type *tiles;
+    double* left_rcv_buffer, *right_rcv_buffer, *bottom_rcv_buffer, *top_rcv_buffer,
+            *left_snd_buffer, *right_snd_buffer, *bottom_snd_buffer, *top_snd_buffer;
+    struct tile_type* tiles;
     int x_min,
         y_min,
         x_max,
@@ -117,7 +89,8 @@ struct chunk_type {
         top_boundary;
 };
 
-extern struct state_type *states;
+
+extern struct state_type* states;
 
 extern int number_of_states;
 
@@ -171,56 +144,17 @@ extern struct grid_type grid;
 #define BOSSPRINT(...) if(parallel.boss) fprintf(__VA_ARGS__)
 
 
-#ifdef USE_KOKKOS
-
-#define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \
-    Kokkos::parallel_for((k_to) - (k_from) + 1, KOKKOS_LAMBDA (const int& i) { \
-            int k = i + (k_from); \
-        _Pragma("ivdep") \
-        for(int j = (j_from); j <= (j_to); j++) { \
-            body ;\
-        } \
-    });
-
-#else
-
-#define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \
-    _Pragma("omp for") \
-    for(int k = (k_from); k <= (k_to); k++) { \
-        _Pragma("ivdep") \
-        for(int j = (j_from); j <= (j_to); j++) { \
-            body ;\
-        } \
-    }
-
-#endif
-
 #define FTNREF2D(i_index, j_index, i_size, i_lb, j_lb) \
     ((i_size) * (j_index - (j_lb)) + \
         (i_index) - (i_lb))
 
-#define T1ACCESS(i, j) FTNREF2D(i, j, x_max + 4, x_min - 2, y_min - 2)
-#define T2ACCESS(i, j) FTNREF2D(i, j, x_max + 5, x_min - 2, y_min - 2)
+#define T1ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 4, x_min - 2, y_min - 2)]
+#define T2ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 5, x_min - 2, y_min - 2)]
 
-#define DENSITY0(d, i, j) d[T1ACCESS(i, j)]
-#define DENSITY1(d, i, j) d[T1ACCESS(i, j)]
-#define ENERGY0(d, i, j) d[T1ACCESS(i, j)]
-#define ENERGY1(d, i, j) d[T1ACCESS(i, j)]
-#define PRESSURE(d, i, j) d[T1ACCESS(i, j)]
-#define VISCOSITY(d, i, j) d[T1ACCESS(i, j)]
-#define SOUNDSPEED(d, i, j) d[T1ACCESS(i, j)]
-#define VEL(d, i, j) d[T2ACCESS(i, j)]
-#define XVEL0(d, i, j) VEL(d, i, j)
-#define XVEL1(d, i, j) VEL(d, i, j)
-#define YVEL0(d, i, j) VEL(d, i, j)
-#define YVEL1(d, i, j) VEL(d, i, j)
-#define VOL_FLUX_X(d, i, j) d[T2ACCESS(i, j)]
-#define MASS_FLUX_X(d, i, j) d[T2ACCESS(i, j)]
-#define VOL_FLUX_Y(d, i, j) d[T1ACCESS(i, j)]
-#define MASS_FLUX_Y(d, i, j) d[T1ACCESS(i, j)]
-#define VOLUME(d, i, j) d[T1ACCESS(i, j)]
-#define XAREA(d, i, j) d[T2ACCESS(i, j)]
-#define YAREA(d, i, j) d[T1ACCESS(i, j)]
+#define VOLUME(d, i, j)        T1ACCESS(d, i, j)
+#define XAREA(d, i, j)         T2ACCESS(d, i, j)
+#define YAREA(d, i, j)         T1ACCESS(d, i, j)
 
-#define WORK_ARRAY(d, i, j) d[T2ACCESS(i, j)]
+#define WORK_ARRAY(d, i, j)    T2ACCESS(d, i, j)
+
 #endif

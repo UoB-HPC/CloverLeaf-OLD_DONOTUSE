@@ -28,8 +28,5 @@ void viscosity()
                     chunk.tiles[tile].field.yvel0);
             }));
         }
-#ifdef USE_KOKKOS
-        Kokkos::fence();
-#endif
     }
 }

@@ -1,10 +1,10 @@
 #include "generate_chunk.h"
-#include "kernels/generate_chunk_kernel_c.c"
 #include "definitions_c.h"
+#include "kernels/generate_chunk_kernel_c.c"
 
 void generate_chunk(int tile)
 {
-    double *state_density = (double*)malloc(sizeof(double) * number_of_states),
+    double* state_density = (double*)malloc(sizeof(double) * number_of_states),
             *state_energy = (double*)malloc(sizeof(double) * number_of_states),
              *state_xvel = (double*)malloc(sizeof(double) * number_of_states),
               *state_yvel = (double*)malloc(sizeof(double) * number_of_states),
@@ -13,7 +13,7 @@ void generate_chunk(int tile)
                  *state_ymin = (double*)malloc(sizeof(double) * number_of_states),
                   *state_ymax = (double*)malloc(sizeof(double) * number_of_states),
                    *state_radius = (double*)malloc(sizeof(double) * number_of_states);
-    int *state_geometry = (int*)malloc(sizeof(int) * number_of_states);
+    int* state_geometry = (int*)malloc(sizeof(int) * number_of_states);
 
     for (int state = 0; state < number_of_states; state++) {
         state_density[state] = states[state].density;
@@ -94,7 +94,4 @@ void generate_chunk(int tile)
             }));
         }
     }
-#ifdef USE_KOKKOS
-    Kokkos::fence();
-#endif
 }

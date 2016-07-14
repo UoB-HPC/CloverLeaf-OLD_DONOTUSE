@@ -11,7 +11,7 @@
 #define _FTOC_MACROS_
 
 #define FTNREF1D(i_index,i_lb) ((i_index)-(i_lb))
-#define FTNREF2D(i_index,j_index,i_size,i_lb,j_lb) ((i_size)*(j_index-(j_lb))+(i_index)-(i_lb))
+// #define FTNREF2D(i_index,j_index,i_size,i_lb,j_lb) ((i_size)*(j_index-(j_lb))+(i_index)-(i_lb))
 #define FTNREF3D(i_index,j_index,k_index,i_size,j_size,i_lb,j_lb,k_lb) (i_size)*(j_size)*(k_index-k_lb)+(i_size)*(j_index-j_lb)+i_index-i_lb
 #define FTNREF4D(i_index,j_index,k_index,l_index,i_size,j_size,k_size,i_lb,j_lb,k_lb,l_lb) (i_size)*(j_size)*(k_size)*(l_index-l_lb)+(i_size)*(j_size)*(k_index-k_lb)+(i_size)*(j_index-j_lb)+i_index-i_lb
 #define FTNREF5D(i_index,j_index,k_index,l_index,m_index,i_size,j_size,k_size,l_size,i_lb,j_lb,k_lb,l_lb,m_lb) (i_size)*(j_size)*(k_size)*(l_size)*(m_index-m_lb)+(i_size)*(j_size)*(k_size)*(l_index-l_lb)+(i_size)*(j_size)*(k_index-k_lb)+(i_size)*(j_index-j_lb)+i_index-i_lb

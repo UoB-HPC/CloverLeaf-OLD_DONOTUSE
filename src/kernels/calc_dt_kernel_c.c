@@ -40,13 +40,14 @@ double calc_dt_kernel_c_(
     const double* __restrict__ celldx,
     const double* __restrict__ celldy,
     const double* __restrict__ volume,
-    const double* __restrict__ density0,
-    const double* __restrict__ energy0 ,
-    const double* __restrict__ pressure,
-    const double* __restrict__ viscosity ,
-    const double* __restrict__ soundspeed,
-    const double* __restrict__ xvel0 ,
-    const double* __restrict__ yvel0)
+    CONSTFIELDPARAM density0,
+    CONSTFIELDPARAM energy0 ,
+    CONSTFIELDPARAM pressure,
+    CONSTFIELDPARAM viscosity ,
+    CONSTFIELDPARAM soundspeed,
+    CONSTFIELDPARAM xvel0 ,
+    CONSTFIELDPARAM yvel0,
+    double* __restrict__ dtmin)
 {
     double dsx = celldx[FTNREF1D(j, x_min - 2)];
     double dsy = celldy[FTNREF1D(k, y_min - 2)];
@@ -81,5 +82,25 @@ double calc_dt_kernel_c_(
         dtdivt = g_big;
     }
 
-    return MIN(dtct, MIN(dtut, MIN(dtvt, dtdivt)));
+    WORK_ARRAY(dtmin, j, k) = MIN(dtct, MIN(dtut, MIN(dtvt, dtdivt)));
+}
+
+
+void calc_dt_min_val(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double* __restrict__ dt_min,
+    double* dt_min_val)
+{
+    *dt_min_val = g_big;
+    // TODO min reduction
+    for (int k = y_min; k <= y_max; k++) {
+#pragma ivdep
+        for (int j = x_min; j <= x_max; j++) {
+            if (dt_min[FTNREF2D(j, k, x_max + 5, x_min - 2, y_min - 2)] < *dt_min_val)
+                *dt_min_val = dt_min[FTNREF2D(j, k, x_max + 5, x_min - 2, y_min - 2)];
+        }
+    }
 }

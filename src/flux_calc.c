@@ -52,9 +52,6 @@ void flux_calc()
                     chunk.tiles[tile].field.vol_flux_y);
             }));
         }
-#ifdef USE_KOKKOS
-        Kokkos::fence();
-#endif
     }
 
     if (profiler_on) profiler.flux += timer() - kernel_time;

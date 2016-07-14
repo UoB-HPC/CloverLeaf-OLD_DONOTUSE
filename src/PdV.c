@@ -80,10 +80,6 @@ void PdV(bool predict)
         }
     }
 
-#ifdef USE_KOKKOS
-    Kokkos::fence();
-#endif
-
 
     if (profiler_on) profiler.PdV += timer() - kernel_time;
 

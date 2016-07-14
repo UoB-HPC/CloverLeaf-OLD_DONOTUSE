@@ -1,16 +1,19 @@
 #include "update_halo.h"
 #include "definitions_c.h"
 #include "timer_c.h"
-#include "update_tile_halo.h"
+// #include "update_tile_halo.h"
 #include "kernels/update_halo_kernel_c.c"
 #include "clover.h"
 
-void update_halo(int *fields, int depth)
+void update_halo(int* fields, int depth)
 {
+#ifdef USE_KOKKOS
+    Kokkos::fence();
+#endif
     double kernel_time = 0.0;
     if (profiler_on) kernel_time = timer();
 
-    update_tile_halo(fields, depth);
+    // update_tile_halo(fields, depth);
 
     if (profiler_on) {
         profiler.tile_halo_exchange += (timer() - kernel_time);
