@@ -155,6 +155,5 @@ extern struct grid_type grid;
 #define XAREA(d, i, j)         T2ACCESS(d, i, j)
 #define YAREA(d, i, j)         T1ACCESS(d, i, j)
 
-#define WORK_ARRAY(d, i, j)    T2ACCESS(d, i, j)
 
 #endif

@@ -66,6 +66,8 @@ struct field_type {
 #define VOL_FLUX_Y(d, i, j)    T1ACCESS(d, i, j)
 #define MASS_FLUX_Y(d, i, j)   T1ACCESS(d, i, j)
 
+#define WORK_ARRAY(d, i, j)    T2ACCESS(d, i, j)
+
 #define CONSTFIELDPARAM     const double* __restrict__
 #define FIELDPARAM          double* __restrict__
 

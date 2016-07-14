@@ -12,38 +12,60 @@ struct field_type {
     Kokkos::View<double**>* vol_flux_x; Kokkos::View<double**>* mass_flux_x;
     Kokkos::View<double**>* vol_flux_y; Kokkos::View<double**>* mass_flux_y;
     //node_flux; stepbymass; volume_change; pre_vo
-    double* work_array1;
+    Kokkos::View<double**>* work_array1;
     //node_mass_post; post_vol
-    double* work_array2;
+    Kokkos::View<double**>* work_array2;
     //node_mass_pre; pre_mass
-    double* work_array3;
+    Kokkos::View<double**>* work_array3;
     //advec_vel; post_mass
-    double* work_array4;
+    Kokkos::View<double**>* work_array4;
     //mom_flux; advec_vol
-    double* work_array5;
+    Kokkos::View<double**>* work_array5;
     //pre_vol; post_ener
-    double* work_array6;
+    Kokkos::View<double**>* work_array6;
     //post_vol; ener_flux
-    double* work_array7;
-    double* cellx;
-    double* celly;
-    double* vertexx;
-    double* vertexy;
-    double* celldx;
-    double* celldy;
-    double* vertexdx;
-    double* vertexdy;
+    Kokkos::View<double**>* work_array7;
+
+    Kokkos::View<double*>* cellx;
+    Kokkos::View<double*>* celly;
+    Kokkos::View<double*>* vertexx;
+    Kokkos::View<double*>* vertexy;
+    Kokkos::View<double*>* celldx;
+    Kokkos::View<double*>* celldy;
+    Kokkos::View<double*>* vertexdx;
+    Kokkos::View<double*>* vertexdy;
+
     double* volume;
     double* xarea;
     double* yarea;
 };
 
 
-#define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \
-    Kokkos::parallel_for((k_to) - (k_from) + 1, KOKKOS_LAMBDA (const int& i) { \
-            int k = i + (k_from); \
-        _Pragma("ivdep") \
-        for(int j = (j_from); j <= (j_to); j++) { \
+// outer y's, inner x's
+// #define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
+//     Kokkos::parallel_for((y_to) - (y_from) + 1, KOKKOS_LAMBDA (const int& i) { \
+//             int k = i + (y_from); \
+//         _Pragma("ivdep") \
+//         for(int j = (x_from); j <= (x_to); j++) { \
+//             body ;\
+//         } \
+//     });
+
+// double kokkos - needs policy stuff
+// #define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
+//     Kokkos::parallel_for((y_to) - (y_from) + 1, KOKKOS_LAMBDA (const int& i) { \
+//         int k = i + (y_from); \
+//         Kokkos::parallel_for((x_to) - (x_from) + 1, KOKKOS_LAMBDA (const int& f) { \
+//             int j = f + (x_from); \
+//             body ;\
+//         }); \
+//     });
+
+// outer x's, inner y's
+#define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
+    Kokkos::parallel_for((x_to) - (x_from) + 1, KOKKOS_LAMBDA (const int& i) { \
+            int j = i + (x_from); \
+        for(int k = (y_from); k <= (y_to); k++) { \
             body ;\
         } \
     });
@@ -70,7 +92,12 @@ struct field_type {
 #define VOL_FLUX_Y(d, x, y)    KOKKOS_ACCESS(d, x, y)
 #define MASS_FLUX_Y(d, x, y)   KOKKOS_ACCESS(d, x, y)
 
+#define WORK_ARRAY(d, x, y)    KOKKOS_ACCESS(d, x, y)
+
 #define CONSTFIELDPARAM   const Kokkos::View<double**>*
 #define FIELDPARAM        Kokkos::View<double**>*
-
+// const_1d_field_type
+// const_2d_field_type
+// 1d_field_type
+// 2d_field_type
 #define T3ACCESS(d, x, y) (*d)(x - x_min, y - y_min)

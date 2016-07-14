@@ -35,8 +35,8 @@
 void ms1(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    double* __restrict__ pre_vol,
-    double* __restrict__ post_vol ,
+    FIELDPARAM pre_vol,
+    FIELDPARAM post_vol ,
     const double* __restrict__ volume ,
     CONSTFIELDPARAM vol_flux_x ,
     CONSTFIELDPARAM vol_flux_y)
@@ -52,8 +52,8 @@ void ms1(
 void ms2(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    double* __restrict__ pre_vol,
-    double* __restrict__ post_vol ,
+    FIELDPARAM pre_vol,
+    FIELDPARAM post_vol ,
     const double* __restrict__ volume ,
     CONSTFIELDPARAM vol_flux_x ,
     CONSTFIELDPARAM vol_flux_y)
@@ -69,8 +69,8 @@ void ms2(
 void ms3(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    double* __restrict__ pre_vol,
-    double* __restrict__ post_vol ,
+    FIELDPARAM pre_vol,
+    FIELDPARAM post_vol ,
     const double* __restrict__ volume ,
     CONSTFIELDPARAM vol_flux_x ,
     CONSTFIELDPARAM vol_flux_y)
@@ -84,8 +84,8 @@ void ms3(
 void ms4(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    double* __restrict__ pre_vol,
-    double* __restrict__ post_vol ,
+    FIELDPARAM pre_vol,
+    FIELDPARAM post_vol ,
     const double* __restrict__ volume ,
     CONSTFIELDPARAM vol_flux_x ,
     CONSTFIELDPARAM vol_flux_y)
@@ -108,12 +108,12 @@ void advec_mom_kernel_c_(
     CONSTFIELDPARAM vol_flux_y ,
     const double* __restrict__ volume ,
     CONSTFIELDPARAM density1 ,
-    double* __restrict__ node_flux,
-    double* __restrict__ node_mass_post ,
-    double* __restrict__ node_mass_pre,
-    double* __restrict__ mom_flux ,
-    double* __restrict__ pre_vol,
-    double* __restrict__ post_vol ,
+    FIELDPARAM node_flux,
+    FIELDPARAM node_mass_post ,
+    FIELDPARAM node_mass_pre,
+    FIELDPARAM mom_flux ,
+    FIELDPARAM pre_vol,
+    FIELDPARAM post_vol ,
     const double* __restrict__ celldx,
     const double* __restrict__ celldy,
     int sweep_number,

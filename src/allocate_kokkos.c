@@ -60,22 +60,23 @@ void allocate()
         chunk.tiles[tile].field.vol_flux_y  = new Kokkos::View<double**>("vol_flux_y",  size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 3));
         chunk.tiles[tile].field.mass_flux_y = new Kokkos::View<double**>("mass_flux_y", size1d(xmin - 2, xmax + 2), size1d(ymin - 2, ymax + 3));
 
-        chunk.tiles[tile].field.work_array1 = (double*)calloc(sizeof(double), work_array1Size);
-        chunk.tiles[tile].field.work_array2 = (double*)calloc(sizeof(double), work_array2Size);
-        chunk.tiles[tile].field.work_array3 = (double*)calloc(sizeof(double), work_array3Size);
-        chunk.tiles[tile].field.work_array4 = (double*)calloc(sizeof(double), work_array4Size);
-        chunk.tiles[tile].field.work_array5 = (double*)calloc(sizeof(double), work_array5Size);
-        chunk.tiles[tile].field.work_array6 = (double*)calloc(sizeof(double), work_array6Size);
-        chunk.tiles[tile].field.work_array7 = (double*)calloc(sizeof(double), work_array7Size);
+        chunk.tiles[tile].field.work_array1 = new Kokkos::View<double**>("work_array1", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
+        chunk.tiles[tile].field.work_array2 = new Kokkos::View<double**>("work_array2", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
+        chunk.tiles[tile].field.work_array3 = new Kokkos::View<double**>("work_array3", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
+        chunk.tiles[tile].field.work_array4 = new Kokkos::View<double**>("work_array4", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
+        chunk.tiles[tile].field.work_array5 = new Kokkos::View<double**>("work_array5", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
+        chunk.tiles[tile].field.work_array6 = new Kokkos::View<double**>("work_array6", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
+        chunk.tiles[tile].field.work_array7 = new Kokkos::View<double**>("work_array7", size1d(xmin - 2, xmax + 3), size1d(ymin - 2, ymax + 3));
 
-        chunk.tiles[tile].field.cellx    = (double*)calloc(sizeof(double), cellxSize);
-        chunk.tiles[tile].field.celly    = (double*)calloc(sizeof(double), cellySize);
-        chunk.tiles[tile].field.vertexx  = (double*)calloc(sizeof(double), vertexxSize);
-        chunk.tiles[tile].field.vertexy  = (double*)calloc(sizeof(double), vertexySize);
-        chunk.tiles[tile].field.celldx   = (double*)calloc(sizeof(double), celldxSize);
-        chunk.tiles[tile].field.celldy   = (double*)calloc(sizeof(double), celldySize);
-        chunk.tiles[tile].field.vertexdx = (double*)calloc(sizeof(double), vertexdxSize);
-        chunk.tiles[tile].field.vertexdy = (double*)calloc(sizeof(double), vertexdySize);
+        chunk.tiles[tile].field.cellx    = new Kokkos::View<double*>("cellx", cellxSize);
+        chunk.tiles[tile].field.celly    = new Kokkos::View<double*>("celly", cellySize);
+        chunk.tiles[tile].field.vertexx  = new Kokkos::View<double*>("vertexx", vertexxSize);
+        chunk.tiles[tile].field.vertexy  = new Kokkos::View<double*>("vertexy", vertexySize);
+        chunk.tiles[tile].field.celldx   = new Kokkos::View<double*>("celldx", celldxSize);
+        chunk.tiles[tile].field.celldy   = new Kokkos::View<double*>("celldy", celldySize);
+        chunk.tiles[tile].field.vertexdx = new Kokkos::View<double*>("vertexdx", vertexdxSize);
+        chunk.tiles[tile].field.vertexdy = new Kokkos::View<double*>("vertexdy", vertexdySize);
+
         chunk.tiles[tile].field.volume   = (double*)calloc(sizeof(double), volumeSize);
         chunk.tiles[tile].field.xarea    = (double*)calloc(sizeof(double), xareaSize);
         chunk.tiles[tile].field.yarea    = (double*)calloc(sizeof(double), yareaSize);

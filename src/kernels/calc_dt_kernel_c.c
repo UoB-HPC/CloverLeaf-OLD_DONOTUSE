@@ -47,7 +47,7 @@ double calc_dt_kernel_c_(
     CONSTFIELDPARAM soundspeed,
     CONSTFIELDPARAM xvel0 ,
     CONSTFIELDPARAM yvel0,
-    double* __restrict__ dtmin)
+    FIELDPARAM dtmin)
 {
     double dsx = celldx[FTNREF1D(j, x_min - 2)];
     double dsy = celldy[FTNREF1D(k, y_min - 2)];
@@ -91,7 +91,7 @@ void calc_dt_min_val(
     int x_max,
     int y_min,
     int y_max,
-    double* __restrict__ dt_min,
+    FIELDPARAM dt_min,
     double* dt_min_val)
 {
     *dt_min_val = g_big;
@@ -99,8 +99,8 @@ void calc_dt_min_val(
     for (int k = y_min; k <= y_max; k++) {
 #pragma ivdep
         for (int j = x_min; j <= x_max; j++) {
-            if (dt_min[FTNREF2D(j, k, x_max + 5, x_min - 2, y_min - 2)] < *dt_min_val)
-                *dt_min_val = dt_min[FTNREF2D(j, k, x_max + 5, x_min - 2, y_min - 2)];
+            if (WORK_ARRAY(dt_min, j,  k) < *dt_min_val)
+                *dt_min_val = WORK_ARRAY(dt_min, j,  k);
         }
     }
 }

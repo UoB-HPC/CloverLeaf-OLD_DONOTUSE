@@ -47,7 +47,7 @@ void pdv_kernel_predict_c_(
     CONSTFIELDPARAM xvel1,
     CONSTFIELDPARAM yvel0,
     CONSTFIELDPARAM yvel1,
-    double* __restrict__ volume_change)
+    FIELDPARAM volume_change)
 {
     double left_flux = (XAREA(xarea, j, k))
                        * (XVEL0(xvel0, j, k)
@@ -112,7 +112,7 @@ void pdv_kernel_no_predict_c_(
     CONSTFIELDPARAM xvel1,
     CONSTFIELDPARAM yvel0,
     CONSTFIELDPARAM yvel1,
-    double* __restrict__ volume_change)
+    FIELDPARAM volume_change)
 {
 
     double left_flux = (XAREA(xarea, j, k))
