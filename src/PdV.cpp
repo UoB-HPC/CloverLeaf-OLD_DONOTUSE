@@ -21,8 +21,7 @@ void PdV(bool predict)
                     chunk.tiles[tile].t_ymin,
                     chunk.tiles[tile].t_ymax,
                     chunk.tiles[tile].t_xmin,
-                    chunk.tiles[tile].t_xmax,
-                ({
+                chunk.tiles[tile].t_xmax, {
                     pdv_kernel_predict_c_(
                         j, k,
                         chunk.tiles[tile].t_xmin,
@@ -44,7 +43,7 @@ void PdV(bool predict)
                         chunk.tiles[tile].field.yvel0,
                         chunk.tiles[tile].field.yvel1,
                         chunk.tiles[tile].field.work_array1);
-                }));
+                });
             }
         } else {
             for (int tile = 0; tile < tiles_per_chunk; tile++) {
@@ -52,8 +51,7 @@ void PdV(bool predict)
                     chunk.tiles[tile].t_ymin,
                     chunk.tiles[tile].t_ymax,
                     chunk.tiles[tile].t_xmin,
-                    chunk.tiles[tile].t_xmax,
-                ({
+                chunk.tiles[tile].t_xmax, {
                     pdv_kernel_no_predict_c_(
                         j, k,
                         chunk.tiles[tile].t_xmin,
@@ -75,7 +73,7 @@ void PdV(bool predict)
                         chunk.tiles[tile].field.yvel0,
                         chunk.tiles[tile].field.yvel1,
                         chunk.tiles[tile].field.work_array1);
-                }));
+                });
             }
         }
     }

@@ -35,11 +35,11 @@
 void ms1(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    FIELDPARAM pre_vol,
-    FIELDPARAM post_vol ,
-    const double* __restrict__ volume ,
-    CONSTFIELDPARAM vol_flux_x ,
-    CONSTFIELDPARAM vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     WORK_ARRAY(post_vol, j, k) = VOLUME(volume, j, k)
                                  + VOL_FLUX_Y(vol_flux_y, j, k + 1)
@@ -52,11 +52,11 @@ void ms1(
 void ms2(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    FIELDPARAM pre_vol,
-    FIELDPARAM post_vol ,
-    const double* __restrict__ volume ,
-    CONSTFIELDPARAM vol_flux_x ,
-    CONSTFIELDPARAM vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     WORK_ARRAY(post_vol, j, k) = VOLUME(volume, j, k)
                                  + VOL_FLUX_X(vol_flux_x, j + 1, k)
@@ -69,11 +69,11 @@ void ms2(
 void ms3(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    FIELDPARAM pre_vol,
-    FIELDPARAM post_vol ,
-    const double* __restrict__ volume ,
-    CONSTFIELDPARAM vol_flux_x ,
-    CONSTFIELDPARAM vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     WORK_ARRAY(post_vol, j, k) = VOLUME(volume, j, k);
     WORK_ARRAY(pre_vol, j, k) = WORK_ARRAY(post_vol, j, k)
@@ -84,11 +84,11 @@ void ms3(
 void ms4(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
-    FIELDPARAM pre_vol,
-    FIELDPARAM post_vol ,
-    const double* __restrict__ volume ,
-    CONSTFIELDPARAM vol_flux_x ,
-    CONSTFIELDPARAM vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     WORK_ARRAY(post_vol, j, k) = VOLUME(volume, j, k);
     WORK_ARRAY(pre_vol, j, k) = WORK_ARRAY(post_vol, j, k)
@@ -97,25 +97,25 @@ void ms4(
 }
 
 void advec_mom_kernel_c_(
-    FIELDPARAM vel1,
+    field_2d_t vel1,
     int x_min,
     int x_max,
     int y_min,
     int y_max,
-    CONSTFIELDPARAM mass_flux_x,
-    CONSTFIELDPARAM vol_flux_x ,
-    CONSTFIELDPARAM mass_flux_y,
-    CONSTFIELDPARAM vol_flux_y ,
-    const double* __restrict__ volume ,
-    CONSTFIELDPARAM density1 ,
-    FIELDPARAM node_flux,
-    FIELDPARAM node_mass_post ,
-    FIELDPARAM node_mass_pre,
-    FIELDPARAM mom_flux ,
-    FIELDPARAM pre_vol,
-    FIELDPARAM post_vol ,
-    const double* __restrict__ celldx,
-    const double* __restrict__ celldy,
+    const_field_2d_t mass_flux_x,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t mass_flux_y,
+    const_field_2d_t vol_flux_y ,
+    const_field_2d_t volume ,
+    const_field_2d_t density1 ,
+    field_2d_t       node_flux,
+    field_2d_t       node_mass_post ,
+    field_2d_t       node_mass_pre,
+    field_2d_t       mom_flux ,
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_1d_t celldx,
+    const_field_1d_t celldy,
     int sweep_number,
     int direction)
 {
@@ -184,7 +184,7 @@ void advec_mom_kernel_c_(
                     dif = upwind;
                 }
                 double sigma = fabs(WORK_ARRAY(node_flux, j, k)) / (WORK_ARRAY(node_mass_pre, donor, k));
-                double width = celldx[FTNREF1D(j, x_min - 2)];
+                double width = FIELD_1D(celldx, j,  x_min - 2);
                 double vdiffuw = VEL(vel1, donor, k) - VEL(vel1, upwind, k);
                 double vdiffdw = VEL(vel1, downwind, k) - VEL(vel1, donor, k);
                 double limiter = 0.0;
@@ -194,7 +194,7 @@ void advec_mom_kernel_c_(
                     double adw = fabs(vdiffdw);
                     double wind = 1.0;
                     if (vdiffdw <= 0.0) wind = -1.0;
-                    limiter = wind * MIN(width * ((2.0 - sigma) * adw / width + (1.0 + sigma) * auw / celldx[FTNREF1D(dif, x_min - 2)]) / 6.0, MIN(auw, adw));
+                    limiter = wind * MIN(width * ((2.0 - sigma) * adw / width + (1.0 + sigma) * auw / FIELD_1D(celldx, dif,  x_min - 2)) / 6.0, MIN(auw, adw));
                 }
                 double advec_vel_s = VEL(vel1, donor, k) + (1.0 - sigma) * limiter;
                 WORK_ARRAY(mom_flux, j, k) = advec_vel_s
@@ -255,7 +255,7 @@ void advec_mom_kernel_c_(
                     dif = upwind;
                 }
                 double sigma = fabs(WORK_ARRAY(node_flux, j, k)) / (WORK_ARRAY(node_mass_pre, j, donor));
-                double width = celldy[FTNREF1D(k, y_min - 2)];
+                double width = FIELD_1D(celldy, k,  y_min - 2);
                 double vdiffuw = VEL(vel1, j, donor) - VEL(vel1, j, upwind);
                 double vdiffdw = VEL(vel1, j, downwind) - VEL(vel1, j, donor);
                 double limiter = 0.0;
@@ -265,7 +265,7 @@ void advec_mom_kernel_c_(
                     double adw = fabs(vdiffdw);
                     double wind = 1.0;
                     if (vdiffdw <= 0.0) wind = -1.0;
-                    limiter = wind * MIN(width * ((2.0 - sigma) * adw / width + (1.0 + sigma) * auw / celldy[FTNREF1D(dif, y_min - 2)]) / 6.0, MIN(auw, adw));
+                    limiter = wind * MIN(width * ((2.0 - sigma) * adw / width + (1.0 + sigma) * auw / FIELD_1D(celldy, dif,  y_min - 2)) / 6.0, MIN(auw, adw));
                 }
                 double advec_vel_s = VEL(vel1, j, donor) + (1.0 - sigma) * limiter;
                 WORK_ARRAY(mom_flux, j, k) = advec_vel_s

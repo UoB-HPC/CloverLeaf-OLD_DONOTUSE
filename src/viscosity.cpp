@@ -12,7 +12,7 @@ void viscosity()
             chunk.tiles[tile].t_ymax,
             chunk.tiles[tile].t_xmin,
             chunk.tiles[tile].t_xmax,
-            ({
+            {
                 viscosity_kernel_c_(
                     j, k,
                     chunk.tiles[tile].t_xmin,
@@ -26,7 +26,7 @@ void viscosity()
                     chunk.tiles[tile].field.viscosity,
                     chunk.tiles[tile].field.xvel0,
                     chunk.tiles[tile].field.yvel0);
-            }));
+            });
         }
     }
 }

@@ -31,133 +31,132 @@
 #include "../definitions_c.h"
 
 void pdv_kernel_predict_c_(
-    int j, int k,
-    int x_min, int x_max, int y_min, int y_max,
-    double dt,
-    const double* __restrict__ xarea,
-    const double* __restrict__ yarea,
-    const double* __restrict__ volume,
-    CONSTFIELDPARAM density0,
-    FIELDPARAM density1,
-    CONSTFIELDPARAM energy0,
-    FIELDPARAM energy1,
-    CONSTFIELDPARAM pressure,
-    CONSTFIELDPARAM viscosity,
-    CONSTFIELDPARAM xvel0,
-    CONSTFIELDPARAM xvel1,
-    CONSTFIELDPARAM yvel0,
-    CONSTFIELDPARAM yvel1,
-    FIELDPARAM volume_change)
+  int j, int k,
+  int x_min, int x_max, int y_min, int y_max,
+  double dt,
+  const_field_2d_t xarea,
+  const_field_2d_t yarea,
+  const_field_2d_t volume,
+  const_field_2d_t density0,
+  field_2d_t       density1,
+  const_field_2d_t energy0,
+  field_2d_t       energy1,
+  const_field_2d_t pressure,
+  const_field_2d_t viscosity,
+  const_field_2d_t xvel0,
+  const_field_2d_t xvel1,
+  const_field_2d_t yvel0,
+  const_field_2d_t yvel1,
+  field_2d_t       volume_change)
 {
-    double left_flux = (XAREA(xarea, j, k))
-                       * (XVEL0(xvel0, j, k)
-                          + XVEL0(xvel0, j, k + 1)
-                          + XVEL0(xvel0, j, k)
-                          + XVEL0(xvel0, j, k + 1))
-                       * 0.25 * dt * 0.5;
-    double right_flux = (XAREA(xarea, j + 1, k))
-                        * (XVEL0(xvel0, j + 1, k)
-                           + XVEL0(xvel0, j + 1, k + 1)
-                           + XVEL0(xvel0, j + 1, k)
-                           + XVEL0(xvel0, j + 1, k + 1))
-                        * 0.25 * dt * 0.5;
-    double bottom_flux = (YAREA(yarea, j, k))
-                         * (YVEL0(yvel0, j, k)
-                            + YVEL0(yvel0, j + 1, k)
-                            + YVEL0(yvel0, j, k)
-                            + YVEL0(yvel0, j + 1, k))
-                         * 0.25 * dt * 0.5;
-    double top_flux = (YAREA(yarea, j, k + 1))
-                      * (YVEL0(yvel0, j, k + 1)
-                         + YVEL0(yvel0, j + 1, k + 1)
-                         + YVEL0(yvel0, j, k + 1)
-                         + YVEL0(yvel0, j + 1, k + 1))
+  double left_flux = (XAREA(xarea, j, k))
+                     * (XVEL0(xvel0, j, k)
+                        + XVEL0(xvel0, j, k + 1)
+                        + XVEL0(xvel0, j, k)
+                        + XVEL0(xvel0, j, k + 1))
+                     * 0.25 * dt * 0.5;
+  double right_flux = (XAREA(xarea, j + 1, k))
+                      * (XVEL0(xvel0, j + 1, k)
+                         + XVEL0(xvel0, j + 1, k + 1)
+                         + XVEL0(xvel0, j + 1, k)
+                         + XVEL0(xvel0, j + 1, k + 1))
                       * 0.25 * dt * 0.5;
+  double bottom_flux = (YAREA(yarea, j, k))
+                       * (YVEL0(yvel0, j, k)
+                          + YVEL0(yvel0, j + 1, k)
+                          + YVEL0(yvel0, j, k)
+                          + YVEL0(yvel0, j + 1, k))
+                       * 0.25 * dt * 0.5;
+  double top_flux = (YAREA(yarea, j, k + 1))
+                    * (YVEL0(yvel0, j, k + 1)
+                       + YVEL0(yvel0, j + 1, k + 1)
+                       + YVEL0(yvel0, j, k + 1)
+                       + YVEL0(yvel0, j + 1, k + 1))
+                    * 0.25 * dt * 0.5;
 
-    double total_flux = right_flux - left_flux + top_flux - bottom_flux;
+  double total_flux = right_flux - left_flux + top_flux - bottom_flux;
 
-    WORK_ARRAY(volume_change, j, k) = VOLUME(volume, j, k)
-                                      / (VOLUME(volume, j, k) + total_flux);
+  WORK_ARRAY(volume_change, j, k) = VOLUME(volume, j, k)
+                                    / (VOLUME(volume, j, k) + total_flux);
 
 // min_cell_volume = MIN(VOLUME(volume, j,k) + right_flux - left_flux + top_flux - bottom_flux
 // , MIN(VOLUME(volume, j,k) + right_flux - left_flux
 // , VOLUME(volume, j,k) + top_flux - bottom_flux));
 
-    double recip_volume = 1.0 / VOLUME(volume, j, k);
+  double recip_volume = 1.0 / VOLUME(volume, j, k);
 
-    double energy_change = (PRESSURE(pressure, j, k) / DENSITY0(density0, j, k)
-                            + VISCOSITY(viscosity, j, k) / DENSITY0(density0, j, k))
-                           * total_flux * recip_volume;
+  double energy_change = (PRESSURE(pressure, j, k) / DENSITY0(density0, j, k)
+                          + VISCOSITY(viscosity, j, k) / DENSITY0(density0, j, k))
+                         * total_flux * recip_volume;
 
-    ENERGY1(energy1, j, k) = ENERGY0(energy0, j, k) - energy_change;
+  ENERGY1(energy1, j, k) = ENERGY0(energy0, j, k) - energy_change;
 
-    DENSITY1(density1, j, k) = DENSITY0(density0, j, k)
-                               * WORK_ARRAY(volume_change, j, k);
+  DENSITY1(density1, j, k) = DENSITY0(density0, j, k)
+                             * WORK_ARRAY(volume_change, j, k);
 }
 
 void pdv_kernel_no_predict_c_(
-    int j, int k,
-    int x_min, int x_max, int y_min, int y_max,
-    double dt,
-    const double* __restrict__ xarea,
-    const double* __restrict__ yarea,
-    const double* __restrict__ volume,
-    CONSTFIELDPARAM density0,
-    FIELDPARAM density1,
-    CONSTFIELDPARAM energy0,
-    FIELDPARAM energy1,
-    CONSTFIELDPARAM pressure,
-    CONSTFIELDPARAM viscosity,
-    CONSTFIELDPARAM xvel0,
-    CONSTFIELDPARAM xvel1,
-    CONSTFIELDPARAM yvel0,
-    CONSTFIELDPARAM yvel1,
-    FIELDPARAM volume_change)
+  int j, int k,
+  int x_min, int x_max, int y_min, int y_max,
+  double dt,
+  const_field_2d_t xarea,
+  const_field_2d_t yarea,
+  const_field_2d_t volume,
+  const_field_2d_t density0,
+  field_2d_t       density1,
+  const_field_2d_t energy0,
+  field_2d_t       energy1,
+  const_field_2d_t pressure,
+  const_field_2d_t viscosity,
+  const_field_2d_t xvel0,
+  const_field_2d_t xvel1,
+  const_field_2d_t yvel0,
+  const_field_2d_t yvel1,
+  field_2d_t       volume_change)
 {
-
-    double left_flux = (XAREA(xarea, j, k))
-                       * (XVEL0(xvel0, j, k)
-                          + XVEL0(xvel0, j, k + 1)
-                          + XVEL1(xvel1, j, k)
-                          + XVEL1(xvel1, j, k + 1))
-                       * 0.25 * dt;
-    double right_flux = (XAREA(xarea, j + 1, k))
-                        * (XVEL0(xvel0, j + 1, k)
-                           + XVEL0(xvel0, j + 1, k + 1)
-                           + XVEL1(xvel1, j + 1, k)
-                           + XVEL1(xvel1, j + 1, k + 1))
-                        * 0.25 * dt;
-    double bottom_flux = (YAREA(yarea, j, k))
-                         * (YVEL0(yvel0, j, k)
-                            + YVEL0(yvel0, j + 1, k)
-                            + YVEL1(yvel1, j, k)
-                            + YVEL1(yvel1, j + 1, k))
-                         * 0.25 * dt;
-    double top_flux = (YAREA(yarea, j, k + 1))
-                      * (YVEL0(yvel0, j, k + 1)
-                         + YVEL0(yvel0, j + 1, k + 1)
-                         + YVEL1(yvel1, j, k + 1)
-                         + YVEL1(yvel1, j + 1, k + 1))
+  double left_flux = (XAREA(xarea, j, k))
+                     * (XVEL0(xvel0, j, k)
+                        + XVEL0(xvel0, j, k + 1)
+                        + XVEL1(xvel1, j, k)
+                        + XVEL1(xvel1, j, k + 1))
+                     * 0.25 * dt;
+  double right_flux = (XAREA(xarea, j + 1, k))
+                      * (XVEL0(xvel0, j + 1, k)
+                         + XVEL0(xvel0, j + 1, k + 1)
+                         + XVEL1(xvel1, j + 1, k)
+                         + XVEL1(xvel1, j + 1, k + 1))
                       * 0.25 * dt;
+  double bottom_flux = (YAREA(yarea, j, k))
+                       * (YVEL0(yvel0, j, k)
+                          + YVEL0(yvel0, j + 1, k)
+                          + YVEL1(yvel1, j, k)
+                          + YVEL1(yvel1, j + 1, k))
+                       * 0.25 * dt;
+  double top_flux = (YAREA(yarea, j, k + 1))
+                    * (YVEL0(yvel0, j, k + 1)
+                       + YVEL0(yvel0, j + 1, k + 1)
+                       + YVEL1(yvel1, j, k + 1)
+                       + YVEL1(yvel1, j + 1, k + 1))
+                    * 0.25 * dt;
 
-    double total_flux = right_flux - left_flux + top_flux - bottom_flux;
+  double total_flux = right_flux - left_flux + top_flux - bottom_flux;
 
-    WORK_ARRAY(volume_change, j, k) = VOLUME(volume, j, k)
-                                      / (VOLUME(volume, j, k) + total_flux);
+  WORK_ARRAY(volume_change, j, k) = VOLUME(volume, j, k)
+                                    / (VOLUME(volume, j, k) + total_flux);
 
 // min_cell_volume = MIN(VOLUME(volume, j,k) + right_flux - left_flux + top_flux - bottom_flux
 // , MIN(VOLUME(volume, j,k) + right_flux - left_flux
 // , VOLUME(volume, j,k) + top_flux - bottom_flux));
 
-    double recip_volume = 1.0 / VOLUME(volume, j, k);
+  double recip_volume = 1.0 / VOLUME(volume, j, k);
 
-    double energy_change = (PRESSURE(pressure, j, k) / DENSITY0(density0, j, k)
-                            + VISCOSITY(viscosity, j, k) / DENSITY0(density0, j, k))
-                           * total_flux * recip_volume;
+  double energy_change = (PRESSURE(pressure, j, k) / DENSITY0(density0, j, k)
+                          + VISCOSITY(viscosity, j, k) / DENSITY0(density0, j, k))
+                         * total_flux * recip_volume;
 
-    ENERGY1(energy1, j, k) = ENERGY0(energy0, j, k) - energy_change;
+  ENERGY1(energy1, j, k) = ENERGY0(energy0, j, k) - energy_change;
 
-    DENSITY1(density1, j, k) = DENSITY0(density0, j, k)
-                               * WORK_ARRAY(volume_change, j, k);
+  DENSITY1(density1, j, k) = DENSITY0(density0, j, k)
+                             * WORK_ARRAY(volume_change, j, k);
 }
 

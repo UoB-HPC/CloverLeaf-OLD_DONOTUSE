@@ -46,6 +46,9 @@ struct field_type {
         } \
     }
 
+#define T1ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 4, x_min - 2, y_min - 2)]
+#define T2ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 5, x_min - 2, y_min - 2)]
+
 #define DENSITY0(d, i, j)      T1ACCESS(d, i, j)
 #define DENSITY1(d, i, j)      T1ACCESS(d, i, j)
 
@@ -66,8 +69,16 @@ struct field_type {
 #define VOL_FLUX_Y(d, i, j)    T1ACCESS(d, i, j)
 #define MASS_FLUX_Y(d, i, j)   T1ACCESS(d, i, j)
 
+#define VOLUME(d, i, j)        T1ACCESS(d, i, j)
+#define XAREA(d, i, j)         T2ACCESS(d, i, j)
+#define YAREA(d, i, j)         T1ACCESS(d, i, j)
+
 #define WORK_ARRAY(d, i, j)    T2ACCESS(d, i, j)
 
-#define CONSTFIELDPARAM     const double* __restrict__
-#define FIELDPARAM          double* __restrict__
+#define FIELD_1D(d, i, j)      d[FTNREF1D(i, j)]
 
+#define const_field_2d_t     const double* __restrict__
+#define field_2d_t           double* __restrict__
+
+#define const_field_1d_t     const double* __restrict__
+#define field_1d_t           double* __restrict__

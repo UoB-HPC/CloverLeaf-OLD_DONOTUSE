@@ -33,65 +33,65 @@ void initialise_chunk_kernel_c_(
     double min_y,
     double d_x,
     double d_y,
-    double* __restrict__ vertexx,
-    double* __restrict__ vertexdx,
-    double* __restrict__ vertexy,
-    double* __restrict__ vertexdy,
-    double* __restrict__ cellx,
-    double* __restrict__ celldx,
-    double* __restrict__ celly,
-    double* __restrict__ celldy,
-    double* __restrict__ volume,
-    double* __restrict__ xarea,
-    double* __restrict__ yarea)
+    field_1d_t vertexx,
+    field_1d_t vertexdx,
+    field_1d_t vertexy,
+    field_1d_t vertexdy,
+    field_1d_t cellx,
+    field_1d_t celldx,
+    field_1d_t celly,
+    field_1d_t celldy,
+    field_2d_t volume,
+    field_2d_t xarea,
+    field_2d_t yarea)
 {
     int j, k;
 
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 3; j++) {
-        vertexx[FTNREF1D(j, x_min - 2)] = min_x + d_x * (double)(j - x_min);
+        FIELD_1D(vertexx, j,  x_min - 2) = min_x + d_x * (double)(j - x_min);
     }
 
 
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 3; j++) {
-        vertexdx[FTNREF1D(j, x_min - 2)] = d_x;
+        FIELD_1D(vertexdx, j,  x_min - 2) = d_x;
     }
 
 
 #pragma ivdep
     for (k = y_min - 2; k <= y_max + 3; k++) {
-        vertexy[FTNREF1D(k, y_min - 2)] = min_y + d_y * (double)(k - y_min);
+        FIELD_1D(vertexy, k,  y_min - 2) = min_y + d_y * (double)(k - y_min);
     }
 
 
 #pragma ivdep
     for (k = y_min - 2; k <= y_max + 3; k++) {
-        vertexdy[FTNREF1D(k, y_min - 2)] = d_y;
+        FIELD_1D(vertexdy, k,  y_min - 2) = d_y;
     }
 
 
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-        cellx[FTNREF1D(j, x_min - 2)] = 0.5 * (vertexx[FTNREF1D(j, x_min - 2)] + vertexx[FTNREF1D(j + 1, x_min - 2)]);
+        FIELD_1D(cellx, j,  x_min - 2) = 0.5 * (FIELD_1D(vertexx, j,  x_min - 2) + FIELD_1D(vertexx, j + 1,  x_min - 2));
     }
 
 
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-        celldx[FTNREF1D(j, x_min - 2)] = d_x;
+        FIELD_1D(celldx, j,  x_min - 2) = d_x;
     }
 
 
 #pragma ivdep
     for (k = y_min - 2; k <= y_max + 2; k++) {
-        celly[FTNREF1D(k, y_min - 2)] = 0.5 * (vertexy[FTNREF1D(k, y_min - 2)] + vertexy[FTNREF1D(k + 1, x_min - 2)]);
+        FIELD_1D(celly, k,  y_min - 2) = 0.5 * (FIELD_1D(vertexy, k,  y_min - 2) + FIELD_1D(vertexy, k + 1,  x_min - 2));
     }
 
 
 #pragma ivdep
     for (k = y_min - 2; k <= y_max + 2; k++) {
-        celldy[FTNREF1D(k, y_min - 2)] = d_y;
+        FIELD_1D(celldy, k,  y_min - 2) = d_y;
     }
 
 
@@ -106,7 +106,7 @@ void initialise_chunk_kernel_c_(
     for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
         for (j = x_min - 2; j <= x_max + 2; j++) {
-            XAREA(xarea, j, k) = celldy[FTNREF1D(k, y_min - 2)];
+            XAREA(xarea, j, k) = FIELD_1D(celldy, k,  y_min - 2);
         }
     }
 
@@ -114,7 +114,7 @@ void initialise_chunk_kernel_c_(
     for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
         for (j = x_min - 2; j <= x_max + 2; j++) {
-            YAREA(yarea, j, k) = celldx[FTNREF1D(j, x_min - 2)];
+            YAREA(yarea, j, k) = FIELD_1D(celldx, j,  x_min - 2);
         }
     }
 }

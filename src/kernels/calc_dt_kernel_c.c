@@ -29,28 +29,28 @@
 #include <math.h>
 #include "../definitions_c.h"
 
-double calc_dt_kernel_c_(
+void calc_dt_kernel_c_(
     int j, int k,
     int x_min,
     int x_max,
     int y_min,
     int y_max,
-    const double* __restrict__ xarea ,
-    const double* __restrict__ yarea ,
-    const double* __restrict__ celldx,
-    const double* __restrict__ celldy,
-    const double* __restrict__ volume,
-    CONSTFIELDPARAM density0,
-    CONSTFIELDPARAM energy0 ,
-    CONSTFIELDPARAM pressure,
-    CONSTFIELDPARAM viscosity ,
-    CONSTFIELDPARAM soundspeed,
-    CONSTFIELDPARAM xvel0 ,
-    CONSTFIELDPARAM yvel0,
-    FIELDPARAM dtmin)
+    const_field_2d_t xarea ,
+    const_field_2d_t yarea ,
+    const_field_1d_t celldx,
+    const_field_1d_t celldy,
+    const_field_2d_t volume,
+    const_field_2d_t density0,
+    const_field_2d_t energy0 ,
+    const_field_2d_t pressure,
+    const_field_2d_t viscosity ,
+    const_field_2d_t soundspeed,
+    const_field_2d_t xvel0 ,
+    const_field_2d_t yvel0,
+    field_2d_t dtmin)
 {
-    double dsx = celldx[FTNREF1D(j, x_min - 2)];
-    double dsy = celldy[FTNREF1D(k, y_min - 2)];
+    double dsx = FIELD_1D(celldx, j,  x_min - 2);
+    double dsy = FIELD_1D(celldy, k,  y_min - 2);
 
     double cc = SOUNDSPEED(soundspeed, j, k) * SOUNDSPEED(soundspeed, j, k);
     cc = cc + 2.0 * VISCOSITY(viscosity, j, k) / DENSITY0(density0, j, k);
@@ -91,7 +91,7 @@ void calc_dt_min_val(
     int x_max,
     int y_min,
     int y_max,
-    FIELDPARAM dt_min,
+    field_2d_t dt_min,
     double* dt_min_val)
 {
     *dt_min_val = g_big;

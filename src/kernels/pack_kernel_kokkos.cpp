@@ -28,7 +28,7 @@
 #include "../definitions_c.h"
 
 void clover_pack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax,
-                                 FIELDPARAM field,
+                                 field_2d_t field,
                                  double* __restrict__ left_snd_buffer,
                                  int dpth, int fld_typ,
                                  int bffr_ffst)
@@ -77,7 +77,7 @@ void clover_pack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax,
 }
 
 void clover_unpack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax,
-                                   FIELDPARAM field,
+                                   field_2d_t field,
                                    double* left_rcv_buffer,
                                    int dpth, int fld_typ,
                                    int bffr_ffst)
@@ -127,7 +127,7 @@ void clover_unpack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax,
 }
 
 void clover_pack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax,
-                                  FIELDPARAM field,
+                                  field_2d_t field,
                                   double* right_snd_buffer,
                                   int dpth, int fld_typ,
                                   int bffr_ffst)
@@ -177,7 +177,7 @@ void clover_pack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax,
 }
 
 void clover_unpack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax,
-                                    FIELDPARAM field,
+                                    field_2d_t field,
                                     double* right_rcv_buffer,
                                     int dpth, int fld_typ,
                                     int bffr_ffst)
@@ -227,7 +227,7 @@ void clover_unpack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax,
 }
 
 void clover_pack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax,
-                                FIELDPARAM field,
+                                field_2d_t field,
                                 double* top_snd_buffer,
                                 int dpth, int fld_typ,
                                 int bffr_ffst)
@@ -277,7 +277,7 @@ void clover_pack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax,
 }
 
 void clover_pack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax,
-                                   FIELDPARAM field,
+                                   field_2d_t field,
                                    double* bottom_snd_buffer,
                                    int dpth, int fld_typ,
                                    int bffr_ffst)
@@ -326,7 +326,7 @@ void clover_pack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax,
 }
 
 void clover_unpack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax,
-                                     FIELDPARAM field,
+                                     field_2d_t field,
                                      double* bottom_rcv_buffer,
                                      int dpth, int fld_typ,
                                      int bffr_ffst)
@@ -376,7 +376,7 @@ void clover_unpack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax,
 }
 
 void clover_unpack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax,
-                                  FIELDPARAM field,
+                                  field_2d_t field,
                                   double* top_rcv_buffer,
                                   int dpth, int fld_typ,
                                   int bffr_ffst)

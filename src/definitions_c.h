@@ -143,17 +143,12 @@ extern struct grid_type grid;
 
 #define BOSSPRINT(...) if(parallel.boss) fprintf(__VA_ARGS__)
 
-
+#define FTNREF1D(i_index,i_lb) \
+    ((i_index)-(i_lb))
 #define FTNREF2D(i_index, j_index, i_size, i_lb, j_lb) \
     ((i_size) * (j_index - (j_lb)) + \
         (i_index) - (i_lb))
 
-#define T1ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 4, x_min - 2, y_min - 2)]
-#define T2ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 5, x_min - 2, y_min - 2)]
-
-#define VOLUME(d, i, j)        T1ACCESS(d, i, j)
-#define XAREA(d, i, j)         T2ACCESS(d, i, j)
-#define YAREA(d, i, j)         T1ACCESS(d, i, j)
 
 
 #endif

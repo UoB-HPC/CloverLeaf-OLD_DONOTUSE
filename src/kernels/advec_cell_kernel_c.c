@@ -22,8 +22,7 @@
  *  with directional splitting.
  */
 
-// #include <stdio.h>
-// #include <stdlib.h>
+
 #include "ftocmacros.h"
 #include <math.h>
 #include "../definitions_c.h"
@@ -34,40 +33,38 @@
 
 
 
-void advec_cell_kernel_c_(
+inline void advec_cell_kernel_c_(
 // int j, int k,
-    int x_min, int x_max, int y_min, int y_max,
-    const double* __restrict__ vertexdx,
-    const double* __restrict__ vertexdy,
-    const double* __restrict__ volume,
-    FIELDPARAM density1,
-    FIELDPARAM energy1,
-    FIELDPARAM mass_flux_x,
-    CONSTFIELDPARAM vol_flux_x,
-    FIELDPARAM mass_flux_y,
-    CONSTFIELDPARAM vol_flux_y,
-    FIELDPARAM pre_vol,
-    FIELDPARAM post_vol,
-    FIELDPARAM pre_mass,
-    FIELDPARAM post_mass,
-    FIELDPARAM advec_vol,
-    FIELDPARAM post_ener,
-    FIELDPARAM ener_flux,
+    int x_min, int x_max,
+    int y_min, int y_max,
+    const_field_1d_t vertexdx,
+    const_field_1d_t vertexdy,
+    const_field_2d_t volume,
+    field_2d_t       density1,
+    field_2d_t       energy1,
+    field_2d_t       mass_flux_x,
+    const_field_2d_t vol_flux_x,
+    field_2d_t       mass_flux_y,
+    const_field_2d_t vol_flux_y,
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol,
+    field_2d_t       pre_mass,
+    field_2d_t       post_mass,
+    field_2d_t       advec_vol,
+    field_2d_t       post_ener,
+    field_2d_t       ener_flux,
     int dir,
     int sweep_number)
 {
     int g_xdir = 1, g_ydir = 2;
 
-    double one_by_six;
-
-    one_by_six = 1.0 / 6.0;
+    double one_by_six = 1.0 / 6.0;
     #pragma omp parallel
     {
         if (dir == g_xdir) {
             if (sweep_number == 1) {
 
-                DOUBLEFOR(y_min - 2, y_max + 2,
-                x_min - 2, x_max + 2, {
+                DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
                     WORK_ARRAY(pre_vol, j, k) = VOLUME(volume, j, k)
                     + (VOL_FLUX_X(vol_flux_x, j + 1, k)
                     - VOL_FLUX_X(vol_flux_x, j, k)
@@ -80,8 +77,7 @@ void advec_cell_kernel_c_(
 
             } else {
 
-                DOUBLEFOR(y_min - 2, y_max + 2,
-                x_min - 2, x_max + 2, {
+                DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
                     WORK_ARRAY(pre_vol, j, k) = VOLUME(volume, j, k)
                     + VOL_FLUX_X(vol_flux_x, j + 1, k)
                     - VOL_FLUX_X(vol_flux_x, j, k);
@@ -106,7 +102,7 @@ void advec_cell_kernel_c_(
                 }
 
                 double sigmat = fabs(VOL_FLUX_X(vol_flux_x, j, k) / WORK_ARRAY(pre_vol, donor, k));
-                double sigma3 = (1.0 + sigmat) * (vertexdx[FTNREF1D(j, x_min - 2)] / vertexdx[FTNREF1D(dif, x_min - 2)]);
+                double sigma3 = (1.0 + sigmat) * (FIELD_1D(vertexdx, j,  x_min - 2) / FIELD_1D(vertexdx, dif,  x_min - 2));
                 double sigma4 = 2.0 - sigmat;
 
                 double sigma = sigmat;
@@ -142,8 +138,7 @@ void advec_cell_kernel_c_(
             }));
 
 
-            DOUBLEFOR(y_min, y_max,
-            x_min, x_max, {
+            DOUBLEFOR(y_min, y_max, x_min, x_max, {
                 WORK_ARRAY(pre_mass, j, k) = DENSITY1(density1, j, k)
                 * WORK_ARRAY(pre_vol, j, k);
                 WORK_ARRAY(post_mass, j, k) = WORK_ARRAY(pre_mass, j, k)
@@ -165,8 +160,7 @@ void advec_cell_kernel_c_(
         } else if (dir == g_ydir) {
             if (sweep_number == 1) {
 
-                DOUBLEFOR(y_min - 2, y_max + 2,
-                x_min - 2, x_max + 2, {
+                DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
                     WORK_ARRAY(pre_vol, j, k) = VOLUME(volume, j, k)
                     + (VOL_FLUX_Y(vol_flux_y, j, k + 1)
                     - VOL_FLUX_Y(vol_flux_y, j, k)
@@ -179,8 +173,7 @@ void advec_cell_kernel_c_(
 
             } else {
 
-                DOUBLEFOR(y_min - 2, y_max + 2,
-                x_min - 2, x_max + 2, {
+                DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
                     WORK_ARRAY(pre_vol, j, k) = VOLUME(volume, j, k)
                     + VOL_FLUX_Y(vol_flux_y, j, k + 1)
                     - VOL_FLUX_Y(vol_flux_y, j, k);
@@ -205,7 +198,7 @@ void advec_cell_kernel_c_(
                 }
 
                 double sigmat = fabs(VOL_FLUX_Y(vol_flux_y, j, k) / WORK_ARRAY(pre_vol, j, donor));
-                double sigma3 = (1.0 + sigmat) * (vertexdy[FTNREF1D(k, y_min - 2)] / vertexdy[FTNREF1D(dif, y_min - 2)]);
+                double sigma3 = (1.0 + sigmat) * (FIELD_1D(vertexdy, k,  y_min - 2) / FIELD_1D(vertexdy, dif,  y_min - 2));
                 double sigma4 = 2.0 - sigmat;
 
                 double sigma = sigmat;
@@ -240,8 +233,7 @@ void advec_cell_kernel_c_(
 
             }));
 
-            DOUBLEFOR(y_min, y_max,
-            x_min, x_max, {
+            DOUBLEFOR(y_min, y_max, x_min, x_max, {
                 WORK_ARRAY(pre_mass, j, k) = DENSITY1(density1, j, k)
                 * WORK_ARRAY(pre_vol, j, k);
                 WORK_ARRAY(post_mass, j, k) = WORK_ARRAY(pre_mass, j, k)

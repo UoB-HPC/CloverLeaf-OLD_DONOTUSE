@@ -30,25 +30,25 @@
 
 void reset_field_kernel_c_(
     int x_min, int x_max, int y_min, int y_max,
-    FIELDPARAM density0,
-    CONSTFIELDPARAM density1,
-    FIELDPARAM energy0,
-    CONSTFIELDPARAM energy1,
-    FIELDPARAM xvel0,
-    CONSTFIELDPARAM xvel1,
-    FIELDPARAM yvel0,
-    CONSTFIELDPARAM yvel1)
+    field_2d_t       density0,
+    const_field_2d_t density1,
+    field_2d_t       energy0,
+    const_field_2d_t energy1,
+    field_2d_t       xvel0,
+    const_field_2d_t xvel1,
+    field_2d_t       yvel0,
+    const_field_2d_t yvel1)
 {
-    DOUBLEFOR(y_min, y_max, x_min, x_max, ({
+    DOUBLEFOR(y_min, y_max, x_min, x_max, {
         DENSITY0(density0, j, k) = DENSITY1(density1, j, k);
         ENERGY0(energy0, j, k) = ENERGY1(energy1, j, k);
-    }));
+    });
 
-    DOUBLEFOR(y_min, y_max + 1, x_min, x_max + 1, ({
+    DOUBLEFOR(y_min, y_max + 1, x_min, x_max + 1, {
         XVEL0(xvel0, j, k) = XVEL1(xvel1, j, k);
-    }));
+    });
 
-    DOUBLEFOR(y_min, y_max + 1, x_min, x_max + 1, ({
+    DOUBLEFOR(y_min, y_max + 1, x_min, x_max + 1, {
         YVEL0(yvel0, j, k) = YVEL1(yvel1, j, k);
-    }));
+    });
 }

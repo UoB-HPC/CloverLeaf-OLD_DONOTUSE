@@ -26,19 +26,21 @@
 #include <math.h>
 #include "../definitions_c.h"
 
+
 void accelerate_kernel_c_(
     int j, int k,
-    int x_min, int x_max, int y_min, int y_max,
-    const double* __restrict__ xarea,
-    const double* __restrict__ yarea,
-    const double* __restrict__ volume,
-    CONSTFIELDPARAM density0 ,
-    CONSTFIELDPARAM pressure ,
-    CONSTFIELDPARAM viscosity,
-    FIELDPARAM xvel0,
-    FIELDPARAM yvel0,
-    FIELDPARAM xvel1,
-    FIELDPARAM yvel1,
+    int x_min, int x_max,
+    int y_min, int y_max,
+    const_field_2d_t xarea,
+    const_field_2d_t yarea,
+    const_field_2d_t volume,
+    const_field_2d_t density0 ,
+    const_field_2d_t pressure ,
+    const_field_2d_t viscosity,
+    field_2d_t       xvel0,
+    field_2d_t       yvel0,
+    field_2d_t       xvel1,
+    field_2d_t       yvel1,
     double dt)
 {
     double nodal_mass = (DENSITY0(density0, j - 1, k - 1) * VOLUME(volume, j - 1, k - 1)

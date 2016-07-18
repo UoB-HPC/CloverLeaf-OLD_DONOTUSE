@@ -29,10 +29,10 @@ void flux_calc_x_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
     double dt,
-    const double* __restrict__ xarea,
-    CONSTFIELDPARAM xvel0,
-    CONSTFIELDPARAM xvel1,
-    FIELDPARAM vol_flux_x)
+    const_field_2d_t xarea,
+    const_field_2d_t xvel0,
+    const_field_2d_t xvel1,
+    field_2d_t vol_flux_x)
 {
     VOL_FLUX_X(vol_flux_x, j, k) =
         0.25 * dt * XAREA(xarea, j, k)
@@ -47,10 +47,10 @@ void flux_calc_y_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
     double dt,
-    const double* __restrict__ yarea,
-    CONSTFIELDPARAM yvel0,
-    CONSTFIELDPARAM yvel1,
-    FIELDPARAM vol_flux_y)
+    const_field_2d_t yarea,
+    const_field_2d_t yvel0,
+    const_field_2d_t yvel1,
+    field_2d_t vol_flux_y)
 {
     VOL_FLUX_Y(vol_flux_y, j, k) =
         0.25 * dt * YAREA(yarea, j, k)

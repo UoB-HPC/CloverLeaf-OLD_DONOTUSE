@@ -14,7 +14,7 @@ void revert()
                 chunk.tiles[tile].t_ymax,
                 chunk.tiles[tile].t_xmin,
                 chunk.tiles[tile].t_xmax,
-            ({
+            {
                 revert_kernel_c_(
                     j, k,
                     chunk.tiles[tile].t_xmin,
@@ -25,7 +25,7 @@ void revert()
                     chunk.tiles[tile].field.density1,
                     chunk.tiles[tile].field.energy0,
                     chunk.tiles[tile].field.energy1);
-            }));
+            });
         }
     }
 }

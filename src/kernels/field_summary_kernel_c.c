@@ -26,17 +26,18 @@
 #include <stdlib.h>
 #include "ftocmacros.h"
 #include <math.h>
+#include "../definitions_c.h"
 
 void field_summary_kernel_c_(int* xmin,
                              int* xmax,
                              int* ymin,
                              int* ymax,
-                             double* __restrict__ volume,
-                             FIELDPARAM density0,
-                             FIELDPARAM energy0,
-                             FIELDPARAM pressure,
-                             FIELDPARAM xvel0,
-                             FIELDPARAM yvel0,
+                             field_2d_t volume,
+                             field_2d_t density0,
+                             field_2d_t energy0,
+                             field_2d_t pressure,
+                             field_2d_t xvel0,
+                             field_2d_t yvel0,
                              double* __restrict__ vl,
                              double* __restrict__ mss,
                              double* __restrict__ ien,

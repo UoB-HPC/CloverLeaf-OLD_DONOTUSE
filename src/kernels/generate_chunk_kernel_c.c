@@ -31,18 +31,39 @@
 #include <math.h>
 #include "../definitions_c.h"
 
+
+void generate_chunk_1_kernel(
+    int j, int k,
+    int x_min, int x_max, int y_min, int y_max,
+    field_2d_t energy0,
+    field_2d_t density0,
+    field_2d_t xvel0,
+    field_2d_t yvel0,
+    const double* __restrict__ state_energy,
+    const double* __restrict__ state_density,
+    const double* __restrict__ state_xvel,
+    const double* __restrict__ state_yvel)
+{
+    ENERGY0(energy0, j, k) = state_energy[FTNREF1D(1, 1)];
+    DENSITY0(density0, j, k) = state_density[FTNREF1D(1, 1)];
+    XVEL0(xvel0, j, k) = state_xvel[FTNREF1D(1, 1)];
+    YVEL0(yvel0, j, k) = state_yvel[FTNREF1D(1, 1)];
+}
+
+
+
 void generate_chunk_kernel_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     double x_cent, double y_cent,
-    double* __restrict__ vertexx,
-    double* __restrict__ vertexy,
-    double* __restrict__ cellx,
-    double* __restrict__ celly,
-    FIELDPARAM density0,
-    FIELDPARAM energy0,
-    FIELDPARAM xvel0,
-    FIELDPARAM yvel0,
+    field_1d_t vertexx,
+    field_1d_t vertexy,
+    field_1d_t cellx,
+    field_1d_t celly,
+    field_2d_t density0,
+    field_2d_t energy0,
+    field_2d_t xvel0,
+    field_2d_t yvel0,
     int number_of_states,
     int state,
     double const* __restrict__ state_density,
@@ -58,8 +79,8 @@ void generate_chunk_kernel_c_(
 {
     /* Could the velocity setting be thread unsafe? */
     if (state_geometry[FTNREF1D(state, 1)] == g_rect) {
-        if (vertexx[FTNREF1D(j + 1, x_min - 2)] >= state_xmin[FTNREF1D(state, 1)] && vertexx[FTNREF1D(j, x_min - 2)] < state_xmax[FTNREF1D(state, 1)]) {
-            if (vertexy[FTNREF1D(k + 1, y_min - 2)] >= state_ymin[FTNREF1D(state, 1)] && vertexy[FTNREF1D(k, y_min - 2)] < state_ymax[FTNREF1D(state, 1)]) {
+        if (FIELD_1D(vertexx, j + 1,  x_min - 2) >= state_xmin[FTNREF1D(state, 1)] && FIELD_1D(vertexx, j,  x_min - 2) < state_xmax[FTNREF1D(state, 1)]) {
+            if (FIELD_1D(vertexy, k + 1,  y_min - 2) >= state_ymin[FTNREF1D(state, 1)] && FIELD_1D(vertexy, k,  y_min - 2) < state_ymax[FTNREF1D(state, 1)]) {
                 DENSITY0(density0, j, k) = state_density[FTNREF1D(state, 1)];
                 ENERGY0(energy0, j, k) = state_energy[FTNREF1D(state, 1)];
                 for (int kt = k; kt <= k + 1; kt++) {
@@ -71,7 +92,7 @@ void generate_chunk_kernel_c_(
             }
         }
     } else if (state_geometry[FTNREF1D(state, 1)] == g_circ) {
-        double radius = sqrt((cellx[FTNREF1D(j, x_min - 2)] - x_cent) * (cellx[FTNREF1D(j, x_min - 2)] - x_cent) + (celly[FTNREF1D(k, y_min - 2)] - y_cent) * (celly[FTNREF1D(k, y_min - 2)] - y_cent));
+        double radius = sqrt((FIELD_1D(cellx, j,  x_min - 2) - x_cent) * (FIELD_1D(cellx, j,  x_min - 2) - x_cent) + (FIELD_1D(celly, k,  y_min - 2) - y_cent) * (FIELD_1D(celly, k,  y_min - 2) - y_cent));
         if (radius <= state_radius[FTNREF1D(state, 1)]) {
             DENSITY0(density0, j, k) = state_density[FTNREF1D(state, 1)];
             ENERGY0(energy0, j, k) = state_density[FTNREF1D(state, 1)];
@@ -83,7 +104,7 @@ void generate_chunk_kernel_c_(
             }
         }
     } else if (state_geometry[FTNREF1D(state, 1)] == g_point) {
-        if (vertexx[FTNREF1D(j, x_min - 2)] == x_cent && vertexy[FTNREF1D(j, x_min - 2)] == y_cent) {
+        if (FIELD_1D(vertexx, j,  x_min - 2) == x_cent && FIELD_1D(vertexy, j,  x_min - 2) == y_cent) {
             DENSITY0(density0, j, k) = state_density[FTNREF1D(state, 1)];
             ENERGY0(energy0, j, k) = state_density[FTNREF1D(state, 1)];
             for (int kt = k; kt <= k + 1; kt++) {
@@ -95,22 +116,3 @@ void generate_chunk_kernel_c_(
         }
     }
 }
-
-void generate_chunk_1_kernel(
-    int j, int k,
-    int x_min, int x_max, int y_min, int y_max,
-    FIELDPARAM energy0,
-    FIELDPARAM density0,
-    FIELDPARAM xvel0,
-    FIELDPARAM yvel0,
-    const double* __restrict__ state_energy,
-    const double* __restrict__ state_density,
-    const double* __restrict__ state_xvel,
-    const double* __restrict__ state_yvel)
-{
-    ENERGY0(energy0, j, k) = state_energy[FTNREF1D(1, 1)];
-    DENSITY0(density0, j, k) = state_density[FTNREF1D(1, 1)];
-    XVEL0(xvel0, j, k) = state_xvel[FTNREF1D(1, 1)];
-    YVEL0(yvel0, j, k) = state_yvel[FTNREF1D(1, 1)];
-}
-

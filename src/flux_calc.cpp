@@ -19,7 +19,7 @@ void flux_calc()
                 chunk.tiles[tile].t_ymax,
                 chunk.tiles[tile].t_xmin,
                 chunk.tiles[tile].t_xmax + 1,
-            ({
+            {
                 flux_calc_x_kernel(
                     j, k,
                     chunk.tiles[tile].t_xmin,
@@ -31,14 +31,14 @@ void flux_calc()
                     chunk.tiles[tile].field.xvel0,
                     chunk.tiles[tile].field.xvel1,
                     chunk.tiles[tile].field.vol_flux_x);
-            }));
+            });
 
             DOUBLEFOR(
                 chunk.tiles[tile].t_ymin,
                 chunk.tiles[tile].t_ymax + 1,
                 chunk.tiles[tile].t_xmin,
                 chunk.tiles[tile].t_xmax,
-            ({
+            {
                 flux_calc_y_kernel(
                     j, k,
                     chunk.tiles[tile].t_xmin,
@@ -50,7 +50,7 @@ void flux_calc()
                     chunk.tiles[tile].field.yvel0,
                     chunk.tiles[tile].field.yvel1,
                     chunk.tiles[tile].field.vol_flux_y);
-            }));
+            });
         }
     }
 

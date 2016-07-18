@@ -12,10 +12,8 @@ void calc_dt(int tile,
              int* kldt)
 {
     // *local_dt = g_big;
-    int small = 0,
-        l_control;
-    double mindt = g_big;
-    double lmin = g_big;
+    int l_control;
+    // double lmin = g_big;
 
     #pragma omp parallel
     {
@@ -23,8 +21,7 @@ void calc_dt(int tile,
             chunk.tiles[tile].t_ymin,
             chunk.tiles[tile].t_ymax,
             chunk.tiles[tile].t_xmin,
-            chunk.tiles[tile].t_xmax,
-        ({
+        chunk.tiles[tile].t_xmax, {
             calc_dt_kernel_c_(
                 j, k,
                 chunk.tiles[tile].t_xmin,
@@ -45,7 +42,7 @@ void calc_dt(int tile,
                 chunk.tiles[tile].field.yvel0,
                 chunk.tiles[tile].field.work_array1
             );
-        }));
+        });
     }
     calc_dt_min_val(chunk.tiles[tile].t_xmin,
                     chunk.tiles[tile].t_xmax,
@@ -69,8 +66,8 @@ void calc_dt(int tile,
     l_control = 1;
     int x_min = chunk.tiles[tile].t_xmin,
         x_max = chunk.tiles[tile].t_xmax,
-        y_min = chunk.tiles[tile].t_ymin,
-        y_max = chunk.tiles[tile].t_ymax;
+        y_min = chunk.tiles[tile].t_ymin;
+    // y_max = chunk.tiles[tile].t_ymax;
 
     if (*local_dt < dtmin) {
         printf("Timestep information:\n");

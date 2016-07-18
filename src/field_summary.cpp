@@ -1,10 +1,11 @@
 #include "field_summary.h"
 #include "definitions_c.h"
-#include "kernels/field_summary_kernel_c.c"
 #include "timer_c.h"
 #include "stdlib.h"
 #include "ideal_gas.h"
 #include "clover.h"
+#include "field_summary_driver.h"
+#include <math.h>
 
 void field_summary()
 {
@@ -25,38 +26,7 @@ void field_summary()
         kernel_time = timer();
     }
 
-
-    double t_vol = 0.0;
-    double t_mass = 0.0;
-    double t_ie = 0.0;
-    double t_ke = 0.0;
-    double t_press = 0.0;
-
-    for (int tile = 0; tile < tiles_per_chunk; tile++) {
-        field_summary_kernel_c_(
-            &chunk.tiles[tile].t_xmin,
-            &chunk.tiles[tile].t_xmax,
-            &chunk.tiles[tile].t_ymin,
-            &chunk.tiles[tile].t_ymax,
-            chunk.tiles[tile].field.volume,
-            chunk.tiles[tile].field.density0,
-            chunk.tiles[tile].field.energy0,
-            chunk.tiles[tile].field.pressure,
-            chunk.tiles[tile].field.xvel0,
-            chunk.tiles[tile].field.yvel0,
-            &vol, &mass, &ie, &ke, &press);
-        t_vol = t_vol + vol;
-        t_mass = t_mass + mass;
-        t_ie = t_ie + ie;
-        t_ke = t_ke + ke;
-        t_press = t_press + press;
-    }
-
-    vol = t_vol;
-    ie = t_ie;
-    ke = t_ke;
-    mass = t_mass;
-    press = t_press;
+    field_summary_driver(vol, ie, ke, mass, press);
 
     clover_sum(&vol);
     clover_sum(&mass);

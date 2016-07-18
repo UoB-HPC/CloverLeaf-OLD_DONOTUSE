@@ -1,46 +1,6 @@
 
-struct field_type {
-    Kokkos::View<double**>* density0;
-    Kokkos::View<double**>* density1;
-    Kokkos::View<double**>* energy0;
-    Kokkos::View<double**>* energy1;
-    Kokkos::View<double**>* pressure;
-    Kokkos::View<double**>* viscosity;
-    Kokkos::View<double**>* soundspeed;
-    Kokkos::View<double**>* xvel0; Kokkos::View<double**>* xvel1;
-    Kokkos::View<double**>* yvel0; Kokkos::View<double**>* yvel1;
-    Kokkos::View<double**>* vol_flux_x; Kokkos::View<double**>* mass_flux_x;
-    Kokkos::View<double**>* vol_flux_y; Kokkos::View<double**>* mass_flux_y;
-    //node_flux; stepbymass; volume_change; pre_vo
-    Kokkos::View<double**>* work_array1;
-    //node_mass_post; post_vol
-    Kokkos::View<double**>* work_array2;
-    //node_mass_pre; pre_mass
-    Kokkos::View<double**>* work_array3;
-    //advec_vel; post_mass
-    Kokkos::View<double**>* work_array4;
-    //mom_flux; advec_vol
-    Kokkos::View<double**>* work_array5;
-    //pre_vol; post_ener
-    Kokkos::View<double**>* work_array6;
-    //post_vol; ener_flux
-    Kokkos::View<double**>* work_array7;
 
-    Kokkos::View<double*>* cellx;
-    Kokkos::View<double*>* celly;
-    Kokkos::View<double*>* vertexx;
-    Kokkos::View<double*>* vertexy;
-    Kokkos::View<double*>* celldx;
-    Kokkos::View<double*>* celldy;
-    Kokkos::View<double*>* vertexdx;
-    Kokkos::View<double*>* vertexdy;
-
-    double* volume;
-    double* xarea;
-    double* yarea;
-};
-
-
+/*
 // outer y's, inner x's
 // #define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
 //     Kokkos::parallel_for((y_to) - (y_from) + 1, KOKKOS_LAMBDA (const int& i) { \
@@ -60,17 +20,19 @@ struct field_type {
 //             body ;\
 //         }); \
 //     });
+*/
+
 
 // outer x's, inner y's
 #define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
-    Kokkos::parallel_for((x_to) - (x_from) + 1, KOKKOS_LAMBDA (const int& i) { \
+    Kokkos::parallel_for(Kokkos::RangePolicy<Kokkos::DefaultExecutionSpace>(0, (x_to) - (x_from) + 1), KOKKOS_LAMBDA (const int& i) { \
             int j = i + (x_from); \
         for(int k = (y_from); k <= (y_to); k++) { \
             body ;\
         } \
     });
 
-#define KOKKOS_ACCESS(d, x, y) (*d)(x - x_min, y - y_min)
+#define KOKKOS_ACCESS(d, x, y) (*d)((x) - (x_min-2), (y) - (y_min-2))
 
 #define DENSITY0(d, x, y) KOKKOS_ACCESS(d, x, y)
 #define DENSITY1(d, x, y) KOKKOS_ACCESS(d, x, y)
@@ -92,12 +54,59 @@ struct field_type {
 #define VOL_FLUX_Y(d, x, y)    KOKKOS_ACCESS(d, x, y)
 #define MASS_FLUX_Y(d, x, y)   KOKKOS_ACCESS(d, x, y)
 
+#define VOLUME(d, x, y)        KOKKOS_ACCESS(d, x, y)
+#define XAREA(d, x, y)         KOKKOS_ACCESS(d, x, y)
+#define YAREA(d, x, y)         KOKKOS_ACCESS(d, x, y)
+
 #define WORK_ARRAY(d, x, y)    KOKKOS_ACCESS(d, x, y)
 
-#define CONSTFIELDPARAM   const Kokkos::View<double**>*
-#define FIELDPARAM        Kokkos::View<double**>*
-// const_1d_field_type
-// const_2d_field_type
-// 1d_field_type
-// 2d_field_type
-#define T3ACCESS(d, x, y) (*d)(x - x_min, y - y_min)
+#define FIELD_1D(d, i, j) (*d)((i) - (j))
+
+#define const_field_2d_t   const Kokkos::View<double**>*
+#define field_2d_t         const Kokkos::View<double**>*
+
+#define const_field_1d_t   const Kokkos::View<double*>*
+#define field_1d_t         const Kokkos::View<double*>*
+
+#define T3ACCESS(d, x, y) (*d)((x) - (x_min-2), (y) - (y_min-2))
+
+struct field_type {
+    field_2d_t density0;
+    field_2d_t density1;
+    field_2d_t energy0;
+    field_2d_t energy1;
+    field_2d_t pressure;
+    field_2d_t viscosity;
+    field_2d_t soundspeed;
+    field_2d_t xvel0; field_2d_t xvel1;
+    field_2d_t yvel0; field_2d_t yvel1;
+    field_2d_t vol_flux_x; field_2d_t mass_flux_x;
+    field_2d_t vol_flux_y; field_2d_t mass_flux_y;
+    //node_flux; stepbymass; volume_change; pre_vo
+    field_2d_t work_array1;
+    //node_mass_post; post_vol
+    field_2d_t work_array2;
+    //node_mass_pre; pre_mass
+    field_2d_t work_array3;
+    //advec_vel; post_mass
+    field_2d_t work_array4;
+    //mom_flux; advec_vol
+    field_2d_t work_array5;
+    //pre_vol; post_ener
+    field_2d_t work_array6;
+    //post_vol; ener_flux
+    field_2d_t work_array7;
+
+    field_1d_t cellx;
+    field_1d_t celly;
+    field_1d_t vertexx;
+    field_1d_t vertexy;
+    field_1d_t celldx;
+    field_1d_t celldy;
+    field_1d_t vertexdx;
+    field_1d_t vertexdy;
+
+    field_2d_t volume;
+    field_2d_t xarea;
+    field_2d_t yarea;
+};

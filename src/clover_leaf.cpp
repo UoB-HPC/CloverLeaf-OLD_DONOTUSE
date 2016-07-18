@@ -11,10 +11,25 @@
 #endif
 
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 #ifdef USE_KOKKOS
     Kokkos::initialize(argc, argv);
+
+    std::ostringstream msg;
+    msg << "{" << std::endl ;
+
+    if (Kokkos::hwloc::available()) {
+        msg << "hwloc( NUMA[" << Kokkos::hwloc::get_available_numa_count()
+            << "] x CORE["    << Kokkos::hwloc::get_available_cores_per_numa()
+            << "] x HT["      << Kokkos::hwloc::get_available_threads_per_core()
+            << "] )"
+            << std::endl ;
+    }
+#if defined( KOKKOS_HAVE_CUDA )
+    Kokkos::Cuda::print_configuration(msg);
+#endif
+    std::cerr << msg.str() << std::endl;
 #endif
 
     clover_init_comms(argc, argv);

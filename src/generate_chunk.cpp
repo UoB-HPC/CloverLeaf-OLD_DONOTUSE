@@ -2,6 +2,7 @@
 #include "definitions_c.h"
 #include "kernels/generate_chunk_kernel_c.c"
 
+
 void generate_chunk(int tile)
 {
     double* state_density = (double*)malloc(sizeof(double) * number_of_states),
@@ -28,14 +29,11 @@ void generate_chunk(int tile)
         state_geometry[state] = states[state].geometry;
     }
 
-    #pragma omp parallel
-    {
-        DOUBLEFOR(
-            chunk.tiles[tile].t_ymin - 2,
-            chunk.tiles[tile].t_ymax + 2,
-            chunk.tiles[tile].t_xmin - 2,
-            chunk.tiles[tile].t_xmax + 2,
-        ({
+    // #pragma omp parallel
+    // {
+
+    for (int k = chunk.tiles[tile].t_ymin - 2; k <= chunk.tiles[tile].t_ymax + 2; k++) {
+        for (int j = chunk.tiles[tile].t_xmin - 2; j <= chunk.tiles[tile].t_xmax + 2; j++) {
             generate_chunk_1_kernel(
                 j, k,
                 chunk.tiles[tile].t_xmin,
@@ -51,19 +49,16 @@ void generate_chunk(int tile)
                 state_xvel,
                 state_yvel
             );
-        }));
+        }
+    }
 
-        /* State 1 is always the background state */
-        for (int state = 2; state <= number_of_states; state++) {
-            double x_cent = state_xmin[FTNREF1D(state, 1)];
-            double y_cent = state_ymin[FTNREF1D(state, 1)];
+    /* State 1 is always the background state */
+    for (int state = 2; state <= number_of_states; state++) {
+        double x_cent = state_xmin[FTNREF1D(state, 1)];
+        double y_cent = state_ymin[FTNREF1D(state, 1)];
 
-            DOUBLEFOR(
-                chunk.tiles[tile].t_ymin - 2,
-                chunk.tiles[tile].t_ymax + 2,
-                chunk.tiles[tile].t_xmin - 2,
-                chunk.tiles[tile].t_xmax + 2,
-            ({
+        for (int k = chunk.tiles[tile].t_ymin - 2; k <= chunk.tiles[tile].t_ymax + 2; k++) {
+            for (int j = chunk.tiles[tile].t_xmin - 2; j <= chunk.tiles[tile].t_xmax + 2; j++) {
                 generate_chunk_kernel_c_(
                     j, k,
                     chunk.tiles[tile].t_xmin,
@@ -91,7 +86,8 @@ void generate_chunk(int tile)
                     state_ymax,
                     state_radius,
                     state_geometry);
-            }));
+            };
         }
     }
+    // }
 }

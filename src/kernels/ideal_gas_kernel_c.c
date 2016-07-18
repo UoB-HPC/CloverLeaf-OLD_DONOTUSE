@@ -28,17 +28,15 @@
 #include <math.h>
 #include "../definitions_c.h"
 
-#ifdef USE_KOKKOS
-#include <Kokkos_Core.hpp>
-#endif
 
 void ideal_gas_kernel_c_(
     int j, int k,
-    int x_min, int x_max, int y_min, int y_max,
-    CONSTFIELDPARAM density,
-    CONSTFIELDPARAM energy,
-    FIELDPARAM pressure,
-    FIELDPARAM soundspeed)
+    int x_min, int x_max,
+    int y_min, int y_max,
+    const_field_2d_t   density,
+    const_field_2d_t   energy,
+    field_2d_t         pressure,
+    field_2d_t         soundspeed)
 {
     double v = 1.0 / DENSITY0(density, j, k);
     PRESSURE(pressure, j, k) =
