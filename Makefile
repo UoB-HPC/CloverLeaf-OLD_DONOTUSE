@@ -1,30 +1,26 @@
 
-CC_INTEL = mpiicpc
-CC_GNU = mpic++
-CC_ = mpic++
+MPI_CC_INTEL = mpiicpc
+MPI_CC_GNU = mpic++
+CC_CUDA = nvcc_wrapper
+MPI_CC_ = mpic++
+
 
 FLAGS_GNU = -std=c++11 -Wall -Wpedantic -g -Wno-unknown-pragmas -O3 -march=native -lm
-FLAGS_INTEL = -std=c++11 -O3 -g -fp-model strict -march=native
+FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -fp-model strict
+# FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -no-prec-div -fno-alias
+FLAGS_CUDA = 
 FLAGS_ = 
 
-FLAGS = $(FLAGS_$(COMPILER))
-CC = $(CC_$(COMPILER))
+MPI_FLAGS = $(FLAGS_$(COMPILER))
+MPI_CC = $(MPI_CC_$(COMPILER))
 
 OBJECTS = data_c.o \
 	definitions_c.o \
-	initialise.o \
-	hydro.o \
 	report.o \
-	start.o \
-	build_field.o \
 	initialise_chunk.o \
 	generate_chunk.o \
 	ideal_gas.o \
-	update_halo.o \
-	update_tile_halo.o \
-	field_summary.o \
 	timer_c.o \
-	timestep.o \
 	viscosity.o \
 	calc_dt.o \
 	PdV.o \
@@ -34,36 +30,78 @@ OBJECTS = data_c.o \
 	reset_field.o \
 	visit.o \
 	accelerate.o \
-	clover.o
+	field_summary_driver.o
+
+	# update_tile_halo.o 
+MPIOBJECTS = clover.o \
+	initialise.o \
+	hydro.o \
+	update_halo.o \
+	timestep.o \
+	start.o \
+	field_summary.o
 
 
 
 default: build
 
-CXX = mpic++
-# CXX = 
-# KOKKOS_PATH=/usr/local/lib/kokkos
-# KOKKOS_PATH=/Users/jamus/kokkos-tutorial/kokkos
+ifdef USE_KOKKOS
 
+ifeq ($(USE_KOKKOS),gpu)
+
+CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
+MPI_FLAGS += -lcudart
+FLAGS += -O3
+
+KOKKOS_CUDA_OPTIONS = "enable_lambda"
+KOKKOS_DEVICE= "Cuda"
+
+else
+CXX = $(MPI_CC)
+FLAGS += $(MPI_FLAGS)
+endif
+
+MPI_FLAGS += -DUSE_KOKKOS
+FLAGS += -DUSE_KOKKOS
+CC = $(CXX)
 include $(KOKKOS_PATH)/Makefile.kokkos
 
-OBJDIR = obj
-SRCDIR = src
+else
 
-COBJECTS = $(addprefix $(OBJDIR)/, $(OBJECTS))
-CSOURCES = $(addprefix $(SRCDIR)/, $(OBJECTS:.o=.c))
+CC = $(MPI_CC)
 
-build: $(COBJECTS) Makefile $(KOKKOS_LINK_DEPENDS) $(KERNELS)
-	$(CC) $(KOKKOS_LDFLAGS) $(FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(COBJECTS) $(KOKKOS_LIBS) $(SRCDIR)/clover_leaf.c -o clover_leaf
+FLAGS += -fopenmp $(MPI_FLAGS)
+MPI_FLAGS += -fopenmp
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(KOKKOS_CPP_DEPENDS)
-	$(CC) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(FLAGS) $(EXTRA_INC) -c $< -o $@
+endif
+
+OBJDIR    = obj
+MPIOBJDIR = mpiobj
+SRCDIR    = src
+
+_OBJECTS = $(addprefix $(OBJDIR)/, $(OBJECTS))
+_SOURCES = $(addprefix $(SRCDIR)/, $(OBJECTS:.o=.cpp))
+_MPIOBJECTS = $(addprefix $(MPIOBJDIR)/, $(MPIOBJECTS))
+_MPISOURCES = $(addprefix $(SRCDIR)/, $(MPIOBJECTS:.o=.cpp))
+
+-include $(_OBJECTS:.o=.d)
+
+build: $(_OBJECTS) $(_MPIOBJECTS) Makefile $(KOKKOS_LINK_DEPENDS) $(KERNELS)
+	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_OBJECTS) $(_MPIOBJECTS) $(SRCDIR)/clover_leaf.cpp $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(KOKKOS_CPP_DEPENDS)
+	$(CC) $(FLAGS) $(MPIINCLUDE) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(EXTRA_INC) -c $< -o $@
+	# $(CC) $(FLAGS) $(MPIINCLUDE) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(EXTRA_INC) -MM $< > $(OBJDIR)/$*.d
+
+$(MPIOBJDIR)/%.o: $(SRCDIR)/%.cpp $(KOKKOS_CPP_DEPENDS)
+	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_INC) -c $< -o $@
+	# $(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_INC) -MM $< > $(OBJDIR)/$*.d
 
 
-fast: $(CSOURCES)
-	$(CC) $(FLAGS) $(CSOURCES) $(SRCDIR)/clover_leaf.c -o clover_leaf
+fast: $(_SOURCES) $(_MPISOURCES) Makefile $(KOKKOS_LINK_DEPENDS) $(KERNELS)
+	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_SOURCES) $(_MPISOURCES) $(SRCDIR)/clover_leaf.c $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
 
-clean: kokkos-clean
-	rm -f $(OBJDIR)/* *.o clover_leaf
+clean: 
+	rm -f $(OBJDIR)/* $(MPIOBJDIR)/* *.o clover_leaf
 
 print-%  : ; @echo $* = $($*)
