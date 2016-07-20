@@ -23,16 +23,17 @@
 */
 
 
-// outer x's, inner y's
+// outer y's, inner x's
 #define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
     Kokkos::parallel_for(Kokkos::RangePolicy<Kokkos::DefaultExecutionSpace>(0, (x_to) - (x_from) + 1), KOKKOS_LAMBDA (const int& i) { \
-            int j = i + (x_from); \
+        int j = i + (x_from); \
         for(int k = (y_from); k <= (y_to); k++) { \
             body ;\
         } \
     });
 
-#define KOKKOS_ACCESS(d, x, y) (*d)((x) - (x_min-2), (y) - (y_min-2))
+#define T3ACCESS(d, y, x) (*d)((y) - (y_min-2), (x) - (x_min-2))
+#define KOKKOS_ACCESS(d, y, x) T3ACCESS(d, y, x)
 
 #define DENSITY0(d, x, y) KOKKOS_ACCESS(d, x, y)
 #define DENSITY1(d, x, y) KOKKOS_ACCESS(d, x, y)
@@ -68,7 +69,6 @@
 #define const_field_1d_t   const Kokkos::View<double*>*
 #define field_1d_t         const Kokkos::View<double*>*
 
-#define T3ACCESS(d, x, y) (*d)((x) - (x_min-2), (y) - (y_min-2))
 
 struct field_type {
     field_2d_t density0;

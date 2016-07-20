@@ -35,17 +35,17 @@ void calc_dt_kernel_c_(
     int x_max,
     int y_min,
     int y_max,
-    const_field_2d_t xarea ,
-    const_field_2d_t yarea ,
+    const_field_2d_t xarea,
+    const_field_2d_t yarea,
     const_field_1d_t celldx,
     const_field_1d_t celldy,
     const_field_2d_t volume,
     const_field_2d_t density0,
     const_field_2d_t energy0 ,
     const_field_2d_t pressure,
-    const_field_2d_t viscosity ,
+    const_field_2d_t viscosity,
     const_field_2d_t soundspeed,
-    const_field_2d_t xvel0 ,
+    const_field_2d_t xvel0,
     const_field_2d_t yvel0,
     field_2d_t dtmin)
 {
@@ -94,13 +94,28 @@ void calc_dt_min_val(
     field_2d_t dt_min,
     double* dt_min_val)
 {
+#if defined(USE_KOKKOS)
+
     *dt_min_val = g_big;
-    // TODO min reduction
     for (int k = y_min; k <= y_max; k++) {
-#pragma ivdep
+// #pragma ivdep
         for (int j = x_min; j <= x_max; j++) {
             if (WORK_ARRAY(dt_min, j,  k) < *dt_min_val)
                 *dt_min_val = WORK_ARRAY(dt_min, j,  k);
         }
     }
+
+#else
+
+    double minval = g_big;
+    #pragma omp parallel for reduction(min:minval)
+    for (int k = y_min; k <= y_max; k++) {
+        for (int j = x_min; j <= x_max; j++) {
+            if (WORK_ARRAY(dt_min, j,  k) < minval)
+                minval = WORK_ARRAY(dt_min, j,  k);
+        }
+    }
+    *dt_min_val = minval;
+
+#endif
 }

@@ -26,7 +26,7 @@ void field_summary()
         kernel_time = timer();
     }
 
-    field_summary_driver(vol, ie, ke, mass, press);
+    field_summary_driver(&vol, &ie, &ke, &mass, &press);
 
     clover_sum(&vol);
     clover_sum(&mass);

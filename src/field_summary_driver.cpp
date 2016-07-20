@@ -2,11 +2,11 @@
 #include "definitions_c.h"
 
 void field_summary_driver(
-    double& vol,
-    double& ie,
-    double& ke,
-    double& mass,
-    double& press)
+    double* vol,
+    double* ie,
+    double* ke,
+    double* mass,
+    double* press)
 {
     double t_vol = 0.0;
     double t_mass = 0.0;
@@ -26,17 +26,17 @@ void field_summary_driver(
             chunk.tiles[tile].field.pressure,
             chunk.tiles[tile].field.xvel0,
             chunk.tiles[tile].field.yvel0,
-            &vol, &mass, &ie, &ke, &press);
-        t_vol = t_vol + vol;
-        t_mass = t_mass + mass;
-        t_ie = t_ie + ie;
-        t_ke = t_ke + ke;
-        t_press = t_press + press;
+            vol, mass, ie, ke, press);
+        t_vol   += *vol;
+        t_mass  += *mass;
+        t_ie    += *ie;
+        t_ke    += *ke;
+        t_press += *press;
     }
 
-    vol = t_vol;
-    ie = t_ie;
-    ke = t_ke;
-    mass = t_mass;
-    press = t_press;
+    *vol = t_vol;
+    *ie = t_ie;
+    *ke = t_ke;
+    *mass = t_mass;
+    *press = t_press;
 }
