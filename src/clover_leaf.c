@@ -13,6 +13,17 @@
 
 int main(int argc, char** argv)
 {
+
+#ifdef USE_KOKKOS
+    printf("Using Kokkos\n");
+#else
+#ifdef USE_OMPSS
+    printf("Using OMPSS\n");
+#else
+    printf("Using OpenMP\n");
+#endif
+#endif
+
 #ifdef USE_KOKKOS
     Kokkos::initialize(argc, argv);
 

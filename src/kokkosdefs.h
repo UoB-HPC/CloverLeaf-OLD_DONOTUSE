@@ -32,7 +32,7 @@
         } \
     });
 
-#define T3ACCESS(d, y, x) (*d)((y) - (y_min-2), (x) - (x_min-2))
+#define T3ACCESS(d, x, y) (*d)((y) - (y_min-2), (x) - (x_min-2))
 #define KOKKOS_ACCESS(d, y, x) T3ACCESS(d, y, x)
 
 #define DENSITY0(d, x, y) KOKKOS_ACCESS(d, x, y)

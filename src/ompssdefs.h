@@ -38,12 +38,25 @@ struct field_type {
 };
 
 
+
+// #define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \
+//     for(int k = (k_from); k <= (k_to); k++) { \
+//         _Pragma("omp task") \
+//         { \
+//             _Pragma("ivdep") \
+//             for(int j = (j_from); j <= (j_to); j++) { \
+//                 body ;\
+//             } \
+//         } \
+//     _Pragma("omp taskwait") \
+//     }
+
 #define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \
     _Pragma("omp for") \
     for(int k = (k_from); k <= (k_to); k++) { \
         _Pragma("ivdep") \
         for(int j = (j_from); j <= (j_to); j++) { \
-            body; \
+            body ;\
         } \
     }
 

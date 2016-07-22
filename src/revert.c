@@ -13,8 +13,7 @@ void revert()
                 chunk.tiles[tile].t_ymin,
                 chunk.tiles[tile].t_ymax,
                 chunk.tiles[tile].t_xmin,
-                chunk.tiles[tile].t_xmax,
-            {
+            chunk.tiles[tile].t_xmax, {
                 revert_kernel_c_(
                     j, k,
                     chunk.tiles[tile].t_xmin,

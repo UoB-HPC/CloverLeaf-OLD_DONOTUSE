@@ -57,5 +57,9 @@ void update_halo(int* fields, int depth)
                 fields,
                 &depth);
     }
+    if (profiler_on) {
+        profiler.self_halo_exchange += (timer() - kernel_time);
+        kernel_time = timer();
+    }
 
 }

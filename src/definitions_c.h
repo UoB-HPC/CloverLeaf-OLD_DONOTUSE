@@ -15,7 +15,14 @@
 #ifdef USE_KOKKOS
 #include "kokkosdefs.h"
 #else
+
+#ifdef USE_OMPSS
+#include "ompssdefs.h"
+#else
+
 #include "openmpdefs.h"
+
+#endif
 #endif
 
 struct state_type {

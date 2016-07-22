@@ -99,8 +99,7 @@ void accelerate_openmp()
                 chunk.tiles[tile].t_ymin,
                 chunk.tiles[tile].t_ymax + 1,
                 chunk.tiles[tile].t_xmin,
-                chunk.tiles[tile].t_xmax + 1,
-            {
+            chunk.tiles[tile].t_xmax + 1, {
                 accelerate_kernel_c_(
                     j, k,
                     chunk.tiles[tile].t_xmin, chunk.tiles[tile].t_xmax,

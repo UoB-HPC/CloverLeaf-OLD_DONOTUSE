@@ -4,9 +4,9 @@
 void allocate();
 
 #ifdef USE_KOKKOS
-#include "allocate_kokkos.cpp"
+#include "allocate_kokkos.c"
 #else
-#include "allocate.cpp"
+#include "allocate.c"
 #endif
 
 #endif

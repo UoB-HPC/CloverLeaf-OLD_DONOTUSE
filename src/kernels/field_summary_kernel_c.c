@@ -56,7 +56,6 @@ void field_summary_kernel_c_(int* xmin,
     double press = *prss;
 
     int j, k, jv, kv;
-    double vsqrd, cell_vol, cell_mass;
 
 
     vol = 0.0;
@@ -68,18 +67,19 @@ void field_summary_kernel_c_(int* xmin,
 
 
 // TODO reduction
+    #pragma omp parallel for reduction(+:vol, mass, ie, ke, press)
     for (k = y_min; k <= y_max; k++) {
 #pragma ivdep
         for (j = x_min; j <= x_max; j++) {
-            vsqrd = 0.0;
+            double vsqrd = 0.0;
             for (kv = k; kv <= k + 1; kv++) {
                 for (jv = j; jv <= j + 1; jv++) {
                     vsqrd = vsqrd + 0.25 * (XVEL0(xvel0, jv , kv) * XVEL0(xvel0, jv , kv)
                                             + YVEL0(yvel0, jv , kv) * YVEL0(yvel0, jv , kv));
                 }
             }
-            cell_vol = VOLUME(volume, j, k);
-            cell_mass = cell_vol * DENSITY0(density0, j, k);
+            double cell_vol = VOLUME(volume, j, k);
+            double cell_mass = cell_vol * DENSITY0(density0, j, k);
             vol = vol + cell_vol;
             mass = mass + cell_mass;
             ie = ie + cell_mass * ENERGY0(energy0, j, k);

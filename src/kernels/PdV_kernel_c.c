@@ -30,6 +30,7 @@
 #include <math.h>
 #include "../definitions_c.h"
 
+
 void pdv_kernel_predict_c_(
   int j, int k,
   int x_min, int x_max, int y_min, int y_max,
