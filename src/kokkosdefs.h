@@ -25,9 +25,9 @@
 
 // outer y's, inner x's
 #define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
-    Kokkos::parallel_for(Kokkos::RangePolicy<Kokkos::DefaultExecutionSpace>(0, (x_to) - (x_from) + 1), KOKKOS_LAMBDA (const int& i) { \
-        int j = i + (x_from); \
-        for(int k = (y_from); k <= (y_to); k++) { \
+    Kokkos::parallel_for(Kokkos::RangePolicy<Kokkos::DefaultExecutionSpace>(0, (y_to) - (y_from) + 1), KOKKOS_LAMBDA (const int& i) { \
+        int k = i + (y_from); \
+        for(int j = (x_from); j <= (x_to); j++) { \
             body ;\
         } \
     });

@@ -32,12 +32,12 @@ void field_summary_kernel_c_(int* xmin,
                              int* xmax,
                              int* ymin,
                              int* ymax,
-                             field_2d_t volume,
-                             field_2d_t density0,
-                             field_2d_t energy0,
-                             field_2d_t pressure,
-                             field_2d_t xvel0,
-                             field_2d_t yvel0,
+                             const_field_2d_t volume,
+                             const_field_2d_t density0,
+                             const_field_2d_t energy0,
+                             const_field_2d_t pressure,
+                             const_field_2d_t xvel0,
+                             const_field_2d_t yvel0,
                              double* __restrict__ vl,
                              double* __restrict__ mss,
                              double* __restrict__ ien,
@@ -49,51 +49,38 @@ void field_summary_kernel_c_(int* xmin,
     int x_max = *xmax;
     int y_min = *ymin;
     int y_max = *ymax;
-    double vol = *vl;
-    double mass = *mss;
-    double ie = *ien;
-    double ke = *ken;
-    double press = *prss;
-
-    int j, k, jv, kv;
+    double vol   = 0.0;
+    double mass  = 0.0;
+    double ie    = 0.0;
+    double ke    = 0.0;
+    double press = 0.0;
 
 
-    vol = 0.0;
-    mass = 0.0;
-    ie = 0.0;
-    ke = 0.0;;
-    press = 0.0;
-
-
-
-// TODO reduction
-    #pragma omp parallel for reduction(+:vol, mass, ie, ke, press)
-    for (k = y_min; k <= y_max; k++) {
-#pragma ivdep
-        for (j = x_min; j <= x_max; j++) {
+    // #pragma omp parallel for reduction(+:vol,mass,ie,ke,press)
+    for (int k = y_min; k <= y_max; k++) {
+// #pragma ivdep
+        for (int j = x_min; j <= x_max; j++) {
             double vsqrd = 0.0;
-            for (kv = k; kv <= k + 1; kv++) {
-                for (jv = j; jv <= j + 1; jv++) {
-                    vsqrd = vsqrd + 0.25 * (XVEL0(xvel0, jv , kv) * XVEL0(xvel0, jv , kv)
-                                            + YVEL0(yvel0, jv , kv) * YVEL0(yvel0, jv , kv));
+            for (int kv = k; kv <= k + 1; kv++) {
+                for (int jv = j; jv <= j + 1; jv++) {
+                    vsqrd += 0.25 * (XVEL0(xvel0, jv , kv) * XVEL0(xvel0, jv , kv)
+                                     + YVEL0(yvel0, jv , kv) * YVEL0(yvel0, jv , kv));
                 }
             }
             double cell_vol = VOLUME(volume, j, k);
             double cell_mass = cell_vol * DENSITY0(density0, j, k);
-            vol = vol + cell_vol;
-            mass = mass + cell_mass;
-            ie = ie + cell_mass * ENERGY0(energy0, j, k);
-            ke = ke + cell_mass * 0.5 * vsqrd;
-            press = press + cell_vol * PRESSURE(pressure, j, k);
+
+            vol   += cell_vol;
+            mass  += cell_mass;
+            ie    += cell_mass * ENERGY0(energy0, j, k);
+            ke    += cell_mass * 0.5 * vsqrd;
+            press += cell_vol * PRESSURE(pressure, j, k);
         }
     }
 
-
-
-    *vl = vol;
-    *mss = mass;
-    *ien = ie;
-    *ken = ke;
-    *prss = press;
-
+    *vl   += vol;
+    *mss  += mass;
+    *ien  += ie;
+    *ken  += ke;
+    *prss += press;
 }

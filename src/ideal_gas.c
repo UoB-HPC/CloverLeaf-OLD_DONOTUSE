@@ -53,9 +53,9 @@ struct ideal_gas_functor {
     void operator()(TeamPolicy<>::member_type const& member) const
     {
         const int y = member.league_rank();
-        int j = y + y_from;
+        int k = y + y_from;
         parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int k = x + x_from;
+            int j = x + x_from;
 
             ideal_gas_kernel_c_(
                 j, k,

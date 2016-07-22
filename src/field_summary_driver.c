@@ -27,16 +27,5 @@ void field_summary_driver(
             chunk.tiles[tile].field.xvel0,
             chunk.tiles[tile].field.yvel0,
             vol, mass, ie, ke, press);
-        t_vol   += *vol;
-        t_mass  += *mass;
-        t_ie    += *ie;
-        t_ke    += *ke;
-        t_press += *press;
     }
-
-    *vol = t_vol;
-    *ie = t_ie;
-    *ke = t_ke;
-    *mass = t_mass;
-    *press = t_press;
 }

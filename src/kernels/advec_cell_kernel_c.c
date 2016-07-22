@@ -95,9 +95,9 @@ struct xsweep_functor {
     void operator()(TeamPolicy<>::member_type const& member) const
     {
         const int y = member.league_rank();
-        int j = y + y_from;
+        int k = y + y_from;
         parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int k = x + x_from;
+            int j = x + x_from;
 
             xsweep(
                 j,  k,
@@ -177,9 +177,9 @@ struct ysweep_functor {
     void operator()(TeamPolicy<>::member_type const& member) const
     {
         const int y = member.league_rank();
-        int j = y + y_from;
+        int k = y + y_from;
         parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int k = x + x_from;
+            int j = x + x_from;
 
             ysweep(
                 j,  k,
@@ -290,9 +290,9 @@ struct xcomp1_functor {
     void operator()(TeamPolicy<>::member_type const& member) const
     {
         const int y = member.league_rank();
-        int j = y + y_from;
+        int k = y + y_from;
         parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int k = x + x_from;
+            int j = x + x_from;
 
             xcomp1(
                 j,  k,
@@ -404,9 +404,9 @@ struct ycomp1_functor {
     void operator()(TeamPolicy<>::member_type const& member) const
     {
         const int y = member.league_rank();
-        int j = y + y_from;
+        int k = y + y_from;
         parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int k = x + x_from;
+            int j = x + x_from;
 
             ycomp1(
                 j,  k,
@@ -492,9 +492,9 @@ struct xcomp2_functor {
     void operator()(TeamPolicy<>::member_type const& member) const
     {
         const int y = member.league_rank();
-        int j = y + y_from;
+        int k = y + y_from;
         parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int k = x + x_from;
+            int j = x + x_from;
 
             xcomp2(
                 j,  k,
@@ -583,9 +583,9 @@ struct ycomp2_functor {
     void operator()(TeamPolicy<>::member_type const& member) const
     {
         const int y = member.league_rank();
-        int j = y + y_from;
+        int k = y + y_from;
         parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int k = x + x_from;
+            int j = x + x_from;
 
             ycomp2(
                 j,  k,
