@@ -33,10 +33,10 @@ void update_halo(int* fields, int depth)
             chunk.chunk_neighbours[CHUNK_TOP] == EXTERNAL_FACE) {
         for (int tile = 0; tile < tiles_per_chunk; tile++)
             update_halo_kernel_c_(
-                &chunk.tiles[tile].t_xmin,
-                &chunk.tiles[tile].t_xmax,
-                &chunk.tiles[tile].t_ymin,
-                &chunk.tiles[tile].t_ymax,
+                chunk.tiles[tile].t_xmin,
+                chunk.tiles[tile].t_xmax,
+                chunk.tiles[tile].t_ymin,
+                chunk.tiles[tile].t_ymax,
                 chunk.chunk_neighbours,
                 chunk.tiles[tile].tile_neighbours,
                 chunk.tiles[tile].field.density0,
@@ -55,7 +55,7 @@ void update_halo(int* fields, int depth)
                 chunk.tiles[tile].field.mass_flux_x,
                 chunk.tiles[tile].field.mass_flux_y,
                 fields,
-                &depth);
+                depth);
     }
     if (profiler_on) {
         profiler.self_halo_exchange += (timer() - kernel_time);

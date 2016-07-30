@@ -29,7 +29,7 @@
 #include "ftocmacros.h"
 #include <math.h>
 
-void update_halo_kernel_c_(int* xmin, int* xmax, int* ymin, int* ymax,
+void update_halo_kernel_c_(int x_min, int x_max, int y_min, int y_max,
                            int* chunk_neighbours,
                            int* tile_neighbours,
                            field_2d_t density0,
@@ -48,32 +48,25 @@ void update_halo_kernel_c_(int* xmin, int* xmax, int* ymin, int* ymax,
                            field_2d_t mass_flux_x,
                            field_2d_t mass_flux_y,
                            int* fields,
-                           int* dpth)
+                           int depth)
 {
-
-    int x_min = *xmin;
-    int x_max = *xmax;
-    int y_min = *ymin;
-    int y_max = *ymax;
-    int depth = *dpth;
-
     /* These need to be kept consistent with the data module to avoid use statement */
     int CHUNK_LEFT = 1, CHUNK_RIGHT = 2, CHUNK_BOTTOM = 3, CHUNK_TOP = 4, EXTERNAL_FACE = -1;
     int TILE_LEFT = 1, TILE_RIGHT = 2, TILE_BOTTOM = 3, TILE_TOP = 4, EXTERNAL_TILE = -1;
 
-    int FIELD_DENSITY0 = 1;
-    int FIELD_DENSITY1 = 2;
-    int FIELD_ENERGY0 = 3;
-    int FIELD_ENERGY1 = 4;
-    int FIELD_PRESSURE = 5;
-    int FIELD_VISCOSITY = 6;
-    int FIELD_SOUNDSPEED = 7;
-    int FIELD_XVEL0 = 8;
-    int FIELD_XVEL1 = 9;
-    int FIELD_YVEL0 = 10;
-    int FIELD_YVEL1 = 11;
-    int FIELD_VOL_FLUX_X = 12;
-    int FIELD_VOL_FLUX_Y = 13;
+    int FIELD_DENSITY0    = 1;
+    int FIELD_DENSITY1    = 2;
+    int FIELD_ENERGY0     = 3;
+    int FIELD_ENERGY1     = 4;
+    int FIELD_PRESSURE    = 5;
+    int FIELD_VISCOSITY   = 6;
+    int FIELD_SOUNDSPEED  = 7;
+    int FIELD_XVEL0       = 8;
+    int FIELD_XVEL1       = 9;
+    int FIELD_YVEL0       = 10;
+    int FIELD_YVEL1       = 11;
+    int FIELD_VOL_FLUX_X  = 12;
+    int FIELD_VOL_FLUX_Y  = 13;
     int FIELD_MASS_FLUX_X = 14;
     int FIELD_MASS_FLUX_Y = 15;
 

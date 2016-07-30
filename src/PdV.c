@@ -1,8 +1,8 @@
 #include "PdV.h"
 #include "definitions_c.h"
 #include "timer_c.h"
-#include "kernels/PdV_kernel_c.c"
 #include "ideal_gas.h"
+#include "adaptors/pdv.c"
 #include "revert.h"
 #include "update_halo.h"
 
@@ -13,71 +13,7 @@ void PdV(bool predict)
 
     if (profiler_on) kernel_time = timer();
 
-    #pragma omp parallel
-    {
-        if (predict) {
-            for (int tile = 0; tile < tiles_per_chunk; tile++) {
-                DOUBLEFOR(
-                    chunk.tiles[tile].t_ymin,
-                    chunk.tiles[tile].t_ymax,
-                    chunk.tiles[tile].t_xmin,
-                chunk.tiles[tile].t_xmax, {
-                    pdv_kernel_predict_c_(
-                        j, k,
-                        chunk.tiles[tile].t_xmin,
-                        chunk.tiles[tile].t_xmax,
-                        chunk.tiles[tile].t_ymin,
-                        chunk.tiles[tile].t_ymax,
-                        dt,
-                        chunk.tiles[tile].field.xarea,
-                        chunk.tiles[tile].field.yarea,
-                        chunk.tiles[tile].field.volume,
-                        chunk.tiles[tile].field.density0,
-                        chunk.tiles[tile].field.density1,
-                        chunk.tiles[tile].field.energy0,
-                        chunk.tiles[tile].field.energy1,
-                        chunk.tiles[tile].field.pressure,
-                        chunk.tiles[tile].field.viscosity,
-                        chunk.tiles[tile].field.xvel0,
-                        chunk.tiles[tile].field.xvel1,
-                        chunk.tiles[tile].field.yvel0,
-                        chunk.tiles[tile].field.yvel1,
-                        chunk.tiles[tile].field.work_array1);
-                });
-            }
-        } else {
-            for (int tile = 0; tile < tiles_per_chunk; tile++) {
-                DOUBLEFOR(
-                    chunk.tiles[tile].t_ymin,
-                    chunk.tiles[tile].t_ymax,
-                    chunk.tiles[tile].t_xmin,
-                chunk.tiles[tile].t_xmax, {
-                    pdv_kernel_no_predict_c_(
-                        j, k,
-                        chunk.tiles[tile].t_xmin,
-                        chunk.tiles[tile].t_xmax,
-                        chunk.tiles[tile].t_ymin,
-                        chunk.tiles[tile].t_ymax,
-                        dt,
-                        chunk.tiles[tile].field.xarea,
-                        chunk.tiles[tile].field.yarea,
-                        chunk.tiles[tile].field.volume,
-                        chunk.tiles[tile].field.density0,
-                        chunk.tiles[tile].field.density1,
-                        chunk.tiles[tile].field.energy0,
-                        chunk.tiles[tile].field.energy1,
-                        chunk.tiles[tile].field.pressure,
-                        chunk.tiles[tile].field.viscosity,
-                        chunk.tiles[tile].field.xvel0,
-                        chunk.tiles[tile].field.xvel1,
-                        chunk.tiles[tile].field.yvel0,
-                        chunk.tiles[tile].field.yvel1,
-                        chunk.tiles[tile].field.work_array1);
-                });
-            }
-        }
-    }
-
+    pdv(chunk, predict, dt);
 
     if (profiler_on) profiler.PdV += timer() - kernel_time;
 

@@ -1,6 +1,6 @@
 #include "calc_dt.h"
 #include "definitions_c.h"
-#include "kernels/calc_dt_kernel_c.c"
+#include "adaptors/calc_dt.c"
 #include "string.h"
 
 void calc_dt(int tile,
@@ -14,42 +14,7 @@ void calc_dt(int tile,
     // *local_dt = g_big;
     int l_control;
     // double lmin = g_big;
-
-    #pragma omp parallel
-    {
-        DOUBLEFOR(
-            chunk.tiles[tile].t_ymin,
-            chunk.tiles[tile].t_ymax,
-            chunk.tiles[tile].t_xmin,
-        chunk.tiles[tile].t_xmax, {
-            calc_dt_kernel_c_(
-                j, k,
-                chunk.tiles[tile].t_xmin,
-                chunk.tiles[tile].t_xmax,
-                chunk.tiles[tile].t_ymin,
-                chunk.tiles[tile].t_ymax,
-                chunk.tiles[tile].field.xarea,
-                chunk.tiles[tile].field.yarea,
-                chunk.tiles[tile].field.celldx,
-                chunk.tiles[tile].field.celldy,
-                chunk.tiles[tile].field.volume,
-                chunk.tiles[tile].field.density0,
-                chunk.tiles[tile].field.energy0,
-                chunk.tiles[tile].field.pressure,
-                chunk.tiles[tile].field.viscosity,
-                chunk.tiles[tile].field.soundspeed,
-                chunk.tiles[tile].field.xvel0,
-                chunk.tiles[tile].field.yvel0,
-                chunk.tiles[tile].field.work_array1
-            );
-        });
-    }
-    calc_dt_min_val(chunk.tiles[tile].t_xmin,
-                    chunk.tiles[tile].t_xmax,
-                    chunk.tiles[tile].t_ymin,
-                    chunk.tiles[tile].t_ymax,
-                    chunk.tiles[tile].field.work_array1,
-                    local_dt);
+    calc_dt_adaptor(tile, local_dt);
     // *local_dt = mindt;
 
 

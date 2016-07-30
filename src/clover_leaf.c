@@ -10,18 +10,22 @@
 #include <Kokkos_Core.hpp>
 #endif
 
+#ifdef USE_OPENCL
+#include "openclinit.cpp"
+#endif
+
 
 int main(int argc, char** argv)
 {
 
 #ifdef USE_KOKKOS
     printf("Using Kokkos\n");
-#else
+#endif
 #ifdef USE_OMPSS
     printf("Using OMPSS\n");
-#else
-    printf("Using OpenMP\n");
 #endif
+#ifdef USE_OPENMP
+    printf("Using OpenMP\n");
 #endif
 
 #ifdef USE_KOKKOS
@@ -42,12 +46,15 @@ int main(int argc, char** argv)
 #endif
     std::cerr << msg.str() << std::endl;
 #endif
+#ifdef USE_OPENCL
+    initOpenCL();
+#endif
 
     clover_init_comms(argc, argv);
 
     BOSSPRINT(stdout, "Clover Version %8.3f\n", g_version);
     BOSSPRINT(stdout, "Task Count %d\n", parallel.max_task);
-#ifndef USE_KOKKOS
+#if defined(USE_OMPSS) || defined(USE_OPENMP)
     #pragma omp parallel
     #pragma omp master
     {BOSSPRINT(stdout, "OpenMP threads %d\n", omp_get_num_threads());}

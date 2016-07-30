@@ -28,7 +28,11 @@
 #include <math.h>
 #include "../definitions_c.h"
 
+#define INRANGE(y, x, ymin, ymax, xmin, xmax) \
+ ((y) >= (ymin) && (y) <= (ymax) && (x) >= (xmin) && (x) <= (xmax))
+
 void reset_field_kernel_c_(
+    int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t       density0,
     const_field_2d_t density1,
@@ -39,16 +43,11 @@ void reset_field_kernel_c_(
     field_2d_t       yvel0,
     const_field_2d_t yvel1)
 {
-    DOUBLEFOR(y_min, y_max, x_min, x_max, {
+    if (INRANGE(k, j, y_min, y_max, x_min, x_max)) {
         DENSITY0(density0, j, k) = DENSITY1(density1, j, k);
         ENERGY0(energy0, j, k) = ENERGY1(energy1, j, k);
-    });
+    }
 
-    DOUBLEFOR(y_min, y_max + 1, x_min, x_max + 1, {
-        XVEL0(xvel0, j, k) = XVEL1(xvel1, j, k);
-    });
-
-    DOUBLEFOR(y_min, y_max + 1, x_min, x_max + 1, {
-        YVEL0(yvel0, j, k) = YVEL1(yvel1, j, k);
-    });
+    XVEL0(xvel0, j, k) = XVEL1(xvel1, j, k);
+    YVEL0(yvel0, j, k) = YVEL1(yvel1, j, k);
 }

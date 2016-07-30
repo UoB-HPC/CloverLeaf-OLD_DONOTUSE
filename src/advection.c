@@ -1,8 +1,10 @@
 // #include "advection.h"
 #include "definitions_c.h"
-#include "kernels/advec_cell_kernel_c.c"
+// #include "kernels/advec_cell_kernel_c.c"
+#include "adaptors/advec_cell.c"
+#include "adaptors/advec_mom.c"
 #include "update_halo.h"
-#include "kernels/advec_mom_kernel_c.c"
+// #include "kernels/advec_mom_kernel_c.c"
 #include "timer_c.h"
 
 
@@ -87,7 +89,7 @@ void advection()
 
 void advec_cell_driver(int tile, int sweep_number, int dir)
 {
-    advec_cell_kernel_c_(
+    advec_cell(
         chunk.tiles[tile].t_xmin,
         chunk.tiles[tile].t_xmax,
         chunk.tiles[tile].t_ymin,
@@ -99,7 +101,7 @@ void advec_cell_driver(int tile, int sweep_number, int dir)
 
 void advec_mom_driver(int tile, int which_vel, int direction, int sweep_number)
 {
-    advec_mom_kernel_c_(
+    advec_mom(
         which_vel == 1 ? chunk.tiles[tile].field.xvel1 : chunk.tiles[tile].field.yvel1,
         chunk.tiles[tile],
         chunk.tiles[tile].t_xmin,

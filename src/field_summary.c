@@ -4,18 +4,19 @@
 #include "stdlib.h"
 #include "ideal_gas.h"
 #include "clover.h"
-#include "field_summary_driver.h"
+#include "adaptors/field_summary.c"
 #include <math.h>
 
 void field_summary()
 {
     double kernel_time = 0.0,
            vol, mass, ie, ke, press;
-    BOSSPRINT(g_out, "\nTime %.13f\n", _time); // TODO
+    BOSSPRINT(g_out, "\nTime %.13f\n", _time);
     BOSSPRINT(g_out, "%13s%16s%16s%16s%16s%16s%16s%16s\n", "", "Volume", "Mass", "Density", "Pressure", "Internal Energy", "Kinetic Energy", "Total Energy");
 
-    if (profiler_on)
+    if (profiler_on) {
         kernel_time = timer();
+    }
 
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
         ideal_gas(tile, false);
@@ -26,7 +27,7 @@ void field_summary()
         kernel_time = timer();
     }
 
-    field_summary_driver(&vol, &ie, &ke, &mass, &press);
+    field_summary(&vol, &ie, &ke, &mass, &press);
 
     clover_sum(&vol);
     clover_sum(&mass);
@@ -36,6 +37,7 @@ void field_summary()
 
     if (profiler_on) profiler.summary += timer() - kernel_time;
     BOSSPRINT(g_out, "%6s%7d%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e\n\n", " step:", step, vol, mass, mass / vol, press / vol, ie, ke, ie + ke);
+    BOSSPRINT(stdout, "%6s%7d%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e\n\n", " step:", step, vol, mass, mass / vol, press / vol, ie, ke, ie + ke);
     double qa_diff = 4.0;
     if (complete) {
         if (test_problem >= 1) {

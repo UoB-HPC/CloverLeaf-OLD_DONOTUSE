@@ -29,7 +29,7 @@
 #include <math.h>
 #include "../definitions_c.h"
 
-void calc_dt_kernel_c_(
+double calc_dt_kernel_c_(
     int j, int k,
     int x_min,
     int x_max,
@@ -82,7 +82,7 @@ void calc_dt_kernel_c_(
         dtdivt = g_big;
     }
 
-    WORK_ARRAY(dtmin, j, k) = MIN(dtct, MIN(dtut, MIN(dtvt, dtdivt)));
+    return MIN(dtct, MIN(dtut, MIN(dtvt, dtdivt)));
 }
 
 

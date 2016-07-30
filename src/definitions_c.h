@@ -6,23 +6,24 @@
 // #include <functional>
 
 #ifdef USE_KOKKOS
-
 #include <Kokkos_Core.hpp>
-
 #endif
 
 
 #ifdef USE_KOKKOS
 #include "kokkosdefs.h"
-#else
+#endif
 
 #ifdef USE_OMPSS
 #include "ompssdefs.h"
-#else
-
-#include "openmpdefs.h"
-
 #endif
+
+#ifdef USE_OPENMP
+#include "openmpdefs.h"
+#endif
+
+#ifdef USE_OPENCL
+#include "opencldefs.h"
 #endif
 
 struct state_type {
