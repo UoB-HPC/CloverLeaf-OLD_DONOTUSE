@@ -5,7 +5,13 @@
 #include <stdbool.h>
 #include "definitions_c.h"
 
-struct state_type *states;
+#if defined(USE_OPENCL)
+cl::Context      openclContext;
+cl::CommandQueue openclQueue;
+cl::Program openclProgram;
+#endif
+
+struct state_type* states;
 
 int number_of_states;
 

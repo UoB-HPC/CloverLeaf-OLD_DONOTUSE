@@ -1,15 +1,66 @@
+#include "cl.hpp"
+
+extern cl::Context        openclContext;
+extern cl::CommandQueue   openclQueue;
+extern cl::Program        openclProgram;
 
 struct field_type {
+    cl::Buffer* d_density0;
+    cl::Buffer* d_density1;
+    cl::Buffer* d_energy0;
+    cl::Buffer* d_energy1;
+    cl::Buffer* d_pressure;
+    cl::Buffer* d_viscosity;
+    cl::Buffer* d_soundspeed;
+    cl::Buffer* d_xvel0;
+    cl::Buffer* d_xvel1;
+    cl::Buffer* d_yvel0;
+    cl::Buffer* d_yvel1;
+    cl::Buffer* d_vol_flux_x;
+    cl::Buffer* d_mass_flux_x;
+    cl::Buffer* d_vol_flux_y;
+    cl::Buffer* d_mass_flux_y;
+    //node_flux; stepbymass; volume_change; pre_vo
+    cl::Buffer* d_work_array1;
+    //node_mass_post; post_vol
+    cl::Buffer* d_work_array2;
+    //node_mass_pre; pre_mass
+    cl::Buffer* d_work_array3;
+    //advec_vel; post_mass
+    cl::Buffer* d_work_array4;
+    //mom_flux; advec_vol
+    cl::Buffer* d_work_array5;
+    //pre_vol; post_ener
+    cl::Buffer* d_work_array6;
+    //post_vol; ener_flux
+    cl::Buffer* d_work_array7;
+    cl::Buffer* d_cellx;
+    cl::Buffer* d_celly;
+    cl::Buffer* d_vertexx;
+    cl::Buffer* d_vertexy;
+    cl::Buffer* d_celldx;
+    cl::Buffer* d_celldy;
+    cl::Buffer* d_vertexdx;
+    cl::Buffer* d_vertexdy;
+    cl::Buffer* d_volume;
+    cl::Buffer* d_xarea;
+    cl::Buffer* d_yarea;
+
     double* density0;
     double* density1;
-    double* energy0; double* energy1;
+    double* energy0;
+    double* energy1;
     double* pressure;
     double* viscosity;
     double* soundspeed;
-    double* xvel0; double* xvel1;
-    double* yvel0; double* yvel1;
-    double* vol_flux_x; double* mass_flux_x;
-    double* vol_flux_y; double* mass_flux_y;
+    double* xvel0;
+    double* xvel1;
+    double* yvel0;
+    double* yvel1;
+    double* vol_flux_x;
+    double* mass_flux_x;
+    double* vol_flux_y;
+    double* mass_flux_y;
     //node_flux; stepbymass; volume_change; pre_vo
     double* work_array1;
     //node_mass_post; post_vol
@@ -47,39 +98,4 @@ struct field_type {
         } \
     }
 
-#define T1ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 4, x_min - 2, y_min - 2)]
-#define T2ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 5, x_min - 2, y_min - 2)]
-
-#define DENSITY0(d, i, j)      T1ACCESS(d, i, j)
-#define DENSITY1(d, i, j)      T1ACCESS(d, i, j)
-
-#define ENERGY0(d, i, j)       T1ACCESS(d, i, j)
-#define ENERGY1(d, i, j)       T1ACCESS(d, i, j)
-#define PRESSURE(d, i, j)      T1ACCESS(d, i, j)
-#define VISCOSITY(d, i, j)     T1ACCESS(d, i, j)
-#define SOUNDSPEED(d, i, j)    T1ACCESS(d, i, j)
-
-#define VEL(d, i, j)           T2ACCESS(d, i, j)
-#define XVEL0(d, i, j)         VEL(d, i, j)
-#define XVEL1(d, i, j)         VEL(d, i, j)
-#define YVEL0(d, i, j)         VEL(d, i, j)
-#define YVEL1(d, i, j)         VEL(d, i, j)
-
-#define VOL_FLUX_X(d, i, j)    T2ACCESS(d, i, j)
-#define MASS_FLUX_X(d, i, j)   T2ACCESS(d, i, j)
-#define VOL_FLUX_Y(d, i, j)    T1ACCESS(d, i, j)
-#define MASS_FLUX_Y(d, i, j)   T1ACCESS(d, i, j)
-
-#define VOLUME(d, i, j)        T1ACCESS(d, i, j)
-#define XAREA(d, i, j)         T2ACCESS(d, i, j)
-#define YAREA(d, i, j)         T1ACCESS(d, i, j)
-
-#define WORK_ARRAY(d, i, j)    T2ACCESS(d, i, j)
-
-#define FIELD_1D(d, i, j)      d[FTNREF1D(i, j)]
-
-#define const_field_2d_t     const double* __restrict__
-#define field_2d_t           double* __restrict__
-
-#define const_field_1d_t     const double* __restrict__
-#define field_1d_t           double* __restrict__
+#include "openclaccessdefs.h"

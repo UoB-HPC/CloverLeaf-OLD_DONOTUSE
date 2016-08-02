@@ -1,9 +1,13 @@
+#define FTNREF1D(i_index,i_lb) \
+    ((i_index)-(i_lb))
+#define FTNREF2D(i_index, j_index, i_size, i_lb, j_lb) \
+    ((i_size) * (j_index - (j_lb)) + \
+        (i_index) - (i_lb))
 
 
-/*
 // outer y's, inner x's
 // #define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
-//     Kokkos::parallel_for((y_to) - (y_from) + 1, KOKKOS_LAMBDA (const int& i) { \
+// Kokkos::parallel_for((y_to) - (y_from) + 1, KOKKOS_LAMBDA (const int& i) { \
 //             int k = i + (y_from); \
 //         _Pragma("ivdep") \
 //         for(int j = (x_from); j <= (x_to); j++) { \
@@ -20,7 +24,7 @@
 //             body ;\
 //         }); \
 //     });
-*/
+
 
 
 // outer y's, inner x's

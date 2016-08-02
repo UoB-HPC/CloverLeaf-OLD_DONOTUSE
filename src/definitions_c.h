@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include "data_c.h"
-// #include <functional>
 
 #ifdef USE_KOKKOS
 #include <Kokkos_Core.hpp>
@@ -150,13 +149,6 @@ extern int number_of_chunks;
 extern struct grid_type grid;
 
 #define BOSSPRINT(...) if(parallel.boss) fprintf(__VA_ARGS__)
-
-#define FTNREF1D(i_index,i_lb) \
-    ((i_index)-(i_lb))
-#define FTNREF2D(i_index, j_index, i_size, i_lb, j_lb) \
-    ((i_size) * (j_index - (j_lb)) + \
-        (i_index) - (i_lb))
-
 
 
 #endif

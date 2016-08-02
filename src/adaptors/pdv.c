@@ -9,10 +9,10 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
         for (int tile = 0; tile < tiles_per_chunk; tile++) {
             pdv_predict_functor f(
                 chunk.tiles[tile],
-                chunk.tiles[tile].t_ymin,
-                chunk.tiles[tile].t_ymax,
                 chunk.tiles[tile].t_xmin,
                 chunk.tiles[tile].t_xmax,
+                chunk.tiles[tile].t_ymin,
+                chunk.tiles[tile].t_ymax,
                 dt);
             f.compute();
         }
@@ -20,10 +20,10 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
         for (int tile = 0; tile < tiles_per_chunk; tile++) {
             pdv_no_predict_functor f(
                 chunk.tiles[tile],
-                chunk.tiles[tile].t_ymin,
-                chunk.tiles[tile].t_ymax,
                 chunk.tiles[tile].t_xmin,
                 chunk.tiles[tile].t_xmax,
+                chunk.tiles[tile].t_ymin,
+                chunk.tiles[tile].t_ymax,
                 dt);
             f.compute();
         }

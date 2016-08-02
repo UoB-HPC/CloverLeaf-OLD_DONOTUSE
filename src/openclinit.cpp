@@ -26,29 +26,30 @@ void initOpenCL()
     cl::Device default_device = all_devices[0];
     std::cout << "Using device: " << default_device.getInfo<CL_DEVICE_NAME>() << "\n";
 
-    cl::Context context({default_device});
+    openclContext = cl::Context({default_device});
 
     cl::Program::Sources sources;
-
-    std::string files[3] = {
-        "./src/opencldefs.h",
+    int NUMFILES = 3;
+    std::string files[NUMFILES] = {
+        "./src/openclaccessdefs.h",
         "./src/kernels/accelerate_kernel.c",
         "./src/adaptors/opencl/accelerate.c"
     };
     std::stringstream buffer;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < NUMFILES; i++) {
         std::ifstream t(files[i]);
         buffer << t.rdbuf();
     }
     std::string kernel_code = buffer.str();
-    std::cout << kernel_code << std::endl;
+    // std::cout << kernel_code << std::endl;
 
     sources.push_back({kernel_code.c_str(), kernel_code.length()});
 
-    cl::Program program(context, sources);
-    if (program.build({default_device}, "-I src/kernels/accelerate_kernel.c") != CL_SUCCESS) {
-        std::cout << " Error building: " << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device) << "\n";
+    openclProgram = cl::Program(openclContext, sources);
+    if (openclProgram.build({default_device}) != CL_SUCCESS) {
+        std::cout << " Error building: " << openclProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device) << "\n";
         exit(1);
     }
-    exit(0);
+    openclQueue = cl::CommandQueue(openclContext, default_device);
+    // exit(0);
 }

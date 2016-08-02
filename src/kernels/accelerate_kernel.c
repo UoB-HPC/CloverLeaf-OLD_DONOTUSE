@@ -26,11 +26,6 @@
 // #include <math.h>
 // #include "../definitions_c.h"
 
-int test(int i)
-{
-    return i * 2;
-}
-
 void accelerate_kernel_c_(
     int j, int k,
     int x_min, int x_max,

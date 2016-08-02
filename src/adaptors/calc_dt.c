@@ -1,8 +1,8 @@
 #include "../definitions_c.h"
-#include "../kernels/calc_dt_kernel_c.c"
 
 #if defined(USE_KOKKOS)
-
+// #include "kokkos/calc_dt.cpp"
+#include "../kernels/calc_dt_kernel_c.c"
 void calc_dt_adaptor(int tile, double* local_dt)
 {
     // TODO kokkos reduction
@@ -38,6 +38,7 @@ void calc_dt_adaptor(int tile, double* local_dt)
 #endif
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
+#include "../kernels/calc_dt_kernel_c.c"
 
 void calc_dt_adaptor(int tile, double* local_dt)
 {
@@ -74,6 +75,7 @@ void calc_dt_adaptor(int tile, double* local_dt)
 #endif
 
 #if defined(USE_OPENCL)
+#include "../kernels/calc_dt_kernel_c.c"
 
 void calc_dt_adaptor(int tile, double* local_dt)
 {

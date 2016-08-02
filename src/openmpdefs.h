@@ -1,3 +1,8 @@
+#define FTNREF1D(i_index,i_lb) \
+    ((i_index)-(i_lb))
+#define FTNREF2D(i_index, j_index, i_size, i_lb, j_lb) \
+    ((i_size) * (j_index - (j_lb)) + \
+        (i_index) - (i_lb))
 
 struct field_type {
     double* density0;
