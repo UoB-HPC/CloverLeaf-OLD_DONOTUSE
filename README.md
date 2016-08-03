@@ -11,6 +11,9 @@ This is a C/C++ version of cloverleaf partially/fully ported to OpenMP, Kokkos, 
 *   Implement visit file output
 *   Port other kernels to opencl
 *   Start a raja port
+*   rewrite file parsing
+*   reduce number of warnings
+*   writeup how to compile
 
 
 <!-- # CloverLeaf_Serial
