@@ -25,9 +25,9 @@
 
 // #include <stdio.h>
 // #include <stdlib.h>
-#include "ftocmacros.h"
-#include <math.h>
-#include "../definitions_c.h"
+// #include "ftocmacros.h"
+// #include <math.h>
+// #include "../definitions_c.h"
 
 double calc_dt_kernel_c_(
     int j, int k,
@@ -86,36 +86,36 @@ double calc_dt_kernel_c_(
 }
 
 
-void calc_dt_min_val(
-    int x_min,
-    int x_max,
-    int y_min,
-    int y_max,
-    field_2d_t dt_min,
-    double* dt_min_val)
-{
-#if defined(USE_KOKKOS)
+// void calc_dt_min_val(
+//     int x_min,
+//     int x_max,
+//     int y_min,
+//     int y_max,
+//     field_2d_t dt_min,
+//     double* dt_min_val)
+// {
+// #if defined(USE_KOKKOS)
 
-    *dt_min_val = g_big;
-    for (int k = y_min; k <= y_max; k++) {
-// #pragma ivdep
-        for (int j = x_min; j <= x_max; j++) {
-            if (WORK_ARRAY(dt_min, j,  k) < *dt_min_val)
-                *dt_min_val = WORK_ARRAY(dt_min, j,  k);
-        }
-    }
+//     *dt_min_val = g_big;
+//     for (int k = y_min; k <= y_max; k++) {
+// // #pragma ivdep
+//         for (int j = x_min; j <= x_max; j++) {
+//             if (WORK_ARRAY(dt_min, j,  k) < *dt_min_val)
+//                 *dt_min_val = WORK_ARRAY(dt_min, j,  k);
+//         }
+//     }
 
-#else
+// #else
 
-    double minval = g_big;
-    #pragma omp parallel for reduction(min:minval)
-    for (int k = y_min; k <= y_max; k++) {
-        for (int j = x_min; j <= x_max; j++) {
-            if (WORK_ARRAY(dt_min, j,  k) < minval)
-                minval = WORK_ARRAY(dt_min, j,  k);
-        }
-    }
-    *dt_min_val = minval;
+//     double minval = g_big;
+//     #pragma omp parallel for reduction(min:minval)
+//     for (int k = y_min; k <= y_max; k++) {
+//         for (int j = x_min; j <= x_max; j++) {
+//             if (WORK_ARRAY(dt_min, j,  k) < minval)
+//                 minval = WORK_ARRAY(dt_min, j,  k);
+//         }
+//     }
+//     *dt_min_val = minval;
 
-#endif
-}
+// #endif
+// }

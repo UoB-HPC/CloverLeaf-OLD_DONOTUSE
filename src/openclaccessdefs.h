@@ -4,6 +4,23 @@
     ((i_size) * (j_index - (j_lb)) + \
         (i_index) - (i_lb))
 
+
+#if !defined(USE_OPENCL)
+__constant double g_small = 1.0e-16,
+                  g_big  = 1.0e+21;
+__constant double dtc_safe = 0.7,
+                  dtu_safe = 0.5,
+                  dtv_safe = 0.5,
+                  dtdiv_safe = 0.7;
+#ifndef MAX
+#define MAX(a, b) ((a) >= (b) ? (a) : (b))
+#endif
+#ifndef MIN
+#define MIN(a, b) ((a) >= (b) ? (b) : (a))
+#endif
+
+#endif
+
 #define T1ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 4, x_min - 2, y_min - 2)]
 #define T2ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 5, x_min - 2, y_min - 2)]
 

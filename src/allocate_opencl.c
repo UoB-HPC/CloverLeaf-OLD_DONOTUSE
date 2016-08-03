@@ -11,6 +11,17 @@ int size1d(int min, int max)
     return max - min + 1;
 }
 
+void* aligned_malloc(size_t size, int align)
+{
+    void* mem = malloc(size + (align - 1) + sizeof(void*));
+
+    char* amem = ((char*)mem) + sizeof(void*);
+    amem += align - ((uintptr_t)amem & (align - 1));
+
+    ((void**)amem)[-1] = mem;
+    return amem;
+}
+
 void allocate()
 {
 
@@ -60,43 +71,43 @@ void allocate()
         int yareaSize           = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 3);
 
 
-        chunk.tiles[tile].field.density0   = (double*)calloc(sizeof(double), density0Size);
-        chunk.tiles[tile].field.density1   = (double*)calloc(sizeof(double), density1Size);
-        chunk.tiles[tile].field.energy0    = (double*)calloc(sizeof(double), energy0Size);
-        chunk.tiles[tile].field.energy1    = (double*)calloc(sizeof(double), energy1Size);
-        chunk.tiles[tile].field.pressure   = (double*)calloc(sizeof(double), pressureSize);
-        chunk.tiles[tile].field.viscosity  = (double*)calloc(sizeof(double), viscositySize);
-        chunk.tiles[tile].field.soundspeed = (double*)calloc(sizeof(double), soundspeedSize);
+        chunk.tiles[tile].field.density0   = (double*)aligned_malloc(sizeof(double) * density0Size, 4096);
+        chunk.tiles[tile].field.density1   = (double*)aligned_malloc(sizeof(double) * density1Size, 4096);
+        chunk.tiles[tile].field.energy0    = (double*)aligned_malloc(sizeof(double) * energy0Size, 4096);
+        chunk.tiles[tile].field.energy1    = (double*)aligned_malloc(sizeof(double) * energy1Size, 4096);
+        chunk.tiles[tile].field.pressure   = (double*)aligned_malloc(sizeof(double) * pressureSize, 4096);
+        chunk.tiles[tile].field.viscosity  = (double*)aligned_malloc(sizeof(double) * viscositySize, 4096);
+        chunk.tiles[tile].field.soundspeed = (double*)aligned_malloc(sizeof(double) * soundspeedSize, 4096);
 
-        chunk.tiles[tile].field.xvel0 = (double*)calloc(sizeof(double), xvel0Size);
-        chunk.tiles[tile].field.xvel1 = (double*)calloc(sizeof(double), xvel1Size);
-        chunk.tiles[tile].field.yvel0 = (double*)calloc(sizeof(double), yvel0Size);
-        chunk.tiles[tile].field.yvel1 = (double*)calloc(sizeof(double), yvel1Size);
+        chunk.tiles[tile].field.xvel0 = (double*)aligned_malloc(sizeof(double) * xvel0Size, 4096);
+        chunk.tiles[tile].field.xvel1 = (double*)aligned_malloc(sizeof(double) * xvel1Size, 4096);
+        chunk.tiles[tile].field.yvel0 = (double*)aligned_malloc(sizeof(double) * yvel0Size, 4096);
+        chunk.tiles[tile].field.yvel1 = (double*)aligned_malloc(sizeof(double) * yvel1Size, 4096);
 
-        chunk.tiles[tile].field.vol_flux_x  = (double*)calloc(sizeof(double), vol_flux_xSize);
-        chunk.tiles[tile].field.mass_flux_x = (double*)calloc(sizeof(double), mass_flux_xSize);
-        chunk.tiles[tile].field.vol_flux_y  = (double*)calloc(sizeof(double), vol_flux_ySize);
-        chunk.tiles[tile].field.mass_flux_y = (double*)calloc(sizeof(double), mass_flux_ySize);
+        chunk.tiles[tile].field.vol_flux_x  = (double*)aligned_malloc(sizeof(double) * vol_flux_xSize, 4096);
+        chunk.tiles[tile].field.mass_flux_x = (double*)aligned_malloc(sizeof(double) * mass_flux_xSize, 4096);
+        chunk.tiles[tile].field.vol_flux_y  = (double*)aligned_malloc(sizeof(double) * vol_flux_ySize, 4096);
+        chunk.tiles[tile].field.mass_flux_y = (double*)aligned_malloc(sizeof(double) * mass_flux_ySize, 4096);
 
-        chunk.tiles[tile].field.work_array1 = (double*)calloc(sizeof(double), work_array1Size);
-        chunk.tiles[tile].field.work_array2 = (double*)calloc(sizeof(double), work_array2Size);
-        chunk.tiles[tile].field.work_array3 = (double*)calloc(sizeof(double), work_array3Size);
-        chunk.tiles[tile].field.work_array4 = (double*)calloc(sizeof(double), work_array4Size);
-        chunk.tiles[tile].field.work_array5 = (double*)calloc(sizeof(double), work_array5Size);
-        chunk.tiles[tile].field.work_array6 = (double*)calloc(sizeof(double), work_array6Size);
-        chunk.tiles[tile].field.work_array7 = (double*)calloc(sizeof(double), work_array7Size);
+        chunk.tiles[tile].field.work_array1 = (double*)aligned_malloc(sizeof(double) * work_array1Size, 4096);
+        chunk.tiles[tile].field.work_array2 = (double*)aligned_malloc(sizeof(double) * work_array2Size, 4096);
+        chunk.tiles[tile].field.work_array3 = (double*)aligned_malloc(sizeof(double) * work_array3Size, 4096);
+        chunk.tiles[tile].field.work_array4 = (double*)aligned_malloc(sizeof(double) * work_array4Size, 4096);
+        chunk.tiles[tile].field.work_array5 = (double*)aligned_malloc(sizeof(double) * work_array5Size, 4096);
+        chunk.tiles[tile].field.work_array6 = (double*)aligned_malloc(sizeof(double) * work_array6Size, 4096);
+        chunk.tiles[tile].field.work_array7 = (double*)aligned_malloc(sizeof(double) * work_array7Size, 4096);
 
-        chunk.tiles[tile].field.cellx    = (double*)calloc(sizeof(double), cellxSize);
-        chunk.tiles[tile].field.celly    = (double*)calloc(sizeof(double), cellySize);
-        chunk.tiles[tile].field.vertexx  = (double*)calloc(sizeof(double), vertexxSize);
-        chunk.tiles[tile].field.vertexy  = (double*)calloc(sizeof(double), vertexySize);
-        chunk.tiles[tile].field.celldx   = (double*)calloc(sizeof(double), celldxSize);
-        chunk.tiles[tile].field.celldy   = (double*)calloc(sizeof(double), celldySize);
-        chunk.tiles[tile].field.vertexdx = (double*)calloc(sizeof(double), vertexdxSize);
-        chunk.tiles[tile].field.vertexdy = (double*)calloc(sizeof(double), vertexdySize);
-        chunk.tiles[tile].field.volume   = (double*)calloc(sizeof(double), volumeSize);
-        chunk.tiles[tile].field.xarea    = (double*)calloc(sizeof(double), xareaSize);
-        chunk.tiles[tile].field.yarea    = (double*)calloc(sizeof(double), yareaSize);
+        chunk.tiles[tile].field.cellx    = (double*)aligned_malloc(sizeof(double) * cellxSize, 4096);
+        chunk.tiles[tile].field.celly    = (double*)aligned_malloc(sizeof(double) * cellySize, 4096);
+        chunk.tiles[tile].field.vertexx  = (double*)aligned_malloc(sizeof(double) * vertexxSize, 4096);
+        chunk.tiles[tile].field.vertexy  = (double*)aligned_malloc(sizeof(double) * vertexySize, 4096);
+        chunk.tiles[tile].field.celldx   = (double*)aligned_malloc(sizeof(double) * celldxSize, 4096);
+        chunk.tiles[tile].field.celldy   = (double*)aligned_malloc(sizeof(double) * celldySize, 4096);
+        chunk.tiles[tile].field.vertexdx = (double*)aligned_malloc(sizeof(double) * vertexdxSize, 4096);
+        chunk.tiles[tile].field.vertexdy = (double*)aligned_malloc(sizeof(double) * vertexdySize, 4096);
+        chunk.tiles[tile].field.volume   = (double*)aligned_malloc(sizeof(double) * volumeSize, 4096);
+        chunk.tiles[tile].field.xarea    = (double*)aligned_malloc(sizeof(double) * xareaSize, 4096);
+        chunk.tiles[tile].field.yarea    = (double*)aligned_malloc(sizeof(double) * yareaSize, 4096);
 
 
 

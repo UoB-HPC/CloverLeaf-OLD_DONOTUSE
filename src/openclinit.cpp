@@ -29,18 +29,33 @@ void initOpenCL()
     openclContext = cl::Context({default_device});
 
     cl::Program::Sources sources;
-    int NUMFILES = 3;
+    int NUMFILES = 11;
     std::string files[NUMFILES] = {
         "./src/openclaccessdefs.h",
 
         "./src/kernels/accelerate_kernel.c",
-        "./src/adaptors/opencl/accelerate.c"
+        "./src/adaptors/opencl/accelerate.c",
 
+        "./src/kernels/PdV_kernel_c.c",
+        "./src/adaptors/opencl/pdv.c",
+
+        "./src/kernels/ideal_gas_kernel_c.c",
+        "./src/adaptors/opencl/ideal_gas.c",
+
+        "./src/kernels/calc_dt_kernel_c.c",
+        "./src/adaptors/opencl/calc_dt.c",
+
+        "./src/kernels/advec_mom_kernel_c.c",
+        "./src/adaptors/opencl/advec_mom.c"
     };
     std::stringstream buffer;
     for (int i = 0; i < NUMFILES; i++) {
         std::ifstream t(files[i]);
-        buffer << t.rdbuf();
+        if (!t.is_open()) {
+            printf("opencl file read error, file %d\n", i);
+            exit(1);
+        }
+        buffer << t.rdbuf() << std::endl;
     }
     std::string kernel_code = buffer.str();
     // std::cout << kernel_code << std::endl;

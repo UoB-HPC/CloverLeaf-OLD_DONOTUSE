@@ -24,13 +24,10 @@
  *  leave it in the method.
  */
 
-#include "ftocmacros.h"
-#include <math.h>
-#include "../definitions_c.h"
+// #include "ftocmacros.h"
+// #include <math.h>
+// #include "../definitions_c.h"
 
-#ifdef USE_KOKKOS
-#include <Kokkos_Core.hpp>
-#endif
 
 void ms1(
     int j, int k,

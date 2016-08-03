@@ -24,9 +24,9 @@
 
 // #include <stdio.h>
 // #include <stdlib.h>
-#include "ftocmacros.h"
-#include <math.h>
-#include "../definitions_c.h"
+// #include "ftocmacros.h"
+// #include <math.h>
+// #include "../definitions_c.h"
 
 
 void ideal_gas_kernel_c_(
