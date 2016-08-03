@@ -1,4 +1,19 @@
-# CloverLeaf_Serial
+# CloverLeaf
+
+This is a C/C++ version of cloverleaf partially/fully ported to OpenMP, Kokkos, Ompss, OpenCL.
+
+
+# Todo
+
+*   Look at using ompss tasks on tiles rather than loops
+*   Look at getting halo kernels parallelised
+*   Get Kokkos reduction kernels working correctly
+*   Implement visit file output
+*   Port other kernels to opencl
+*   Start a raja port
+
+
+<!-- # CloverLeaf_Serial
 
 This is the serial version of CloverLeaf version 1.3. With all OpenMP and MPI removed.
 
@@ -63,3 +78,4 @@ Note that performance can depend on compiler (brand and release), memory speed, 
 | 16         |               |          |
 
 
+ -->
