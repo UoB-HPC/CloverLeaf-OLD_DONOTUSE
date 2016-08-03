@@ -32,8 +32,10 @@ void initOpenCL()
     int NUMFILES = 3;
     std::string files[NUMFILES] = {
         "./src/openclaccessdefs.h",
+
         "./src/kernels/accelerate_kernel.c",
         "./src/adaptors/opencl/accelerate.c"
+
     };
     std::stringstream buffer;
     for (int i = 0; i < NUMFILES; i++) {

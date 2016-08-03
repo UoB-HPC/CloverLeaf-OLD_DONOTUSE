@@ -35,7 +35,7 @@ void field_summary(
                _press = 0.0;
 
 
-        // #pragma omp parallel for reduction(+:_vol,_mass,_ie,_ke,_press)
+        #pragma omp parallel for reduction(+:_vol,_mass,_ie,_ke,_press)
         for (int k = y_min; k <= y_max; k++) {
             for (int j = x_min; j <= x_max; j++) {
                 field_summary_kernel(
