@@ -52,6 +52,21 @@ struct field_type {
         } \
     }
 
+// loop to chunk everything
+// #define CHUNKSIZE 4
+// #define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \
+//     _Pragma("omp for") \
+//     for(int kk = (k_from); kk < (k_to)+1; kk+=CHUNKSIZE) { \
+//         for(int jj = (j_from); jj < (j_to)+1; jj+=CHUNKSIZE) { \
+//             for(int k = kk; k < (kk + CHUNKSIZE) && k < (k_to)+1; k++) { \
+//                 _Pragma("ivdep") \
+//                 for(int j = jj; j < (jj + CHUNKSIZE) && j < (j_to)+1; j++) { \
+//                     body; \
+//                 } \
+//             } \
+//         } \
+//     }
+
 #define T1ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 4, x_min - 2, y_min - 2)]
 #define T2ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 5, x_min - 2, y_min - 2)]
 
