@@ -29,7 +29,7 @@ void flux_calc(struct chunk_type chunk, double dt)
 
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
-
+#include "../definitions_c.h"
 #include "../kernels/flux_calc_kernel_c.c"
 
 void flux_calc(struct chunk_type chunk, double dt)
