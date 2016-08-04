@@ -29,9 +29,10 @@ void initOpenCL()
     openclContext = cl::Context({default_device});
 
     cl::Program::Sources sources;
-    int NUMFILES = 11;
+    int NUMFILES = 16;
     std::string files[NUMFILES] = {
         "./src/openclaccessdefs.h",
+        "./src/kernels/ftocmacros.h",
 
         "./src/kernels/accelerate_kernel.c",
         "./src/adaptors/opencl/accelerate.c",
@@ -46,7 +47,13 @@ void initOpenCL()
         "./src/adaptors/opencl/calc_dt.c",
 
         "./src/kernels/advec_mom_kernel_c.c",
-        "./src/adaptors/opencl/advec_mom.c"
+        "./src/adaptors/opencl/advec_mom.c",
+
+        "./src/kernels/advec_cell_kernel_c.c",
+        "./src/adaptors/opencl/advec_cell.c",
+
+        "./src/kernels/flux_calc_kernel_c.c",
+        "./src/adaptors/opencl/flux_calc.c"
     };
     std::stringstream buffer;
     for (int i = 0; i < NUMFILES; i++) {

@@ -23,9 +23,9 @@
  */
 
 
-#include "ftocmacros.h"
-#include <math.h>
-#include "../definitions_c.h"
+// #include "ftocmacros.h"
+// #include <math.h>
+// #include "../definitions_c.h"
 
 
 void xsweep(

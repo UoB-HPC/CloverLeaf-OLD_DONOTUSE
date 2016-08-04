@@ -1,5 +1,10 @@
+
+#include <math.h>
+#include "../../kernels/ftocmacros.h"
 #include "../../kernels/advec_cell_kernel_c.c"
+
 #include <Kokkos_Core.hpp>
+
 using namespace Kokkos;
 
 struct xsweep_functor {

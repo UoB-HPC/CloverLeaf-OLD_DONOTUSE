@@ -102,26 +102,12 @@ void advec_cell_driver(int tile, int sweep_number, int dir)
 void advec_mom_driver(int tile, int which_vel, int direction, int sweep_number)
 {
     advec_mom(
-        which_vel == 1 ? chunk.tiles[tile].field.xvel1 : chunk.tiles[tile].field.yvel1,
+        which_vel,
         chunk.tiles[tile],
         chunk.tiles[tile].t_xmin,
         chunk.tiles[tile].t_xmax,
         chunk.tiles[tile].t_ymin,
         chunk.tiles[tile].t_ymax,
-        // chunk.tiles[tile].field.mass_flux_x,
-        // chunk.tiles[tile].field.vol_flux_x,
-        // chunk.tiles[tile].field.mass_flux_y,
-        // chunk.tiles[tile].field.vol_flux_y,
-        // chunk.tiles[tile].field.volume,
-        // chunk.tiles[tile].field.density1,
-        // chunk.tiles[tile].field.work_array1,
-        // chunk.tiles[tile].field.work_array2,
-        // chunk.tiles[tile].field.work_array3,
-        // chunk.tiles[tile].field.work_array4,
-        // chunk.tiles[tile].field.work_array5,
-        // chunk.tiles[tile].field.work_array6,
-        // chunk.tiles[tile].field.celldx,
-        // chunk.tiles[tile].field.celldy,
         sweep_number,
         direction);
 }

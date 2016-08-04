@@ -165,24 +165,82 @@ void kernel dy2_kernel(
         node_flux);
 }
 
-// void kernel dx3_kernel(
-//     int j, int k,
-//     int x_min, int x_max, int y_min, int y_max,
-//     global double* mom_flux,
-//     const global double* node_flux,
-//     const global double* node_mass_pre,
-//     const global double* celldx,
-//     const global double* vel1)
-// {
-//     int k = get_global_id(1) + y_min;
-//     int j = get_global_id(0) + x_min - 1;
+void kernel dx3_kernel(
+    int x_min, int x_max, int y_min, int y_max,
+    global double* mom_flux,
+    const global double* node_flux,
+    const global double* node_mass_pre,
+    const global double* celldx,
+    const global double* vel1)
+{
+    int k = get_global_id(1) + y_min;
+    int j = get_global_id(0) + x_min - 1;
 
-//     dx3(
-//         j, k,
-//         x_min, x_max, y_min, y_max,
-//         mom_flux,
-//         node_flux,
-//         node_mass_pre,
-//         celldx,
-//         vel1);
-// }
+    dx3(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        mom_flux,
+        node_flux,
+        node_mass_pre,
+        celldx,
+        vel1);
+}
+
+void kernel dy3_kernel(
+    int x_min, int x_max, int y_min, int y_max,
+    global double* mom_flux,
+    const global double* node_flux,
+    const global double* node_mass_pre,
+    const global double* celldy,
+    const global double* vel1)
+{
+    int k = get_global_id(1) + y_min - 1;
+    int j = get_global_id(0) + x_min;
+
+    dy3(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        mom_flux,
+        node_flux,
+        node_mass_pre,
+        celldy,
+        vel1);
+}
+
+void kernel dx4_kernel(
+    int x_min, int x_max, int y_min, int y_max,
+    global double* vel1,
+    const global double* node_mass_pre,
+    const global double* mom_flux,
+    const global double* node_mass_post)
+{
+    int k = get_global_id(1) + y_min;
+    int j = get_global_id(0) + x_min;
+
+    dx4(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        vel1,
+        node_mass_pre,
+        mom_flux,
+        node_mass_post);
+}
+
+void kernel dy4_kernel(
+    int x_min, int x_max, int y_min, int y_max,
+    global double* vel1,
+    const global double* node_mass_pre,
+    const global double* mom_flux,
+    const global double* node_mass_post)
+{
+    int k = get_global_id(1) + y_min;
+    int j = get_global_id(0) + x_min;
+
+    dy4(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        vel1,
+        node_mass_pre,
+        mom_flux,
+        node_mass_post);
+}

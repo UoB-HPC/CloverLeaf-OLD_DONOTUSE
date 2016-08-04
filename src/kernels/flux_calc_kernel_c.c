@@ -21,8 +21,8 @@
  *@details The edge volume fluxes are calculated based on the velocity fields.
  */
 
-#include "ftocmacros.h"
-#include "../definitions_c.h"
+// #include "ftocmacros.h"
+// #include "../definitions_c.h"
 
 void flux_calc_x_kernel(
     int j, int k,

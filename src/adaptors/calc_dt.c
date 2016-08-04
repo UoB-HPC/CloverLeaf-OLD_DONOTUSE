@@ -1,11 +1,10 @@
 #include "../definitions_c.h"
 
 #if defined(USE_KOKKOS)
+#include "../kernels/ftocmacros.h"
 #include "kokkos/calc_dt.cpp"
-// #include "../kernels/calc_dt_kernel_c.c"
 void calc_dt_adaptor(int tile, double* local_dt)
 {
-    // TODO kokkos reduction
     double dt = g_big;
     // for (int k = chunk.tiles[tile].t_ymin; k <= chunk.tiles[tile].t_ymax; k++) {
     calc_dt_functor f(chunk.tiles[tile],
