@@ -24,7 +24,6 @@ void viscosity(struct chunk_type chunk)
 void viscosity(struct chunk_type chunk)
 {
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
-
         #pragma omp parallel
         {
             DOUBLEFOR(chunk.tiles[tile].t_ymin,

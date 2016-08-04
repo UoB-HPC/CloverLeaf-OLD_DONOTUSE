@@ -24,10 +24,10 @@
  *  left in to remain relevant to the full method.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ftocmacros.h"
-#include <math.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include "ftocmacros.h"
+// #include <math.h>
 
 void revert_kernel_c_(
     int j, int k,
