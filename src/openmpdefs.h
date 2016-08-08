@@ -103,3 +103,5 @@ struct field_type {
 
 #define const_field_1d_t     const double* __restrict__
 #define field_1d_t           double* __restrict__
+
+#define flag_t               int*

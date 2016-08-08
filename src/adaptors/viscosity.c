@@ -1,5 +1,7 @@
 
 #if defined(USE_KOKKOS)
+#include "../definitions_c.h"
+#include "../kernels/ftocmacros.h"
 #include "kokkos/viscosity.cpp"
 void viscosity(struct chunk_type chunk)
 {

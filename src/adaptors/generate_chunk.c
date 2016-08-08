@@ -175,9 +175,43 @@ void generate_chunk(
     double* state_radius,
     int* state_geometry)
 {
-    DOUBLEFOR(chunk.tiles[tile].t_ymin - 2,
-              chunk.tiles[tile].t_ymax + 2,
-              chunk.tiles[tile].t_xmin - 2,
+    mapoclmem(chunk.tiles[tile].field.d_energy0,
+              chunk.tiles[tile].field.energy0,
+              chunk.tiles[tile].field.energy0_size,
+              CL_MAP_WRITE);
+    mapoclmem(chunk.tiles[tile].field.d_density0,
+              chunk.tiles[tile].field.density0,
+              chunk.tiles[tile].field.density0_size,
+              CL_MAP_WRITE);
+    mapoclmem(chunk.tiles[tile].field.d_xvel0,
+              chunk.tiles[tile].field.xvel0,
+              chunk.tiles[tile].field.xvel0_size,
+              CL_MAP_WRITE);
+    mapoclmem(chunk.tiles[tile].field.d_yvel0,
+              chunk.tiles[tile].field.yvel0,
+              chunk.tiles[tile].field.yvel0_size,
+              CL_MAP_WRITE);
+    mapoclmem(chunk.tiles[tile].field.d_vertexx,
+              chunk.tiles[tile].field.vertexx,
+              chunk.tiles[tile].field.vertexx_size,
+              CL_MAP_WRITE);
+    mapoclmem(chunk.tiles[tile].field.d_vertexy,
+              chunk.tiles[tile].field.vertexy,
+              chunk.tiles[tile].field.vertexy_size,
+              CL_MAP_WRITE);
+    mapoclmem(chunk.tiles[tile].field.d_cellx,
+              chunk.tiles[tile].field.cellx,
+              chunk.tiles[tile].field.cellx_size,
+              CL_MAP_WRITE);
+    mapoclmem(chunk.tiles[tile].field.d_celly,
+              chunk.tiles[tile].field.celly,
+              chunk.tiles[tile].field.celly_size,
+              CL_MAP_WRITE);
+
+    DOUBLEFOR(
+        chunk.tiles[tile].t_ymin - 2,
+        chunk.tiles[tile].t_ymax + 2,
+        chunk.tiles[tile].t_xmin - 2,
     chunk.tiles[tile].t_xmax + 2, {
         generate_chunk_1_kernel(
             j, k,
@@ -235,5 +269,22 @@ void generate_chunk(
                 state_geometry);
         };
     });
+
+    unmapoclmem(chunk.tiles[tile].field.d_energy0,
+                chunk.tiles[tile].field.energy0);
+    unmapoclmem(chunk.tiles[tile].field.d_density0,
+                chunk.tiles[tile].field.density0);
+    unmapoclmem(chunk.tiles[tile].field.d_xvel0,
+                chunk.tiles[tile].field.xvel0);
+    unmapoclmem(chunk.tiles[tile].field.d_yvel0,
+                chunk.tiles[tile].field.yvel0);
+    unmapoclmem(chunk.tiles[tile].field.d_vertexx,
+                chunk.tiles[tile].field.vertexx);
+    unmapoclmem(chunk.tiles[tile].field.d_vertexy,
+                chunk.tiles[tile].field.vertexy);
+    unmapoclmem(chunk.tiles[tile].field.d_cellx,
+                chunk.tiles[tile].field.cellx);
+    unmapoclmem(chunk.tiles[tile].field.d_celly,
+                chunk.tiles[tile].field.celly);
 }
 #endif

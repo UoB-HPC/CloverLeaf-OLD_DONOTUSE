@@ -73,7 +73,9 @@ void initialise_chunk_kernel_c_(
 
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-        FIELD_1D(cellx, j,  x_min - 2) = 0.5 * (FIELD_1D(vertexx, j,  x_min - 2) + FIELD_1D(vertexx, j + 1,  x_min - 2));
+        FIELD_1D(cellx, j,  x_min - 2) =
+            0.5 * (min_x + d_x * (double)(j - x_min) +
+                   min_x + d_x * (double)(j + 1 - x_min));
     }
 
 
@@ -85,7 +87,9 @@ void initialise_chunk_kernel_c_(
 
 #pragma ivdep
     for (k = y_min - 2; k <= y_max + 2; k++) {
-        FIELD_1D(celly, k,  y_min - 2) = 0.5 * (FIELD_1D(vertexy, k,  y_min - 2) + FIELD_1D(vertexy, k + 1,  x_min - 2));
+        FIELD_1D(celly, k,  y_min - 2) =
+            0.5 * (min_y + d_y * (double)(k - y_min) +
+                   min_y + d_y * (double)(k + 1 - y_min));
     }
 
 
@@ -95,29 +99,9 @@ void initialise_chunk_kernel_c_(
     }
 
 
-
-    for (k = y_min - 2; k <= y_max + 2; k++) {
-#pragma ivdep
-        for (j = x_min - 2; j <= x_max + 2; j++) {
-        }
-    }
-
-
-//     for (k = y_min - 2; k <= y_max + 2; k++) {
-// #pragma ivdep
-//         for (j = x_min - 2; j <= x_max + 2; j++) {
-    DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, ({
+    DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
         VOLUME(volume, j, k) = d_x* d_y;
-        XAREA(xarea, j, k) = FIELD_1D(celldy, k,  y_min - 2);
-        YAREA(yarea, j, k) = FIELD_1D(celldx, j,  x_min - 2);
-    }));
-    //     }
-    // }
-
-
-    for (k = y_min - 2; k <= y_max + 2; k++) {
-#pragma ivdep
-        for (j = x_min - 2; j <= x_max + 2; j++) {
-        }
-    }
+        XAREA(xarea, j, k) = d_x;
+        YAREA(yarea, j, k) = d_y;
+    });
 }

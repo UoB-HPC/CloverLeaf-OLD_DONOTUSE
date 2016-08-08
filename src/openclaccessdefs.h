@@ -21,6 +21,7 @@ __constant double dtc_safe = 0.7,
 
 #endif
 
+
 #define T1ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 4, x_min - 2, y_min - 2)]
 #define T2ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 5, x_min - 2, y_min - 2)]
 
@@ -52,18 +53,25 @@ __constant double dtc_safe = 0.7,
 
 #define FIELD_1D(d, i, j)      d[FTNREF1D(i, j)]
 
+
 #if defined(USE_OPENCL)
+
 #define const_field_2d_t     const double* __restrict__
 #define field_2d_t           double* __restrict__
 
 #define const_field_1d_t     const double* __restrict__
 #define field_1d_t           double* __restrict__
-#else
+
+#define flag_t               int*
+
+#else // Inside opencl code
 
 #define const_field_2d_t     const global double* __restrict__
 #define field_2d_t           global double* __restrict__
 
 #define const_field_1d_t     const global double* __restrict__
 #define field_1d_t           global double* __restrict__
+
+#define flag_t               constant int*
 
 #endif

@@ -73,6 +73,7 @@
 #define const_field_1d_t   const Kokkos::View<double*>*
 #define field_1d_t         const Kokkos::View<double*>*
 
+#define flag_t               int*
 
 struct field_type {
     field_2d_t density0;

@@ -35,7 +35,6 @@ void advec_mom(
         f2.compute();
     }
 
-
     if (direction == X) {
         mom_direction_x2_functor f3(
             tile,
@@ -129,7 +128,7 @@ void advec_mom(
             });
         }
 
-        if (direction == 1) {
+        if (direction == X) {
             DOUBLEFOR(y_min, y_max + 1, x_min - 2, x_max + 2, {
                 dx1(
                     j, k,
@@ -170,7 +169,7 @@ void advec_mom(
                     node_mass_post);
 
             });
-        } else if (direction == 2) {
+        } else if (direction == Y) {
             DOUBLEFOR(y_min - 2, y_max + 2, x_min , x_max + 1, {
 
                 dy1(
@@ -244,7 +243,10 @@ void advec_mom(
         ms1_kernel.setArg(6,  *tile.field.d_volume);
         ms1_kernel.setArg(7,  *tile.field.d_vol_flux_x);
         ms1_kernel.setArg(8,  *tile.field.d_vol_flux_y);
-        openclQueue.enqueueNDRangeKernel(ms1_kernel, cl::NullRange, cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            ms1_kernel, cl::NullRange,
+            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            cl::NullRange);
     } else if (mom_sweep == 2) {
         cl::Kernel ms2_kernel(openclProgram, "ms2_kernel");
         ms2_kernel.setArg(0,  x_min);
@@ -256,7 +258,10 @@ void advec_mom(
         ms2_kernel.setArg(6,  *tile.field.d_volume);
         ms2_kernel.setArg(7,  *tile.field.d_vol_flux_x);
         ms2_kernel.setArg(8,  *tile.field.d_vol_flux_y);
-        openclQueue.enqueueNDRangeKernel(ms2_kernel, cl::NullRange, cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            ms2_kernel, cl::NullRange,
+            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            cl::NullRange);
     } else if (mom_sweep == 3) {
         cl::Kernel ms3_kernel(openclProgram, "ms3_kernel");
         ms3_kernel.setArg(0,  x_min);
@@ -268,7 +273,10 @@ void advec_mom(
         ms3_kernel.setArg(6,  *tile.field.d_volume);
         ms3_kernel.setArg(7,  *tile.field.d_vol_flux_x);
         ms3_kernel.setArg(8,  *tile.field.d_vol_flux_y);
-        openclQueue.enqueueNDRangeKernel(ms3_kernel, cl::NullRange, cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            ms3_kernel, cl::NullRange,
+            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            cl::NullRange);
     } else if (mom_sweep == 4) {
         cl::Kernel ms4_kernel(openclProgram, "ms4_kernel");
 
@@ -282,11 +290,13 @@ void advec_mom(
         ms4_kernel.setArg(7,  *tile.field.d_vol_flux_x);
         ms4_kernel.setArg(8,  *tile.field.d_vol_flux_y);
 
-        openclQueue.enqueueNDRangeKernel(ms4_kernel, cl::NullRange, cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            ms4_kernel, cl::NullRange,
+            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            cl::NullRange);
     }
-    openclQueue.finish();
 
-    if (direction == 1) {
+    if (direction == X) {
         cl::Kernel dx1_kernel(openclProgram, "dx1_kernel");
         dx1_kernel.setArg(0,  x_min);
         dx1_kernel.setArg(1,  x_max);
@@ -294,7 +304,10 @@ void advec_mom(
         dx1_kernel.setArg(3,  y_max);
         dx1_kernel.setArg(4,  *tile.field.d_work_array1);
         dx1_kernel.setArg(5,  *tile.field.d_mass_flux_x);
-        openclQueue.enqueueNDRangeKernel(dx1_kernel, cl::NullRange, cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 1) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            dx1_kernel, cl::NullRange,
+            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 1) - (y_min) + 1),
+            cl::NullRange);
 
         cl::Kernel dx2_kernel(openclProgram, "dx2_kernel");
         dx2_kernel.setArg(0,  x_min);
@@ -306,7 +319,10 @@ void advec_mom(
         dx2_kernel.setArg(6,  *tile.field.d_density1);
         dx2_kernel.setArg(7,  *tile.field.d_work_array6);
         dx2_kernel.setArg(8,  *tile.field.d_work_array1);
-        openclQueue.enqueueNDRangeKernel(dx2_kernel, cl::NullRange, cl::NDRange((x_max + 2) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            dx2_kernel, cl::NullRange,
+            cl::NDRange((x_max + 2) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1),
+            cl::NullRange);
 
         cl::Kernel dx3_kernel(openclProgram, "dx3_kernel");
         dx3_kernel.setArg(0,  x_min);
@@ -318,8 +334,10 @@ void advec_mom(
         dx3_kernel.setArg(6,  *tile.field.d_work_array3);
         dx3_kernel.setArg(7,  *tile.field.d_celldx);
         dx3_kernel.setArg(8,  *d_vel1);
-        openclQueue.enqueueNDRangeKernel(dx3_kernel, cl::NullRange, cl::NDRange((x_max + 1) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1), cl::NullRange);
-
+        openclQueue.enqueueNDRangeKernel(
+            dx3_kernel, cl::NullRange,
+            cl::NDRange((x_max + 1) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1),
+            cl::NullRange);
 
         cl::Kernel dx4_kernel(openclProgram, "dx4_kernel");
         dx4_kernel.setArg(0,  x_min);
@@ -330,9 +348,11 @@ void advec_mom(
         dx4_kernel.setArg(5,  *tile.field.d_work_array3);
         dx4_kernel.setArg(6,  *tile.field.d_work_array4);
         dx4_kernel.setArg(7,  *tile.field.d_work_array2);
-        openclQueue.enqueueNDRangeKernel(dx4_kernel, cl::NullRange, cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1), cl::NullRange);
-
-    } else if (direction == 2) {
+        openclQueue.enqueueNDRangeKernel(
+            dx4_kernel, cl::NullRange,
+            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
+            cl::NullRange);
+    } else if (direction == Y) {
         cl::Kernel dy1_kernel(openclProgram, "dy1_kernel");
         dy1_kernel.setArg(0,  x_min);
         dy1_kernel.setArg(1,  x_max);
@@ -340,7 +360,10 @@ void advec_mom(
         dy1_kernel.setArg(3,  y_max);
         dy1_kernel.setArg(4,  *tile.field.d_work_array1);
         dy1_kernel.setArg(5,  *tile.field.d_mass_flux_y);
-        openclQueue.enqueueNDRangeKernel(dy1_kernel, cl::NullRange, cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 2) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            dy1_kernel, cl::NullRange,
+            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 2) + 1),
+            cl::NullRange);
 
         cl::Kernel dy2_kernel(openclProgram, "dy2_kernel");
         dy2_kernel.setArg(0,  x_min);
@@ -352,8 +375,10 @@ void advec_mom(
         dy2_kernel.setArg(6,  *tile.field.d_density1);
         dy2_kernel.setArg(7,  *tile.field.d_work_array6);
         dy2_kernel.setArg(8,  *tile.field.d_work_array1);
-        openclQueue.enqueueNDRangeKernel(dy2_kernel, cl::NullRange, cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 1) + 1), cl::NullRange);
-
+        openclQueue.enqueueNDRangeKernel(
+            dy2_kernel, cl::NullRange,
+            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 1) + 1),
+            cl::NullRange);
 
         cl::Kernel dy3_kernel(openclProgram, "dy3_kernel");
         dy3_kernel.setArg(0,  x_min);
@@ -365,7 +390,10 @@ void advec_mom(
         dy3_kernel.setArg(6,  *tile.field.d_work_array3);
         dy3_kernel.setArg(7,  *tile.field.d_celldy);
         dy3_kernel.setArg(8,  *d_vel1);
-        openclQueue.enqueueNDRangeKernel(dy3_kernel, cl::NullRange, cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min - 1) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            dy3_kernel, cl::NullRange,
+            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min - 1) + 1),
+            cl::NullRange);
 
         cl::Kernel dy4_kernel(openclProgram, "dy4_kernel");
         dy4_kernel.setArg(0,  x_min);
@@ -376,7 +404,10 @@ void advec_mom(
         dy4_kernel.setArg(5,  *tile.field.d_work_array3);
         dy4_kernel.setArg(6,  *tile.field.d_work_array4);
         dy4_kernel.setArg(7,  *tile.field.d_work_array2);
-        openclQueue.enqueueNDRangeKernel(dy4_kernel, cl::NullRange, cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            dy4_kernel, cl::NullRange,
+            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
+            cl::NullRange);
     }
     openclQueue.finish();
 }

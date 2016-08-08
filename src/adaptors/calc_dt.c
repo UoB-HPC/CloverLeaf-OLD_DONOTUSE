@@ -91,8 +91,15 @@ void calc_dt_adaptor(int tile, double* local_dt)
         calc_dt.setArg(15, *chunk.tiles[tile].field.d_yvel0);
         calc_dt.setArg(16, *chunk.tiles[tile].field.d_work_array1);
 
-        openclQueue.enqueueNDRangeKernel(calc_dt, cl::NullRange, cl::NDRange(x_max - x_min + 1, y_max - y_min + 1), cl::NullRange);
-        openclQueue.finish();
+        openclQueue.enqueueNDRangeKernel(
+            calc_dt, cl::NullRange,
+            cl::NDRange(x_max - x_min + 1, y_max - y_min + 1),
+            cl::NullRange);
+
+        mapoclmem(chunk.tiles[tile].field.d_work_array1,
+                  chunk.tiles[tile].field.work_array1,
+                  chunk.tiles[tile].field.work_array1_size,
+                  CL_MAP_READ);
 
         for (int k = y_min; k <= y_max; k++) {
             for (int j = x_min; j <= x_max; j++) {
@@ -101,8 +108,12 @@ void calc_dt_adaptor(int tile, double* local_dt)
                     min = val;
             }
         }
+
+        unmapoclmem(chunk.tiles[tile].field.d_work_array1,
+                    chunk.tiles[tile].field.work_array1);
     }
 
+    openclQueue.finish();
     *local_dt = min;
 }
 #endif

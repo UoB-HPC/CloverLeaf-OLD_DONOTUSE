@@ -5,6 +5,7 @@
 #include <mpi.h>
 #include "clover.h"
 #include <omp.h>
+#include <iostream>
 
 #ifdef USE_KOKKOS
 #include <Kokkos_Core.hpp>

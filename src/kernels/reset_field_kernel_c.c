@@ -22,11 +22,11 @@
  *  step data, ready for the next timestep.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ftocmacros.h"
-#include <math.h>
-#include "../definitions_c.h"
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include "ftocmacros.h"
+// #include <math.h>
+// #include "../definitions_c.h"
 
 #define INRANGE(y, x, ymin, ymax, xmin, xmax) \
  ((y) >= (ymin) && (y) <= (ymax) && (x) >= (xmin) && (x) <= (xmax))

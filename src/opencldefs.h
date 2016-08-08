@@ -86,11 +86,53 @@ struct field_type {
     double* volume;
     double* xarea;
     double* yarea;
+
+    int density0_size;
+    int density1_size;
+    int energy0_size;
+    int energy1_size;
+    int pressure_size;
+    int viscosity_size;
+    int soundspeed_size;
+    int xvel0_size;
+    int xvel1_size;
+    int yvel0_size;
+    int yvel1_size;
+    int vol_flux_x_size;
+    int mass_flux_x_size;
+    int vol_flux_y_size;
+    int mass_flux_y_size;
+    //node_flux; stepbymass; volume_change; pre_vo
+    int work_array1_size;
+    //node_mass_post; post_vol
+    int work_array2_size;
+    //node_mass_pre; pre_mass
+    int work_array3_size;
+    //advec_vel; post_mass
+    int work_array4_size;
+    //mom_flux; advec_vol
+    int work_array5_size;
+    //pre_vol; post_ener
+    int work_array6_size;
+    //post_vol; ener_flux
+    int work_array7_size;
+    int cellx_size;
+    int celly_size;
+    int vertexx_size;
+    int vertexy_size;
+    int celldx_size;
+    int celldy_size;
+    int vertexdx_size;
+    int vertexdy_size;
+    int volume_size;
+    int xarea_size;
+    int yarea_size;
 };
 
+#define mapoclmem(devbuf, hostbuf, size, rw) hostbuf = (double*)openclQueue.enqueueMapBuffer(*(devbuf), CL_TRUE, (rw), 0, sizeof(double) * size);
+#define unmapoclmem(devbuf, hostbuf) openclQueue.enqueueUnmapMemObject(*(devbuf), (hostbuf));
 
 #define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \
-    _Pragma("omp for") \
     for(int k = (k_from); k <= (k_to); k++) { \
         _Pragma("ivdep") \
         for(int j = (j_from); j <= (j_to); j++) { \

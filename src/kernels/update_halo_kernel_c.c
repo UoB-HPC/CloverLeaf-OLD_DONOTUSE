@@ -24,686 +24,147 @@
  *  reflective.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ftocmacros.h"
-#include <math.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include "ftocmacros.h"
+// #include <math.h>
 
-void update_halo_kernel_c_(int x_min, int x_max, int y_min, int y_max,
-                           int* chunk_neighbours,
-                           int* tile_neighbours,
-                           field_2d_t density0,
-                           field_2d_t energy0,
-                           field_2d_t pressure,
-                           field_2d_t viscosity,
-                           field_2d_t soundspeed,
-                           field_2d_t density1,
-                           field_2d_t energy1,
-                           field_2d_t xvel0,
-                           field_2d_t yvel0,
-                           field_2d_t xvel1,
-                           field_2d_t yvel1,
-                           field_2d_t vol_flux_x,
-                           field_2d_t vol_flux_y,
-                           field_2d_t mass_flux_x,
-                           field_2d_t mass_flux_y,
-                           int* fields,
-                           int depth)
+
+/* These need to be kept consistent with the data module to avoid use statement */
+#define CHUNK_LEFT     1
+#define CHUNK_RIGHT    2
+#define CHUNK_BOTTOM   3
+#define CHUNK_TOP      4
+#define EXTERNAL_FACE  -1
+#define TILE_LEFT      1
+#define TILE_RIGHT     2
+#define TILE_BOTTOM    3
+#define TILE_TOP       4
+#define EXTERNAL_TILE  -1
+
+#define FIELD_DENSITY0     1
+#define FIELD_DENSITY1     2
+#define FIELD_ENERGY0      3
+#define FIELD_ENERGY1      4
+#define FIELD_PRESSURE     5
+#define FIELD_VISCOSITY    6
+#define FIELD_SOUNDSPEED   7
+#define FIELD_XVEL0        8
+#define FIELD_XVEL1        9
+#define FIELD_YVEL0        10
+#define FIELD_YVEL1        11
+#define FIELD_VOL_FLUX_X   12
+#define FIELD_VOL_FLUX_Y   13
+#define FIELD_MASS_FLUX_X  14
+#define FIELD_MASS_FLUX_Y  15
+
+
+// requires fields, chunk_neighbours, tile_neighbours, x_min,x_max,y_min,y_max
+// depth, and EXTERNAL* to be defined
+#define update1(j, k, field_t, field, access) \
+    if (fields[FTNREF1D(field_t, 1)] == 1) { \
+        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && \
+            tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) { \
+            access(field, j, 1 - k) = \
+                access(field, j, 0 + k); \
+        } \
+        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && \
+            tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) { \
+            access(field, j, y_max + k) = \
+                access(field, j, y_max + 1 - k); \
+        } \
+    }
+
+#define update2(j, k, field_t, field, access) \
+    if (fields[FTNREF1D(field_t, 1)] == 1) { \
+        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && \
+            tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) { \
+            access(field, 1 - j, k) = \
+                access(field, 0 + j, k); \
+        } \
+        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && \
+            tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) { \
+            access(field, x_max + j, k) = \
+                access(field, x_max + 1 - j, k); \
+        } \
+    }
+
+void update_halo_kernel_1(
+    int j, int k,
+    int x_min, int x_max, int y_min, int y_max,
+    flag_t chunk_neighbours,
+    flag_t tile_neighbours,
+    field_2d_t density0,
+    field_2d_t density1,
+    field_2d_t energy0,
+    field_2d_t energy1,
+    field_2d_t pressure,
+    field_2d_t viscosity,
+    field_2d_t soundspeed,
+    field_2d_t xvel0,
+    field_2d_t yvel0,
+    field_2d_t xvel1,
+    field_2d_t yvel1,
+    field_2d_t vol_flux_x,
+    field_2d_t mass_flux_x,
+    field_2d_t vol_flux_y,
+    field_2d_t mass_flux_y,
+    flag_t fields,
+    int depth)
 {
-    /* These need to be kept consistent with the data module to avoid use statement */
-    int CHUNK_LEFT = 1, CHUNK_RIGHT = 2, CHUNK_BOTTOM = 3, CHUNK_TOP = 4, EXTERNAL_FACE = -1;
-    int TILE_LEFT = 1, TILE_RIGHT = 2, TILE_BOTTOM = 3, TILE_TOP = 4, EXTERNAL_TILE = -1;
-
-    int FIELD_DENSITY0    = 1;
-    int FIELD_DENSITY1    = 2;
-    int FIELD_ENERGY0     = 3;
-    int FIELD_ENERGY1     = 4;
-    int FIELD_PRESSURE    = 5;
-    int FIELD_VISCOSITY   = 6;
-    int FIELD_SOUNDSPEED  = 7;
-    int FIELD_XVEL0       = 8;
-    int FIELD_XVEL1       = 9;
-    int FIELD_YVEL0       = 10;
-    int FIELD_YVEL1       = 11;
-    int FIELD_VOL_FLUX_X  = 12;
-    int FIELD_VOL_FLUX_Y  = 13;
-    int FIELD_MASS_FLUX_X = 14;
-    int FIELD_MASS_FLUX_Y = 15;
-
-    int j, k;
-
-    /* Update values in external halo cells based on depth and fields requested */
-
-
-
-    if (fields[FTNREF1D(FIELD_DENSITY0, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    DENSITY0(density0, j, 1 - k) = DENSITY0(density0, j, 0 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    DENSITY0(density0, j, y_max + k) = DENSITY0(density0, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    DENSITY0(density0, 1 - j, k) = DENSITY0(density0, 0 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    DENSITY0(density0, x_max + j, k) = DENSITY0(density0, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_DENSITY1, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    DENSITY1(density1, j, 1 - k) = DENSITY1(density1, j, 0 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    DENSITY1(density1, j, y_max + k) = DENSITY1(density1, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    DENSITY1(density1, 1 - j, k) = DENSITY1(density1, 0 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    DENSITY1(density1, x_max + j, k) = DENSITY1(density1, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_ENERGY0, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    ENERGY0(energy0, j, 1 - k) = ENERGY0(energy0, j, 0 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    ENERGY0(energy0, j, y_max + k) = ENERGY0(energy0, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    ENERGY0(energy0, 1 - j, k) = ENERGY0(energy0, 0 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    ENERGY0(energy0, x_max + j, k) = ENERGY0(energy0, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_ENERGY1, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    ENERGY1(energy1, j, 1 - k) = ENERGY1(energy1, j, 0 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    ENERGY1(energy1, j, y_max + k) = ENERGY1(energy1, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    ENERGY1(energy1, 1 - j, k) = ENERGY1(energy1, 0 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    ENERGY1(energy1, x_max + j, k) = ENERGY1(energy1, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_PRESSURE, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    PRESSURE(pressure, j, 1 - k) = PRESSURE(pressure, j, 0 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    PRESSURE(pressure, j, y_max + k) = PRESSURE(pressure, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    PRESSURE(pressure, 1 - j, k) = PRESSURE(pressure, 0 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    PRESSURE(pressure, x_max + j, k) = PRESSURE(pressure, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_VISCOSITY, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    VISCOSITY(viscosity, j, 1 - k) = VISCOSITY(viscosity, j, 0 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    VISCOSITY(viscosity, j, y_max + k) = VISCOSITY(viscosity, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    VISCOSITY(viscosity, 1 - j, k) = VISCOSITY(viscosity, 0 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    VISCOSITY(viscosity, x_max + j, k) = VISCOSITY(viscosity, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_SOUNDSPEED, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    SOUNDSPEED(soundspeed, j, 1 - k) = SOUNDSPEED(soundspeed, j, 0 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    SOUNDSPEED(soundspeed, j, y_max + k) = SOUNDSPEED(soundspeed, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    SOUNDSPEED(soundspeed, 1 - j, k) = SOUNDSPEED(soundspeed, 0 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    SOUNDSPEED(soundspeed, x_max + j, k) = SOUNDSPEED(soundspeed, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-    if (fields[FTNREF1D(FIELD_XVEL0, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    XVEL0(xvel0, j, 1 - k) = XVEL0(xvel0, j, 1 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    XVEL0(xvel0, j, y_max + 1 + k) = XVEL0(xvel0, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    XVEL0(xvel0, 1 - j, k) = -XVEL0(xvel0, 1 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    XVEL0(xvel0, x_max + 1 + j, k) = -XVEL0(xvel0, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_XVEL1, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    XVEL1(xvel1, j, 1 - k) = XVEL1(xvel1, j, 1 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    XVEL1(xvel1, j, y_max + 1 + k) = XVEL1(xvel1, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    XVEL1(xvel1, 1 - j, k) = -XVEL1(xvel1, 1 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    XVEL1(xvel1, x_max + 1 + j, k) = -XVEL1(xvel1, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_YVEL0, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    YVEL0(yvel0, j, 1 - k) = -YVEL0(yvel0, j, 1 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    YVEL0(yvel0, j, y_max + 1 + k) = -YVEL0(yvel0, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    YVEL0(yvel0, 1 - j, k) = YVEL0(yvel0, 1 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    YVEL0(yvel0, x_max + 1 + j, k) = YVEL0(yvel0, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_YVEL1, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    YVEL1(yvel1, j, 1 - k) = -YVEL1(yvel1, j, 1 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    YVEL1(yvel1, j, y_max + 1 + k) = -YVEL1(yvel1, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    YVEL1(yvel1, 1 - j, k) = YVEL1(yvel1, 1 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    YVEL1(yvel1, x_max + 1 + j, k) = YVEL1(yvel1, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_VOL_FLUX_X, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    VOL_FLUX_X(vol_flux_x, j, 1 - k) = VOL_FLUX_X(vol_flux_x, j, 1 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    VOL_FLUX_X(vol_flux_x, j, y_max + k) = VOL_FLUX_X(vol_flux_x, j, y_max - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    VOL_FLUX_X(vol_flux_x, 1 - j, k) = -VOL_FLUX_X(vol_flux_x, 1 + j, k);
-                }
-            }
-        }
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    VOL_FLUX_X(vol_flux_x, x_max + 1 + j, k) = -VOL_FLUX_X(vol_flux_x, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_MASS_FLUX_X, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    MASS_FLUX_X(mass_flux_x, j, 1 - k) = MASS_FLUX_X(mass_flux_x, j, 1 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + 1 + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    MASS_FLUX_X(mass_flux_x, j, y_max + k) = MASS_FLUX_X(mass_flux_x, j, y_max - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    MASS_FLUX_X(mass_flux_x, 1 - j, k) = -MASS_FLUX_X(mass_flux_x, 1 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    MASS_FLUX_X(mass_flux_x, x_max + 1 + j, k) = -MASS_FLUX_X(mass_flux_x, x_max + 1 - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_VOL_FLUX_Y, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    VOL_FLUX_Y(vol_flux_y, j, 1 - k) = -VOL_FLUX_Y(vol_flux_y, j, 1 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    VOL_FLUX_Y(vol_flux_y, j, y_max + k + 1) = -VOL_FLUX_Y(vol_flux_y, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    VOL_FLUX_Y(vol_flux_y, 1 - j, k) = VOL_FLUX_Y(vol_flux_y, 1 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    VOL_FLUX_Y(vol_flux_y, x_max + j, k) = VOL_FLUX_Y(vol_flux_y, x_max - j, k);
-                }
-            }
-        }
-    }
-
-    if (fields[FTNREF1D(FIELD_MASS_FLUX_Y, 1)] == 1) {
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    MASS_FLUX_Y(mass_flux_y, j, 1 - k) = -MASS_FLUX_Y(mass_flux_y, j, 1 + k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) {
-
-            for (j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-                for (k = 1; k <= depth; k++) {
-                    MASS_FLUX_Y(mass_flux_y, j, y_max + k + 1) = -MASS_FLUX_Y(mass_flux_y, j, y_max + 1 - k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    MASS_FLUX_Y(mass_flux_y, 1 - j, k) = MASS_FLUX_Y(mass_flux_y, 1 + j, k);
-                }
-            }
-        }
-
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) {
-
-            for (k = y_min - depth; k <= y_max + 1 + depth; k++) {
-#pragma ivdep
-                for (j = 1; j <= depth; j++) {
-                    MASS_FLUX_Y(mass_flux_y, x_max + j, k) = MASS_FLUX_Y(mass_flux_y, x_max - j, k);
-                }
-            }
-        }
-    }
-
-
-
+    update1(j, k, FIELD_DENSITY0,    density0,    DENSITY0);
+    update1(j, k, FIELD_DENSITY1,    density1,    DENSITY1);
+    update1(j, k, FIELD_ENERGY0,     energy0,     ENERGY0);
+    update1(j, k, FIELD_ENERGY1,     energy1,     ENERGY1);
+    update1(j, k, FIELD_PRESSURE,    pressure,    PRESSURE);
+    update1(j, k, FIELD_VISCOSITY,   viscosity,   VISCOSITY);
+    update1(j, k, FIELD_SOUNDSPEED,  soundspeed,  SOUNDSPEED);
+    update1(j, k, FIELD_XVEL0,       xvel0,       XVEL0);
+    update1(j, k, FIELD_XVEL1,       yvel0,       XVEL1);
+    update1(j, k, FIELD_YVEL0,       xvel1,       YVEL0);
+    update1(j, k, FIELD_YVEL1,       yvel1,       YVEL1);
+    update1(j, k, FIELD_VOL_FLUX_X,  vol_flux_x,  VOL_FLUX_X);
+    update1(j, k, FIELD_MASS_FLUX_X, mass_flux_x, MASS_FLUX_X);
+    update1(j, k, FIELD_VOL_FLUX_Y,  vol_flux_y,  VOL_FLUX_Y);
+    update1(j, k, FIELD_MASS_FLUX_Y, mass_flux_y, MASS_FLUX_Y);
+}
+
+void update_halo_kernel_2(
+    int j, int k,
+    int x_min, int x_max, int y_min, int y_max,
+    flag_t chunk_neighbours,
+    flag_t tile_neighbours,
+    field_2d_t density0,
+    field_2d_t density1,
+    field_2d_t energy0,
+    field_2d_t energy1,
+    field_2d_t pressure,
+    field_2d_t viscosity,
+    field_2d_t soundspeed,
+    field_2d_t xvel0,
+    field_2d_t yvel0,
+    field_2d_t xvel1,
+    field_2d_t yvel1,
+    field_2d_t vol_flux_x,
+    field_2d_t mass_flux_x,
+    field_2d_t vol_flux_y,
+    field_2d_t mass_flux_y,
+    flag_t fields,
+    int depth)
+{
+    update2(j, k, FIELD_DENSITY0,    density0,    DENSITY0);
+    update2(j, k, FIELD_DENSITY1,    density1,    DENSITY1);
+    update2(j, k, FIELD_ENERGY0,     energy0,     ENERGY0);
+    update2(j, k, FIELD_ENERGY1,     energy1,     ENERGY1);
+    update2(j, k, FIELD_PRESSURE,    pressure,    PRESSURE);
+    update2(j, k, FIELD_VISCOSITY,   viscosity,   VISCOSITY);
+    update2(j, k, FIELD_SOUNDSPEED,  soundspeed,  SOUNDSPEED);
+    update2(j, k, FIELD_XVEL0,       xvel0,       XVEL0);
+    update2(j, k, FIELD_XVEL1,       yvel0,       XVEL1);
+    update2(j, k, FIELD_YVEL0,       xvel1,       YVEL0);
+    update2(j, k, FIELD_YVEL1,       yvel1,       YVEL1);
+    update2(j, k, FIELD_VOL_FLUX_X,  vol_flux_x,  VOL_FLUX_X);
+    update2(j, k, FIELD_MASS_FLUX_X, mass_flux_x, MASS_FLUX_X);
+    update2(j, k, FIELD_VOL_FLUX_Y,  vol_flux_y,  VOL_FLUX_Y);
+    update2(j, k, FIELD_MASS_FLUX_Y, mass_flux_y, MASS_FLUX_Y);
 }

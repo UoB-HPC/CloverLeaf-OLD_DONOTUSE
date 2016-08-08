@@ -1,5 +1,6 @@
 
 #if defined(USE_KOKKOS)
+#include "../definitions_c.h"
 #include "kokkos/flux_calc.cpp"
 void flux_calc(struct chunk_type chunk, double dt)
 {

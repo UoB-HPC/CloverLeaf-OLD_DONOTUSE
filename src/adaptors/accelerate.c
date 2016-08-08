@@ -82,7 +82,11 @@ void accelerate_adaptor()
         accelerate_kernel.setArg(12, *chunk.tiles[tile].field.d_xvel1);
         accelerate_kernel.setArg(13, *chunk.tiles[tile].field.d_yvel1);
         accelerate_kernel.setArg(14, dt);
-        openclQueue.enqueueNDRangeKernel(accelerate_kernel, cl::NullRange, cl::NDRange(xmax - xmin, ymax - ymin), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            accelerate_kernel,
+            cl::NullRange,
+            cl::NDRange(xmax - xmin , ymax - ymin), // not sure why this breaks with +1
+            cl::NullRange);
     }
     openclQueue.finish();
 }
