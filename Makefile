@@ -6,8 +6,8 @@ MPI_CC_ = mpic++
 
 
 FLAGS_GNU = -std=c++11 -Wall -Wpedantic -g -Wno-unknown-pragmas -O3 -march=native -lm
-FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -fp-model strict
-# FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -no-prec-div -fno-alias
+# FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -fp-model strict
+FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -no-prec-div -fno-alias
 FLAGS_CUDA = 
 FLAGS_ = 
 
@@ -17,7 +17,6 @@ MPI_CC = $(MPI_CC_$(COMPILER))
 OBJECTS = data_c.o \
 	definitions_c.o \
 	report.o \
-	initialise_chunk.o \
 	generate_chunk.o \
 	ideal_gas.o \
 	timer_c.o \
@@ -79,7 +78,11 @@ endif
 ifdef USE_OPENCL
     CC = $(MPI_CC)
 
-    MPI_FLAGS += -framework OpenCL -DUSE_OPENCL
+    ifeq ($(shell uname),Darwin)
+        MPI_FLAGS += -framework OpenCL -DUSE_OPENCL
+    else
+        MPI_FLAGS += -lOpenCL -DUSE_OPENCL
+    endif
     FLAGS += $(MPI_FLAGS)
 endif
 
@@ -92,18 +95,22 @@ _SOURCES = $(addprefix $(SRCDIR)/, $(OBJECTS:.o=.c))
 _MPIOBJECTS = $(addprefix $(MPIOBJDIR)/, $(MPIOBJECTS))
 _MPISOURCES = $(addprefix $(SRCDIR)/, $(MPIOBJECTS:.o=.c))
 
--include $(_OBJECTS:.o=.d)
+# -include $(_OBJECTS:.o=.d)
+# -include $(_MPIOBJECTS:.o=.d)
+
+depend:
+	makedepend -- $(FLAGS) -- $(_SOURCES) $(_MPISOURCES)
 
 build: $(_OBJECTS) $(_MPIOBJECTS) Makefile $(KOKKOS_LINK_DEPENDS) $(KERNELS)
 	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_OBJECTS) $(_MPIOBJECTS) $(SRCDIR)/clover_leaf.c $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(KOKKOS_CPP_DEPENDS)
 	$(CC) $(FLAGS) $(MPIINCLUDE) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(EXTRA_INC) -c $< -o $@
-    # $(CC) $(FLAGS) $(MPIINCLUDE) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(EXTRA_INC) -MM $< > $(OBJDIR)/$*.d
+	# $(CC) $(FLAGS) $(MPIINCLUDE) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(EXTRA_INC) -MM $< > $(OBJDIR)/$*.d
 
 $(MPIOBJDIR)/%.o: $(SRCDIR)/%.c $(KOKKOS_CPP_DEPENDS)
 	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_INC) -c $< -o $@
-    # $(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_INC) -MM $< > $(OBJDIR)/$*.d
+	# $(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_INC) -MM $< > $(MPIOBJDIR)/$*.d
 
 
 fast: $(_SOURCES) $(_MPISOURCES) Makefile $(KOKKOS_LINK_DEPENDS) $(KERNELS)
@@ -112,4 +119,4 @@ fast: $(_SOURCES) $(_MPISOURCES) Makefile $(KOKKOS_LINK_DEPENDS) $(KERNELS)
 clean: 
 	rm -f $(OBJDIR)/* $(MPIOBJDIR)/* *.o clover_leaf
 
-print-%  : ; @echo $* = $($*)
+print-%  : ; @echo $* = $($*)# DO NOT DELETE
