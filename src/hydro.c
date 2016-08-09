@@ -43,37 +43,22 @@ void hydro()
         step++;
 
         timestep();
-        // printf("1\n");
-        // field_summary();
 
         PdV(true);
-        // printf("2\n");
-        // field_summary();
 
         accelerate();
-        // printf("3\n");
-        // field_summary();
 
         PdV(false);
-        // printf("4\n");
-        // field_summary();
 
         flux_calc();
-        // printf("5\n");
-        // field_summary();
 
         advection();
-        // printf("6\n");
-        // field_summary();
 
         reset_field();
-        // printf("7\n");
-        // field_summary();
 
         advect_x = !advect_x;
         _time += dt;
 
-        // fflush(stdout);
 
         if (summary_frequency != 0) {
             if (step % summary_frequency == 0)
