@@ -4,6 +4,8 @@
 extern cl::Context        openclContext;
 extern cl::CommandQueue   openclQueue;
 extern cl::Program        openclProgram;
+const char* getErrorString(cl_int);
+#define checkOclErr(err) {if ((err) != CL_SUCCESS){fprintf(stderr,"Line %d: %s\n", __LINE__, getErrorString(err));exit(1);}}
 
 struct field_type {
     cl::Buffer* d_density0;

@@ -37,6 +37,7 @@ void kernel calc_dt_kernel(
                      xvel0,
                      yvel0,
                      dtmin);
+
     WORK_ARRAY(dtmin, j, k) = val;
 }
 

@@ -142,7 +142,11 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
         } else {
             pdv_kernel.setArg(19, 1);
         }
-        openclQueue.enqueueNDRangeKernel(pdv_kernel, cl::NullRange, cl::NDRange(xmax - xmin, ymax - ymin), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            pdv_kernel,
+            cl::NullRange,
+            cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
+            cl::NullRange);
     }
 
     if (profiler_on)

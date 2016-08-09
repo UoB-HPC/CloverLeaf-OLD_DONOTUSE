@@ -85,7 +85,7 @@ void accelerate_adaptor()
         openclQueue.enqueueNDRangeKernel(
             accelerate_kernel,
             cl::NullRange,
-            cl::NDRange(xmax - xmin , ymax - ymin), // not sure why this breaks with +1
+            cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
             cl::NullRange);
     }
     if (profiler_on)

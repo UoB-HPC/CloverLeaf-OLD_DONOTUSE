@@ -6,17 +6,12 @@
 void calc_dt_adaptor(int tile, double* local_dt)
 {
     double dt = g_big;
-    // for (int k = chunk.tiles[tile].t_ymin; k <= chunk.tiles[tile].t_ymax; k++) {
     calc_dt_functor f(chunk.tiles[tile],
                       chunk.tiles[tile].t_xmin,
                       chunk.tiles[tile].t_xmax,
                       chunk.tiles[tile].t_ymin,
                       chunk.tiles[tile].t_ymax);
-    // double res;
     f.compute(dt);
-    //     if (res < dt)
-    //         dt = res;
-    // }
     *local_dt = dt;
 }
 #endif
@@ -73,29 +68,46 @@ void calc_dt_adaptor(int tile, double* local_dt)
             y_min = chunk.tiles[tile].t_ymin,
             y_max = chunk.tiles[tile].t_ymax;
 
-        calc_dt.setArg(0,  x_min);
-        calc_dt.setArg(1,  x_max);
-        calc_dt.setArg(2,  y_min);
-        calc_dt.setArg(3,  y_max);
+        checkOclErr(calc_dt.setArg(0,  x_min));
+        checkOclErr(calc_dt.setArg(1,  x_max));
+        checkOclErr(calc_dt.setArg(2,  y_min));
+        checkOclErr(calc_dt.setArg(3,  y_max));
 
-        calc_dt.setArg(4, *chunk.tiles[tile].field.d_xarea);
-        calc_dt.setArg(5, *chunk.tiles[tile].field.d_yarea);
-        calc_dt.setArg(6, *chunk.tiles[tile].field.d_celldx);
-        calc_dt.setArg(7, *chunk.tiles[tile].field.d_celldy);
-        calc_dt.setArg(8, *chunk.tiles[tile].field.d_volume);
-        calc_dt.setArg(9, *chunk.tiles[tile].field.d_density0);
-        calc_dt.setArg(10, *chunk.tiles[tile].field.d_energy0);
-        calc_dt.setArg(11, *chunk.tiles[tile].field.d_pressure);
-        calc_dt.setArg(12, *chunk.tiles[tile].field.d_viscosity);
-        calc_dt.setArg(13, *chunk.tiles[tile].field.d_soundspeed);
-        calc_dt.setArg(14, *chunk.tiles[tile].field.d_xvel0);
-        calc_dt.setArg(15, *chunk.tiles[tile].field.d_yvel0);
-        calc_dt.setArg(16, *chunk.tiles[tile].field.d_work_array1);
+        checkOclErr(calc_dt.setArg(4, *chunk.tiles[tile].field.d_xarea));
+        checkOclErr(calc_dt.setArg(5, *chunk.tiles[tile].field.d_yarea));
+        checkOclErr(calc_dt.setArg(6, *chunk.tiles[tile].field.d_celldx));
+        checkOclErr(calc_dt.setArg(7, *chunk.tiles[tile].field.d_celldy));
+        checkOclErr(calc_dt.setArg(8, *chunk.tiles[tile].field.d_volume));
+        checkOclErr(calc_dt.setArg(9, *chunk.tiles[tile].field.d_density0));
+        checkOclErr(calc_dt.setArg(10, *chunk.tiles[tile].field.d_energy0));
+        checkOclErr(calc_dt.setArg(11, *chunk.tiles[tile].field.d_pressure));
+        checkOclErr(calc_dt.setArg(12, *chunk.tiles[tile].field.d_viscosity));
+        checkOclErr(calc_dt.setArg(13, *chunk.tiles[tile].field.d_soundspeed));
+        checkOclErr(calc_dt.setArg(14, *chunk.tiles[tile].field.d_xvel0));
+        checkOclErr(calc_dt.setArg(15, *chunk.tiles[tile].field.d_yvel0));
+        checkOclErr(calc_dt.setArg(16, *chunk.tiles[tile].field.d_work_array1));
+        // checkOclErr(calc_dt.setArg(17, sizeof(double) * 10 * 10, NULL));
 
-        openclQueue.enqueueNDRangeKernel(
-            calc_dt, cl::NullRange,
-            cl::NDRange(x_max - x_min + 1, y_max - y_min + 1),
-            cl::NullRange);
+        checkOclErr(openclQueue.enqueueNDRangeKernel(
+                        calc_dt, cl::NullRange,
+                        cl::NDRange(x_max - x_min + 1, y_max - y_min + 1),
+                        cl::NullRange));
+
+        // cl::NDRange reductionLocalSize(1, 1);
+
+        // cl::Kernel reduce(openclProgram, "reduce");
+        // checkOclErr(reduce.setArg(0, *chunk.tiles[tile].field.d_work_array1));
+        // checkOclErr(reduce.setArg(1, sizeof(double) * 960 * 960, NULL));
+        // checkOclErr(reduce.setArg(2, 960 * 960));
+        // checkOclErr(reduce.setArg(3, *chunk.tiles[tile].field.d_work_array2));
+
+        // checkOclErr(openclQueue.enqueueNDRangeKernel(
+        //                 reduce,
+        //                 cl::NullRange,
+        //                 cl::NDRange(100, 100),
+        //                 reductionLocalSize));
+
+        openclQueue.finish();
 
         mapoclmem(chunk.tiles[tile].field.d_work_array1,
                   chunk.tiles[tile].field.work_array1,
@@ -109,6 +121,11 @@ void calc_dt_adaptor(int tile, double* local_dt)
                     min = val;
             }
         }
+        // for (int i = 0; i < reductionLocalSize[0]*reductionLocalSize[1]; i++) {
+        //     double val = chunk.tiles[tile].field.work_array2[i];
+        //     if (val < min)
+        //         min = val;
+        // }
 
         unmapoclmem(chunk.tiles[tile].field.d_work_array1,
                     chunk.tiles[tile].field.work_array1);

@@ -96,7 +96,11 @@ void ideal_gas_adaptor(int tile, bool predict)
         }
         ideal_gas.setArg(6, *chunk.tiles[tile].field.d_pressure);
         ideal_gas.setArg(7, *chunk.tiles[tile].field.d_soundspeed);
-        openclQueue.enqueueNDRangeKernel(ideal_gas, cl::NullRange, cl::NDRange(xmax - xmin, ymax - ymin), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            ideal_gas,
+            cl::NullRange,
+            cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
+            cl::NullRange);
     }
 
     if (profiler_on)
