@@ -100,7 +100,7 @@ void ideal_gas_adaptor(int tile, bool predict)
             ideal_gas,
             cl::NullRange,
             cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
-            cl::NullRange);
+            ideal_gas_local_size);
     }
 
     if (profiler_on)

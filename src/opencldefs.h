@@ -150,4 +150,46 @@ struct field_type {
         } \
     }
 
+
+
+#define acclerate_local_size       cl::NullRange
+
+#define advec_cell_x1_local_size   cl::NullRange
+#define advec_cell_x2_local_size   cl::NullRange
+#define advec_cell_x3_local_size   cl::NullRange
+#define advec_cell_y1_local_size   cl::NullRange
+#define advec_cell_y2_local_size   cl::NullRange
+#define advec_cell_y3_local_size   cl::NullRange
+
+#define advec_mom_ms1_local_size   cl::NullRange
+#define advec_mom_ms2_local_size   cl::NullRange
+#define advec_mom_ms3_local_size   cl::NullRange
+#define advec_mom_ms4_local_size   cl::NullRange
+#define advec_mom_x1_local_size    cl::NullRange
+#define advec_mom_x2_local_size    cl::NullRange
+#define advec_mom_x3_local_size    cl::NullRange
+#define advec_mom_x4_local_size    cl::NullRange
+#define advec_mom_y1_local_size    cl::NullRange
+#define advec_mom_y2_local_size    cl::NullRange
+#define advec_mom_y3_local_size    cl::NullRange
+#define advec_mom_y4_local_size    cl::NullRange
+
+#define dtmin_local_size           cl::NullRange
+
+#define flux_calc_x_local_size     cl::NullRange
+#define flux_calc_y_local_size     cl::NullRange
+
+#define ideal_gas_local_size       cl::NullRange
+
+#define pdv_kernel_local_size      cl::NullRange
+
+#define reset_field_local_size     cl::NullRange
+
+#define revert_local_size          cl::NullRange
+
+#define update_halo_local_size     cl::NullRange
+
+#define update_halo_local_size     cl::NullRange
+
+
 #include "openclaccessdefs.h"

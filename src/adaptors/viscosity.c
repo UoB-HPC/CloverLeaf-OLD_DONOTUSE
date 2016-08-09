@@ -78,7 +78,11 @@ void viscosity(struct chunk_type chunk)
         viscosity.setArg(8, *chunk.tiles[tile].field.d_viscosity);
         viscosity.setArg(9, *chunk.tiles[tile].field.d_xvel0);
         viscosity.setArg(10, *chunk.tiles[tile].field.d_yvel0);
-        openclQueue.enqueueNDRangeKernel(viscosity, cl::NullRange, cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            viscosity,
+            cl::NullRange,
+            cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+            viscosity_local_size);
     }
     if (profiler_on)
         openclQueue.finish();

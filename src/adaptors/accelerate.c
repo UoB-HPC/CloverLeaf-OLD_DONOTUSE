@@ -86,7 +86,7 @@ void accelerate_adaptor()
             accelerate_kernel,
             cl::NullRange,
             cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
-            cl::NullRange);
+            acclerate_local_size);
     }
     if (profiler_on)
         openclQueue.finish();

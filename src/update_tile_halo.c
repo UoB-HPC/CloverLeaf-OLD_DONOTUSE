@@ -6,7 +6,7 @@
 
 // void __update_tile_halo_kernel_module_MOD_update_tile_halo_t_kernel();
 
-void update_tile_halo(int *fields, int depth)
+void update_tile_halo(int* fields, int depth)
 {
     int t_left, t_right, t_up, t_down;
 
@@ -106,10 +106,10 @@ void update_tile_halo(int *fields, int depth)
 
         if (t_left != EXTERNAL_TILE) {
             update_tile_halo_l_kernel_c_(
-                &chunk.tiles[tile].t_xmin,
-                &chunk.tiles[tile].t_xmax,
-                &chunk.tiles[tile].t_ymin,
-                &chunk.tiles[tile].t_ymax,
+                chunk.tiles[tile].t_xmin,
+                chunk.tiles[tile].t_xmax,
+                chunk.tiles[tile].t_ymin,
+                chunk.tiles[tile].t_ymax,
                 chunk.tiles[tile].field.density0,
                 chunk.tiles[tile].field.energy0,
                 chunk.tiles[tile].field.pressure,
@@ -125,10 +125,10 @@ void update_tile_halo(int *fields, int depth)
                 chunk.tiles[tile].field.vol_flux_y,
                 chunk.tiles[tile].field.mass_flux_x,
                 chunk.tiles[tile].field.mass_flux_y,
-                &chunk.tiles[t_left - 1].t_xmin,
-                &chunk.tiles[t_left - 1].t_xmax,
-                &chunk.tiles[t_left - 1].t_ymin,
-                &chunk.tiles[t_left - 1].t_ymax,
+                chunk.tiles[t_left - 1].t_xmin,
+                chunk.tiles[t_left - 1].t_xmax,
+                chunk.tiles[t_left - 1].t_ymin,
+                chunk.tiles[t_left - 1].t_ymax,
                 chunk.tiles[t_left - 1].field.density0,
                 chunk.tiles[t_left - 1].field.energy0,
                 chunk.tiles[t_left - 1].field.pressure,

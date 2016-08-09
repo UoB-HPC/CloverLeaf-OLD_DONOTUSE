@@ -163,7 +163,7 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
                     update_halo_2,
                     cl::NullRange,
                     cl::NDRange(depth - 1 + 1, (y_max + depth) - (y_min - depth) + 1),
-                    cl::NullRange));
+                    update_halo_local_size));
     if (profiler_on)
         openclQueue.finish();
 }

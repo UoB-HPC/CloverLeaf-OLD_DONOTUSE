@@ -104,7 +104,11 @@ void flux_calc(struct chunk_type chunk, double dt)
         flux_calc_x.setArg(6, *chunk.tiles[tile].field.d_xvel0);
         flux_calc_x.setArg(7, *chunk.tiles[tile].field.d_xvel1);
         flux_calc_x.setArg(8, *chunk.tiles[tile].field.d_vol_flux_x);
-        openclQueue.enqueueNDRangeKernel(flux_calc_x, cl::NullRange, cl::NDRange((x_max + 1) - (x_min) + 1, (y_max) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            flux_calc_x,
+            cl::NullRange,
+            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max) - (y_min) + 1),
+            flux_calc_x_local_size);
 
         cl::Kernel flux_calc_y(openclProgram, "flux_calc_y_kernel_");
         flux_calc_y.setArg(0,  x_min);
@@ -117,7 +121,11 @@ void flux_calc(struct chunk_type chunk, double dt)
         flux_calc_y.setArg(6, *chunk.tiles[tile].field.d_yvel0);
         flux_calc_y.setArg(7, *chunk.tiles[tile].field.d_yvel1);
         flux_calc_y.setArg(8, *chunk.tiles[tile].field.d_vol_flux_y);
-        openclQueue.enqueueNDRangeKernel(flux_calc_y, cl::NullRange, cl::NDRange((x_max) - (x_min) + 1, (y_max + 1) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            flux_calc_y,
+            cl::NullRange,
+            cl::NDRange((x_max) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
+            flux_calc_y_local_size);
     }
     openclQueue.finish();
 }

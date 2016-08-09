@@ -193,7 +193,7 @@ void advec_cell(
             xsweep_kernel,
             cl::NullRange,
             cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
-            cl::NullRange);
+            advec_cell_x1_local_size);
 
         cl::Kernel xcomp1_kernel(openclProgram, "xcomp1_kernel");
         xcomp1_kernel.setArg(0,  x_min);
@@ -211,7 +211,7 @@ void advec_cell(
             xcomp1_kernel,
             cl::NullRange,
             cl::NDRange((x_max + 2) - (x_min) + 1, (y_max) - (y_min) + 1),
-            cl::NullRange);
+            advec_cell_x2_local_size);
 
         cl::Kernel xcomp2_kernel(openclProgram, "xcomp2_kernel");
         xcomp2_kernel.setArg(0,  x_min);
@@ -232,7 +232,7 @@ void advec_cell(
             xcomp2_kernel,
             cl::NullRange,
             cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
-            cl::NullRange);
+            advec_cell_x3_local_size);
     }
     if (dir == g_ydir) {
         cl::Kernel ysweep_kernel(openclProgram, "ysweep_kernel");
@@ -250,7 +250,7 @@ void advec_cell(
             ysweep_kernel,
             cl::NullRange,
             cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
-            cl::NullRange);
+            advec_cell_y1_local_size);
 
         cl::Kernel ycomp1_kernel(openclProgram, "ycomp1_kernel");
         ycomp1_kernel.setArg(0,  x_min);
@@ -268,7 +268,7 @@ void advec_cell(
             ycomp1_kernel,
             cl::NullRange,
             cl::NDRange((x_max) - (x_min) + 1, (y_max + 2) - (y_min) + 1),
-            cl::NullRange);
+            advec_cell_y2_local_size);
 
         cl::Kernel ycomp2_kernel(openclProgram, "ycomp2_kernel");
         ycomp2_kernel.setArg(0,  x_min);
@@ -289,7 +289,7 @@ void advec_cell(
             ycomp2_kernel,
             cl::NullRange,
             cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
-            cl::NullRange);
+            advec_cell_y3_local_size);
     }
     if (profiler_on)
         openclQueue.finish();

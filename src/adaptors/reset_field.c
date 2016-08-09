@@ -76,7 +76,11 @@ void reset_field(struct chunk_type chunk)
         reset_field.setArg(9, *chunk.tiles[tile].field.d_xvel1);
         reset_field.setArg(10, *chunk.tiles[tile].field.d_yvel0);
         reset_field.setArg(11, *chunk.tiles[tile].field.d_yvel1);
-        openclQueue.enqueueNDRangeKernel(reset_field, cl::NullRange, cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            reset_field,
+            cl::NullRange,
+            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
+            reset_field_local_size);
     }
     if (profiler_on)
         openclQueue.finish();

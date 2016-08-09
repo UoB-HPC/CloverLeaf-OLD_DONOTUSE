@@ -146,7 +146,7 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
             pdv_kernel,
             cl::NullRange,
             cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
-            cl::NullRange);
+            pdv_kernel_local_size);
     }
 
     if (profiler_on)

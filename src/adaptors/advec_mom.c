@@ -247,7 +247,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             ms1_kernel, cl::NullRange,
             cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
-            cl::NullRange);
+            advec_mom_ms1_local_size);
     } else if (mom_sweep == 2) {
         cl::Kernel ms2_kernel(openclProgram, "ms2_kernel");
         ms2_kernel.setArg(0,  x_min);
@@ -262,7 +262,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             ms2_kernel, cl::NullRange,
             cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
-            cl::NullRange);
+            advec_mom_ms2_local_size);
     } else if (mom_sweep == 3) {
         cl::Kernel ms3_kernel(openclProgram, "ms3_kernel");
         ms3_kernel.setArg(0,  x_min);
@@ -277,7 +277,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             ms3_kernel, cl::NullRange,
             cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
-            cl::NullRange);
+            advec_mom_ms3_local_size);
     } else if (mom_sweep == 4) {
         cl::Kernel ms4_kernel(openclProgram, "ms4_kernel");
 
@@ -294,7 +294,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             ms4_kernel, cl::NullRange,
             cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
-            cl::NullRange);
+            advec_mom_ms4_local_size);
     }
 
     if (direction == X) {
@@ -308,7 +308,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             dx1_kernel, cl::NullRange,
             cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 1) - (y_min) + 1),
-            cl::NullRange);
+            advec_mom_x1_local_size);
 
         cl::Kernel dx2_kernel(openclProgram, "dx2_kernel");
         dx2_kernel.setArg(0,  x_min);
@@ -323,7 +323,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             dx2_kernel, cl::NullRange,
             cl::NDRange((x_max + 2) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1),
-            cl::NullRange);
+            advec_mom_x2_local_size);
 
         cl::Kernel dx3_kernel(openclProgram, "dx3_kernel");
         dx3_kernel.setArg(0,  x_min);
@@ -338,7 +338,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             dx3_kernel, cl::NullRange,
             cl::NDRange((x_max + 1) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1),
-            cl::NullRange);
+            advec_mom_x3_local_size);
 
         cl::Kernel dx4_kernel(openclProgram, "dx4_kernel");
         dx4_kernel.setArg(0,  x_min);
@@ -352,7 +352,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             dx4_kernel, cl::NullRange,
             cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
-            cl::NullRange);
+            advec_mom_x4_local_size);
     } else if (direction == Y) {
         cl::Kernel dy1_kernel(openclProgram, "dy1_kernel");
         dy1_kernel.setArg(0,  x_min);
@@ -364,7 +364,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             dy1_kernel, cl::NullRange,
             cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 2) + 1),
-            cl::NullRange);
+            advec_mom_y1_local_size);
 
         cl::Kernel dy2_kernel(openclProgram, "dy2_kernel");
         dy2_kernel.setArg(0,  x_min);
@@ -379,7 +379,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             dy2_kernel, cl::NullRange,
             cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 1) + 1),
-            cl::NullRange);
+            advec_mom_y2_local_size);
 
         cl::Kernel dy3_kernel(openclProgram, "dy3_kernel");
         dy3_kernel.setArg(0,  x_min);
@@ -394,7 +394,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             dy3_kernel, cl::NullRange,
             cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min - 1) + 1),
-            cl::NullRange);
+            advec_mom_y3_local_size);
 
         cl::Kernel dy4_kernel(openclProgram, "dy4_kernel");
         dy4_kernel.setArg(0,  x_min);
@@ -408,7 +408,7 @@ void advec_mom(
         openclQueue.enqueueNDRangeKernel(
             dy4_kernel, cl::NullRange,
             cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
-            cl::NullRange);
+            advec_mom_y4_local_size);
     }
     if (profiler_on)
         openclQueue.finish();

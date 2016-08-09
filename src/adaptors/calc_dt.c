@@ -91,7 +91,7 @@ void calc_dt_adaptor(int tile, double* local_dt)
         checkOclErr(openclQueue.enqueueNDRangeKernel(
                         calc_dt, cl::NullRange,
                         cl::NDRange(x_max - x_min + 1, y_max - y_min + 1),
-                        cl::NullRange));
+                        dtmin_local_size));
 
         // cl::NDRange reductionLocalSize(1, 1);
 

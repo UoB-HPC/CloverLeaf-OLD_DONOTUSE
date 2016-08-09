@@ -68,7 +68,11 @@ void revert(struct chunk_type chunk)
         revert.setArg(5, *chunk.tiles[tile].field.d_density1);
         revert.setArg(6, *chunk.tiles[tile].field.d_energy0);
         revert.setArg(7, *chunk.tiles[tile].field.d_energy1);
-        openclQueue.enqueueNDRangeKernel(revert, cl::NullRange, cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            revert,
+            cl::NullRange,
+            cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+            revert_local_size);
     }
     if (profiler_on)
         openclQueue.finish();
