@@ -73,7 +73,7 @@ void ideal_gas_adaptor(int tile, bool predict)
 #endif
 
 #if defined(USE_OPENCL)
-
+#include "../definitions_c.h"
 void ideal_gas_adaptor(int tile, bool predict)
 {
     cl::Kernel ideal_gas(openclProgram, "ideal_gas_kernel");
@@ -99,6 +99,7 @@ void ideal_gas_adaptor(int tile, bool predict)
         openclQueue.enqueueNDRangeKernel(ideal_gas, cl::NullRange, cl::NDRange(xmax - xmin, ymax - ymin), cl::NullRange);
     }
 
-    openclQueue.finish();
+    if (profiler_on)
+        openclQueue.finish();
 }
 #endif

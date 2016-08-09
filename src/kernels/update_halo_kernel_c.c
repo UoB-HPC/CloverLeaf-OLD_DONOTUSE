@@ -60,7 +60,7 @@
 
 
 // requires fields, chunk_neighbours, tile_neighbours, x_min,x_max,y_min,y_max
-// depth, and EXTERNAL* to be defined
+// depth to be defined
 #define update1(j, k, field_t, field, access) \
     if (fields[FTNREF1D(field_t, 1)] == 1) { \
         if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && \

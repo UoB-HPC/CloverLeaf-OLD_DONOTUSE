@@ -8,8 +8,8 @@ void kernel xsweep_kernel(
     const global double* vol_flux_y,
     int sweep_number)
 {
-    int k = get_global_id(1) + y_min;
-    int j = get_global_id(0) + x_min;
+    int k = get_global_id(1) + y_min - 2;
+    int j = get_global_id(0) + x_min - 2;
 
     xsweep(
         j, k,
@@ -32,8 +32,8 @@ void kernel ysweep_kernel(
     const global double* vol_flux_y,
     int sweep_number)
 {
-    int k = get_global_id(1) + y_min;
-    int j = get_global_id(0) + x_min;
+    int k = get_global_id(1) + y_min - 2;
+    int j = get_global_id(0) + x_min - 2;
 
     ysweep(
         j, k,

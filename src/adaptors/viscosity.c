@@ -80,6 +80,7 @@ void viscosity(struct chunk_type chunk)
         viscosity.setArg(10, *chunk.tiles[tile].field.d_yvel0);
         openclQueue.enqueueNDRangeKernel(viscosity, cl::NullRange, cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1), cl::NullRange);
     }
-    openclQueue.finish();
+    if (profiler_on)
+        openclQueue.finish();
 }
 #endif

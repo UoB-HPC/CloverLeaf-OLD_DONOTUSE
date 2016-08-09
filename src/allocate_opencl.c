@@ -111,43 +111,43 @@ void allocate()
 
 
 
-        chunk.tiles[tile].field.d_density0   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.density0_size , chunk.tiles[tile].field.density0);
-        chunk.tiles[tile].field.d_density1   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.density1_size, chunk.tiles[tile].field.density1);
-        chunk.tiles[tile].field.d_energy0    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.energy0_size, chunk.tiles[tile].field.energy0);
-        chunk.tiles[tile].field.d_energy1    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.energy1_size, chunk.tiles[tile].field.energy1);
-        chunk.tiles[tile].field.d_pressure   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.pressure_size, chunk.tiles[tile].field.pressure);
-        chunk.tiles[tile].field.d_viscosity  = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.viscosity_size, chunk.tiles[tile].field.viscosity);
-        chunk.tiles[tile].field.d_soundspeed = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.soundspeed_size, chunk.tiles[tile].field.soundspeed);
+        chunk.tiles[tile].field.d_density0   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.density0_size , chunk.tiles[tile].field.density0);
+        chunk.tiles[tile].field.d_density1   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.density1_size, chunk.tiles[tile].field.density1);
+        chunk.tiles[tile].field.d_energy0    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.energy0_size, chunk.tiles[tile].field.energy0);
+        chunk.tiles[tile].field.d_energy1    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.energy1_size, chunk.tiles[tile].field.energy1);
+        chunk.tiles[tile].field.d_pressure   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.pressure_size, chunk.tiles[tile].field.pressure);
+        chunk.tiles[tile].field.d_viscosity  = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.viscosity_size, chunk.tiles[tile].field.viscosity);
+        chunk.tiles[tile].field.d_soundspeed = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.soundspeed_size, chunk.tiles[tile].field.soundspeed);
 
-        chunk.tiles[tile].field.d_xvel0 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.xvel0_size, chunk.tiles[tile].field.xvel0);
-        chunk.tiles[tile].field.d_xvel1 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.xvel1_size, chunk.tiles[tile].field.xvel1);
-        chunk.tiles[tile].field.d_yvel0 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.yvel0_size, chunk.tiles[tile].field.yvel0);
-        chunk.tiles[tile].field.d_yvel1 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.yvel1_size, chunk.tiles[tile].field.yvel1);
+        chunk.tiles[tile].field.d_xvel0 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.xvel0_size, chunk.tiles[tile].field.xvel0);
+        chunk.tiles[tile].field.d_xvel1 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.xvel1_size, chunk.tiles[tile].field.xvel1);
+        chunk.tiles[tile].field.d_yvel0 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.yvel0_size, chunk.tiles[tile].field.yvel0);
+        chunk.tiles[tile].field.d_yvel1 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.yvel1_size, chunk.tiles[tile].field.yvel1);
 
-        chunk.tiles[tile].field.d_vol_flux_x  = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.vol_flux_x_size, chunk.tiles[tile].field.vol_flux_x);
-        chunk.tiles[tile].field.d_mass_flux_x = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.mass_flux_x_size, chunk.tiles[tile].field.mass_flux_x);
-        chunk.tiles[tile].field.d_vol_flux_y  = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.vol_flux_y_size, chunk.tiles[tile].field.vol_flux_y);
-        chunk.tiles[tile].field.d_mass_flux_y = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.mass_flux_y_size, chunk.tiles[tile].field.mass_flux_y);
+        chunk.tiles[tile].field.d_vol_flux_x  = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.vol_flux_x_size, chunk.tiles[tile].field.vol_flux_x);
+        chunk.tiles[tile].field.d_mass_flux_x = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.mass_flux_x_size, chunk.tiles[tile].field.mass_flux_x);
+        chunk.tiles[tile].field.d_vol_flux_y  = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.vol_flux_y_size, chunk.tiles[tile].field.vol_flux_y);
+        chunk.tiles[tile].field.d_mass_flux_y = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.mass_flux_y_size, chunk.tiles[tile].field.mass_flux_y);
 
-        chunk.tiles[tile].field.d_work_array1 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.work_array1_size, chunk.tiles[tile].field.work_array1);
-        chunk.tiles[tile].field.d_work_array2 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.work_array2_size, chunk.tiles[tile].field.work_array2);
-        chunk.tiles[tile].field.d_work_array3 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.work_array3_size, chunk.tiles[tile].field.work_array3);
-        chunk.tiles[tile].field.d_work_array4 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.work_array4_size, chunk.tiles[tile].field.work_array4);
-        chunk.tiles[tile].field.d_work_array5 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.work_array5_size, chunk.tiles[tile].field.work_array5);
-        chunk.tiles[tile].field.d_work_array6 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.work_array6_size, chunk.tiles[tile].field.work_array6);
-        chunk.tiles[tile].field.d_work_array7 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double) * chunk.tiles[tile].field.work_array7_size, chunk.tiles[tile].field.work_array7);
+        chunk.tiles[tile].field.d_work_array1 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.work_array1_size, chunk.tiles[tile].field.work_array1);
+        chunk.tiles[tile].field.d_work_array2 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.work_array2_size, chunk.tiles[tile].field.work_array2);
+        chunk.tiles[tile].field.d_work_array3 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.work_array3_size, chunk.tiles[tile].field.work_array3);
+        chunk.tiles[tile].field.d_work_array4 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.work_array4_size, chunk.tiles[tile].field.work_array4);
+        chunk.tiles[tile].field.d_work_array5 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.work_array5_size, chunk.tiles[tile].field.work_array5);
+        chunk.tiles[tile].field.d_work_array6 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.work_array6_size, chunk.tiles[tile].field.work_array6);
+        chunk.tiles[tile].field.d_work_array7 = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double) * chunk.tiles[tile].field.work_array7_size, chunk.tiles[tile].field.work_array7);
 
-        chunk.tiles[tile].field.d_cellx    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.cellx_size, chunk.tiles[tile].field.cellx);
-        chunk.tiles[tile].field.d_celly    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.celly_size, chunk.tiles[tile].field.celly);
-        chunk.tiles[tile].field.d_vertexx  = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.vertexx_size, chunk.tiles[tile].field.vertexx);
-        chunk.tiles[tile].field.d_vertexy  = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.vertexy_size, chunk.tiles[tile].field.vertexy);
-        chunk.tiles[tile].field.d_celldx   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.celldx_size, chunk.tiles[tile].field.celldx);
-        chunk.tiles[tile].field.d_celldy   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.celldy_size, chunk.tiles[tile].field.celldy);
-        chunk.tiles[tile].field.d_vertexdx = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.vertexdx_size, chunk.tiles[tile].field.vertexdx);
-        chunk.tiles[tile].field.d_vertexdy = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.vertexdy_size, chunk.tiles[tile].field.vertexdy);
-        chunk.tiles[tile].field.d_volume   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.volume_size, chunk.tiles[tile].field.volume);
-        chunk.tiles[tile].field.d_xarea    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.xarea_size, chunk.tiles[tile].field.xarea);
-        chunk.tiles[tile].field.d_yarea    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR, sizeof(double)* chunk.tiles[tile].field.yarea_size, chunk.tiles[tile].field.yarea);
+        chunk.tiles[tile].field.d_cellx    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.cellx_size, chunk.tiles[tile].field.cellx);
+        chunk.tiles[tile].field.d_celly    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.celly_size, chunk.tiles[tile].field.celly);
+        chunk.tiles[tile].field.d_vertexx  = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.vertexx_size, chunk.tiles[tile].field.vertexx);
+        chunk.tiles[tile].field.d_vertexy  = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.vertexy_size, chunk.tiles[tile].field.vertexy);
+        chunk.tiles[tile].field.d_celldx   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.celldx_size, chunk.tiles[tile].field.celldx);
+        chunk.tiles[tile].field.d_celldy   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.celldy_size, chunk.tiles[tile].field.celldy);
+        chunk.tiles[tile].field.d_vertexdx = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.vertexdx_size, chunk.tiles[tile].field.vertexdx);
+        chunk.tiles[tile].field.d_vertexdy = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.vertexdy_size, chunk.tiles[tile].field.vertexdy);
+        chunk.tiles[tile].field.d_volume   = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.volume_size, chunk.tiles[tile].field.volume);
+        chunk.tiles[tile].field.d_xarea    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.xarea_size, chunk.tiles[tile].field.xarea);
+        chunk.tiles[tile].field.d_yarea    = new cl::Buffer(openclContext, CL_MEM_USE_HOST_PTR | CL_MEM_READ_WRITE, sizeof(double)* chunk.tiles[tile].field.yarea_size, chunk.tiles[tile].field.yarea);
 
 
         // TODO first touch

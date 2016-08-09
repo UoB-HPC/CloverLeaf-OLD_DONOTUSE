@@ -25,6 +25,7 @@ void calc_dt_adaptor(int tile, double* local_dt)
 #include <math.h>
 #include "../kernels/ftocmacros.h"
 #include "../kernels/calc_dt_kernel_c.c"
+#include "../definitions_c.h"
 
 void calc_dt_adaptor(int tile, double* local_dt)
 {
@@ -113,7 +114,8 @@ void calc_dt_adaptor(int tile, double* local_dt)
                     chunk.tiles[tile].field.work_array1);
     }
 
-    openclQueue.finish();
+    if (profiler_on)
+        openclQueue.finish();
     *local_dt = min;
 }
 #endif

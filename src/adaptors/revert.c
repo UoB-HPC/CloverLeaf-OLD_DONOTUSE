@@ -49,6 +49,7 @@ void revert(struct chunk_type chunk)
 #endif
 #if defined(USE_OPENCL)
 #include "../kernels/revert_kernel_c.c"
+#include "../definitions_c.h"
 
 void revert(struct chunk_type chunk)
 {
@@ -69,7 +70,7 @@ void revert(struct chunk_type chunk)
         revert.setArg(7, *chunk.tiles[tile].field.d_energy1);
         openclQueue.enqueueNDRangeKernel(revert, cl::NullRange, cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1), cl::NullRange);
     }
-    openclQueue.finish();
-
+    if (profiler_on)
+        openclQueue.finish();
 }
 #endif

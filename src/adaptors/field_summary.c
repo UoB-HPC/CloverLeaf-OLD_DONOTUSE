@@ -61,6 +61,8 @@ void field_summary(
 #endif
 
 #if defined(USE_OPENCL)
+#include "../definitions_c.h"
+
 void field_summary(
     double* vol,
     double* ie,
@@ -81,36 +83,18 @@ void field_summary(
             y_min = tile.t_ymin,
             y_max = tile.t_ymax;
         field_2d_t volume   = tile.field.volume;
-        field_2d_t density0 = tile.field.density0;
-        field_2d_t energy0  = tile.field.energy0;
+        field_2d_t density1 = tile.field.density1;
+        field_2d_t energy1  = tile.field.energy1;
         field_2d_t pressure = tile.field.pressure;
-        field_2d_t xvel0    = tile.field.xvel0;
-        field_2d_t yvel0    = tile.field.yvel0;
+        field_2d_t xvel1    = tile.field.xvel1;
+        field_2d_t yvel1    = tile.field.yvel1;
 
-        openclQueue.enqueueMapBuffer(
-            *tile.field.d_volume,
-            CL_TRUE, CL_MAP_READ, 0,
-            sizeof(double) * tile.field.volume_size);
-        openclQueue.enqueueMapBuffer(
-            *tile.field.d_density0,
-            CL_TRUE, CL_MAP_READ, 0,
-            sizeof(double) * tile.field.density0_size);
-        openclQueue.enqueueMapBuffer(
-            *tile.field.d_energy0,
-            CL_TRUE, CL_MAP_READ, 0,
-            sizeof(double) * tile.field.energy0_size);
-        openclQueue.enqueueMapBuffer(
-            *tile.field.d_pressure,
-            CL_TRUE, CL_MAP_READ, 0,
-            sizeof(double) * tile.field.pressure_size);
-        openclQueue.enqueueMapBuffer(
-            *tile.field.d_xvel0,
-            CL_TRUE, CL_MAP_READ, 0,
-            sizeof(double) * tile.field.xvel0_size);
-        openclQueue.enqueueMapBuffer(
-            *tile.field.d_yvel0,
-            CL_TRUE, CL_MAP_READ, 0,
-            sizeof(double) * tile.field.yvel0_size);
+        mapoclmem(tile.field.d_volume, volume, tile.field.volume_size, CL_MAP_READ);
+        mapoclmem(tile.field.d_density1, density1, tile.field.density1_size, CL_MAP_READ);
+        mapoclmem(tile.field.d_energy1, energy1, tile.field.energy1_size, CL_MAP_READ);
+        mapoclmem(tile.field.d_pressure, pressure, tile.field.pressure_size, CL_MAP_READ);
+        mapoclmem(tile.field.d_xvel1, xvel1, tile.field.xvel1_size, CL_MAP_READ);
+        mapoclmem(tile.field.d_yvel1, yvel1, tile.field.yvel1_size, CL_MAP_READ);
 
         double _vol   = 0.0,
                _mass  = 0.0,
@@ -125,31 +109,25 @@ void field_summary(
                     x_min, x_max,
                     y_min, y_max,
                     volume,
-                    density0, energy0,
+                    density1, energy1,
                     pressure,
-                    xvel0, yvel0,
+                    xvel1, yvel1,
                     &_vol, &_mass, &_ie, &_ke, &_press);
             }
         }
 
-        openclQueue.enqueueUnmapMemObject(
-            *tile.field.d_volume,
-            tile.field.volume);
-        openclQueue.enqueueUnmapMemObject(
-            *tile.field.d_density0,
-            tile.field.density0);
-        openclQueue.enqueueUnmapMemObject(
-            *tile.field.d_energy0,
-            tile.field.energy0);
-        openclQueue.enqueueUnmapMemObject(
-            *tile.field.d_pressure,
-            tile.field.pressure);
-        openclQueue.enqueueUnmapMemObject(
-            *tile.field.d_xvel0,
-            tile.field.xvel0);
-        openclQueue.enqueueUnmapMemObject(
-            *tile.field.d_yvel0,
-            tile.field.yvel0);
+        unmapoclmem(tile.field.d_volume,
+                    tile.field.volume);
+        unmapoclmem(tile.field.d_density1,
+                    tile.field.density1);
+        unmapoclmem(tile.field.d_energy1,
+                    tile.field.energy1);
+        unmapoclmem(tile.field.d_pressure,
+                    tile.field.pressure);
+        unmapoclmem(tile.field.d_xvel1,
+                    tile.field.xvel1);
+        unmapoclmem(tile.field.d_yvel1,
+                    tile.field.yvel1);
 
         *vol   += _vol;
         *mass  += _mass;
@@ -157,5 +135,7 @@ void field_summary(
         *ke    += _ke;
         *press += _press;
     }
+    if (profiler_on)
+        openclQueue.finish();
 }
 #endif

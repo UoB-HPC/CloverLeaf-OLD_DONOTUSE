@@ -52,6 +52,7 @@ void reset_field(struct chunk_type chunk)
 
 #if defined(USE_OPENCL)
 #include "../kernels/reset_field_kernel_c.c"
+#include "../definitions_c.h"
 
 void reset_field(struct chunk_type chunk)
 {
@@ -77,6 +78,7 @@ void reset_field(struct chunk_type chunk)
         reset_field.setArg(11, *chunk.tiles[tile].field.d_yvel1);
         openclQueue.enqueueNDRangeKernel(reset_field, cl::NullRange, cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1), cl::NullRange);
     }
-    openclQueue.finish();
+    if (profiler_on)
+        openclQueue.finish();
 }
 #endif

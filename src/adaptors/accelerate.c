@@ -58,7 +58,7 @@ void accelerate_adaptor()
 #endif
 
 #if defined(USE_OPENCL)
-
+#include "../definitions_c.h"
 void accelerate_adaptor()
 {
     cl::Kernel accelerate_kernel(openclProgram, "accelerate_kernel");
@@ -88,7 +88,8 @@ void accelerate_adaptor()
             cl::NDRange(xmax - xmin , ymax - ymin), // not sure why this breaks with +1
             cl::NullRange);
     }
-    openclQueue.finish();
+    if (profiler_on)
+        openclQueue.finish();
 }
 
 #endif

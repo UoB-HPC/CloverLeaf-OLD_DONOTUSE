@@ -107,7 +107,7 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
 #endif
 
 #if defined(USE_OPENCL)
-
+#include "../definitions_c.h"
 
 void pdv(struct chunk_type chunk, bool predict, double dt)
 {
@@ -145,7 +145,7 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
         openclQueue.enqueueNDRangeKernel(pdv_kernel, cl::NullRange, cl::NDRange(xmax - xmin, ymax - ymin), cl::NullRange);
     }
 
-    openclQueue.finish();
-
+    if (profiler_on)
+        openclQueue.finish();
 }
 #endif

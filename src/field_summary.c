@@ -12,7 +12,9 @@ void field_summary()
     double kernel_time = 0.0,
            vol, mass, ie, ke, press;
     BOSSPRINT(g_out, "\nTime %.13f\n", _time);
+    BOSSPRINT(stdout, "\nTime %.13f\n", _time);
     BOSSPRINT(g_out, "%13s%16s%16s%16s%16s%16s%16s%16s\n", "", "Volume", "Mass", "Density", "Pressure", "Internal Energy", "Kinetic Energy", "Total Energy");
+    BOSSPRINT(stdout, "%13s%16s%16s%16s%16s%16s%16s%16s\n", "", "Volume", "Mass", "Density", "Pressure", "Internal Energy", "Kinetic Energy", "Total Energy");
 
     if (profiler_on) {
         kernel_time = timer();
@@ -28,7 +30,7 @@ void field_summary()
     }
 
     field_summary(&vol, &ie, &ke, &mass, &press);
-
+    printf("mass=%e\n", mass);
     clover_sum(&vol);
     clover_sum(&mass);
     clover_sum(&press);

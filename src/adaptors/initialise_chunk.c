@@ -145,9 +145,11 @@ void initialise_chunk(int tile)
     unmapoclmem(chunk.tiles[tile].field.d_vertexy,
                 chunk.tiles[tile].field.vertexy);
     unmapoclmem(chunk.tiles[tile].field.d_vertexdx,
-                chunk.tiles[tile].field.vertexx);
+                chunk.tiles[tile].field.vertexdx);
     unmapoclmem(chunk.tiles[tile].field.d_vertexx,
                 chunk.tiles[tile].field.vertexx);
+    if (profiler_on)
+        openclQueue.finish();
 }
 
 #endif

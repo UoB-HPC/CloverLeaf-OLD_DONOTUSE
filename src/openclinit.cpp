@@ -1,3 +1,4 @@
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #include "cl.hpp"
 #include <fstream>
 #include <sstream>

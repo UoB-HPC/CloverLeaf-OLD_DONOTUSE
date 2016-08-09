@@ -221,6 +221,7 @@ void advec_mom(
 
 #include "../kernels/advec_mom_kernel_c.c"
 #include "../cl.hpp"
+#include "../definitions_c.h"
 
 void advec_mom(
     int which_vel,
@@ -409,6 +410,7 @@ void advec_mom(
             cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
             cl::NullRange);
     }
-    openclQueue.finish();
+    if (profiler_on)
+        openclQueue.finish();
 }
 #endif

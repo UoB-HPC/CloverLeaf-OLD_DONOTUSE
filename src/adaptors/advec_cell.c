@@ -149,6 +149,7 @@ void advec_cell(
 #include <math.h>
 #include "../kernels/ftocmacros.h"
 #include "../kernels/advec_cell_kernel_c.c"
+#include "../definitions_c.h"
 
 void advec_cell(
     int x_min, int x_max,
@@ -188,7 +189,11 @@ void advec_cell(
         xsweep_kernel.setArg(7,  *tile.field.d_vol_flux_x);
         xsweep_kernel.setArg(8,  *tile.field.d_vol_flux_y);
         xsweep_kernel.setArg(9,  sweep_number);
-        openclQueue.enqueueNDRangeKernel(xsweep_kernel, cl::NullRange, cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            xsweep_kernel,
+            cl::NullRange,
+            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            cl::NullRange);
 
         cl::Kernel xcomp1_kernel(openclProgram, "xcomp1_kernel");
         xcomp1_kernel.setArg(0,  x_min);
@@ -202,7 +207,11 @@ void advec_cell(
         xcomp1_kernel.setArg(8,  *tile.field.d_density1);
         xcomp1_kernel.setArg(9,  *tile.field.d_energy1);
         xcomp1_kernel.setArg(10, *tile.field.d_vertexdx);
-        openclQueue.enqueueNDRangeKernel(xcomp1_kernel, cl::NullRange, cl::NDRange((x_max + 2) - (x_min) + 1, (y_max) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            xcomp1_kernel,
+            cl::NullRange,
+            cl::NDRange((x_max + 2) - (x_min) + 1, (y_max) - (y_min) + 1),
+            cl::NullRange);
 
         cl::Kernel xcomp2_kernel(openclProgram, "xcomp2_kernel");
         xcomp2_kernel.setArg(0,  x_min);
@@ -219,7 +228,11 @@ void advec_cell(
         xcomp2_kernel.setArg(11,  *tile.field.d_mass_flux_x);
         xcomp2_kernel.setArg(12,  *tile.field.d_work_array7);
         xcomp2_kernel.setArg(13,  *tile.field.d_vol_flux_x);
-        openclQueue.enqueueNDRangeKernel(xcomp2_kernel, cl::NullRange, cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            xcomp2_kernel,
+            cl::NullRange,
+            cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+            cl::NullRange);
     }
     if (dir == g_ydir) {
         cl::Kernel ysweep_kernel(openclProgram, "ysweep_kernel");
@@ -233,7 +246,11 @@ void advec_cell(
         ysweep_kernel.setArg(7,  *tile.field.d_vol_flux_x);
         ysweep_kernel.setArg(8,  *tile.field.d_vol_flux_y);
         ysweep_kernel.setArg(9,  sweep_number);
-        openclQueue.enqueueNDRangeKernel(ysweep_kernel, cl::NullRange, cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            ysweep_kernel,
+            cl::NullRange,
+            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            cl::NullRange);
 
         cl::Kernel ycomp1_kernel(openclProgram, "ycomp1_kernel");
         ycomp1_kernel.setArg(0,  x_min);
@@ -247,7 +264,11 @@ void advec_cell(
         ycomp1_kernel.setArg(8,  *tile.field.d_density1);
         ycomp1_kernel.setArg(9,  *tile.field.d_energy1);
         ycomp1_kernel.setArg(10, *tile.field.d_vertexdy);
-        openclQueue.enqueueNDRangeKernel(ycomp1_kernel, cl::NullRange, cl::NDRange((x_max) - (x_min) + 1, (y_max + 2) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            ycomp1_kernel,
+            cl::NullRange,
+            cl::NDRange((x_max) - (x_min) + 1, (y_max + 2) - (y_min) + 1),
+            cl::NullRange);
 
         cl::Kernel ycomp2_kernel(openclProgram, "ycomp2_kernel");
         ycomp2_kernel.setArg(0,  x_min);
@@ -264,9 +285,14 @@ void advec_cell(
         ycomp2_kernel.setArg(11,  *tile.field.d_mass_flux_y);
         ycomp2_kernel.setArg(12,  *tile.field.d_work_array7);
         ycomp2_kernel.setArg(13,  *tile.field.d_vol_flux_y);
-        openclQueue.enqueueNDRangeKernel(ycomp2_kernel, cl::NullRange, cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1), cl::NullRange);
+        openclQueue.enqueueNDRangeKernel(
+            ycomp2_kernel,
+            cl::NullRange,
+            cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+            cl::NullRange);
     }
-    openclQueue.finish();
+    if (profiler_on)
+        openclQueue.finish();
 }
 
 #endif

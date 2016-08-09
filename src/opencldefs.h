@@ -1,3 +1,4 @@
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #include "cl.hpp"
 
 extern cl::Context        openclContext;
@@ -129,7 +130,14 @@ struct field_type {
     int yarea_size;
 };
 
-#define mapoclmem(devbuf, hostbuf, size, rw) hostbuf = (double*)openclQueue.enqueueMapBuffer(*(devbuf), CL_TRUE, (rw), 0, sizeof(double) * size);
+#define mapoclmem(devbuf, hostbuf, size, rw) \
+    hostbuf = (double*)openclQueue.enqueueMapBuffer(\
+        *(devbuf), \
+        CL_TRUE, \
+        (rw), \
+        0, \
+        sizeof(double) * size);
+
 #define unmapoclmem(devbuf, hostbuf) openclQueue.enqueueUnmapMemObject(*(devbuf), (hostbuf));
 
 #define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \

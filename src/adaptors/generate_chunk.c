@@ -161,6 +161,8 @@ void generate_chunk(
 #endif
 
 #if defined(USE_OPENCL)
+#include "../definitions_c.h"
+
 void generate_chunk(
     int tile,
     struct chunk_type chunk,
@@ -286,5 +288,7 @@ void generate_chunk(
                 chunk.tiles[tile].field.cellx);
     unmapoclmem(chunk.tiles[tile].field.d_celly,
                 chunk.tiles[tile].field.celly);
+    if (profiler_on)
+    openclQueue.finish();
 }
 #endif

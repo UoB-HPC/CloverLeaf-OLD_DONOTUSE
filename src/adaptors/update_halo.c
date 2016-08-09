@@ -156,6 +156,8 @@ const char* getErrorString(cl_int error)
 
 #define printerr(err) {if ((err) != CL_SUCCESS){fprintf(stderr,"%d: %s\n", __LINE__, getErrorString(err));exit(1);}}
 
+#include "../definitions_c.h"
+
 void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields, int depth)
 {
     int x_min = tile.t_xmin,
@@ -173,7 +175,7 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
 
     cl::Buffer fields_cl(
         openclContext, CL_MEM_COPY_HOST_PTR,
-        sizeof(int) * 15, fields);
+        sizeof(int) * NUM_FIELDS, fields);
 
     cl::Kernel update_halo_1(openclProgram, "update_halo_1_kernel");
     update_halo_1.setArg(0,  x_min);
@@ -204,39 +206,10 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
 
 
     printerr(openclQueue.enqueueNDRangeKernel(
-                 update_halo_1, cl::NullRange,
+                 update_halo_1,
+                 cl::NullRange,
                  cl::NDRange((x_max + depth) - (x_min - depth) + 1, depth - 1 + 1),
                  cl::NullRange));
-//     for (int j = x_min - depth; j <= x_max + depth; j++) {
-// #pragma ivdep
-//         for (int k = 1; k <= depth; k++) {
-//             update_halo_kernel_1(
-//                 j, k,
-//                 tile.t_xmin,
-//                 tile.t_xmax,
-//                 tile.t_ymin,
-//                 tile.t_ymax,
-//                 chunk_neighbours,
-//                 tile.tile_neighbours,
-//                 tile.field.density0,
-//                 tile.field.density1,
-//                 tile.field.energy0,
-//                 tile.field.energy1,
-//                 tile.field.pressure,
-//                 tile.field.viscosity,
-//                 tile.field.soundspeed,
-//                 tile.field.xvel0,
-//                 tile.field.yvel0,
-//                 tile.field.xvel1,
-//                 tile.field.yvel1,
-//                 tile.field.vol_flux_x,
-//                 tile.field.mass_flux_x,
-//                 tile.field.vol_flux_y,
-//                 tile.field.mass_flux_y,
-//                 fields,
-//                 depth);
-//         }
-//     }
 
     cl::Kernel update_halo_2(openclProgram, "update_halo_2_kernel");
     update_halo_2.setArg(0,  x_min);
@@ -267,40 +240,12 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
 
 
     printerr(openclQueue.enqueueNDRangeKernel(
-                 update_halo_2, cl::NullRange,
+                 update_halo_2,
+                 cl::NullRange,
                  cl::NDRange(depth - 1 + 1, (y_max + depth) - (y_min - depth) + 1),
                  cl::NullRange));
-    openclQueue.finish();
-//     for (int k = y_min - depth; k <= y_max + depth; k++) {
-// #pragma ivdep
-//         for (int j = 1; j <= depth; j++) {
-//             update_halo_kernel_2(
-//                 j, k,
-//                 tile.t_xmin,
-//                 tile.t_xmax,
-//                 tile.t_ymin,
-//                 tile.t_ymax,
-//                 chunk_neighbours,
-//                 tile.tile_neighbours,
-//                 tile.field.density0,
-//                 tile.field.density1,
-//                 tile.field.energy0,
-//                 tile.field.energy1,
-//                 tile.field.pressure,
-//                 tile.field.viscosity,
-//                 tile.field.soundspeed,
-//                 tile.field.xvel0,
-//                 tile.field.yvel0,
-//                 tile.field.xvel1,
-//                 tile.field.yvel1,
-//                 tile.field.vol_flux_x,
-//                 tile.field.mass_flux_x,
-//                 tile.field.vol_flux_y,
-//                 tile.field.mass_flux_y,
-//                 fields,
-//                 depth);
-//         }
-//     }
+    if (profiler_on)
+        openclQueue.finish();
 }
 #endif
 
