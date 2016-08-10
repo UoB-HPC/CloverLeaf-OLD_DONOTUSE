@@ -74,4 +74,6 @@ __constant double dtc_safe = 0.7,
 
 #define flag_t               constant int*
 
+#define kernelqual
+
 #endif

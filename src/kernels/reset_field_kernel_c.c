@@ -31,7 +31,7 @@
 #define INRANGE(y, x, ymin, ymax, xmin, xmax) \
  ((y) >= (ymin) && (y) <= (ymax) && (x) >= (xmin) && (x) <= (xmax))
 
-void reset_field_kernel_c_(
+kernelqual void reset_field_kernel_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t       density0,

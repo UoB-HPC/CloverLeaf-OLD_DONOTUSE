@@ -26,7 +26,7 @@
 // #include <math.h>
 // #include "../definitions_c.h"
 
-void accelerate_kernel_c_(
+kernelqual void accelerate_kernel_c_(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,

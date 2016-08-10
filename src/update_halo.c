@@ -3,7 +3,7 @@
 #include "timer_c.h"
 #include "adaptors/update_tile_halo.c"
 // #include "kernels/update_halo_kernel_c.c"
-#include "adaptors/update_halo.c"
+#include "adaptors/update_local_halo.c"
 #include "clover.h"
 
 void update_halo(int* fields, int depth)
@@ -11,7 +11,7 @@ void update_halo(int* fields, int depth)
     double kernel_time = 0.0;
     if (profiler_on) kernel_time = timer();
 
-    update_tile_halo(fields, depth);
+    // update_tile_halo(fields, depth);
 
     if (profiler_on) {
         profiler.tile_halo_exchange += (timer() - kernel_time);

@@ -29,9 +29,10 @@
 // #include "ftocmacros.h"
 // #include <math.h>
 
-void revert_kernel_c_(
+kernelqual void revert_kernel_c_(
     int j, int k,
-    int x_min, int x_max, int y_min, int y_max,
+    int x_min, int x_max,
+    int y_min, int y_max,
     field_2d_t density0,
     field_2d_t density1,
     field_2d_t energy0,

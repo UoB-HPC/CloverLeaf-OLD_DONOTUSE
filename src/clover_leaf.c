@@ -15,21 +15,29 @@
 #include "openclinit.cpp"
 #endif
 
+#ifdef USE_CUDA
+#include "cudaInit.cpp"
+#endif
+
 
 int main(int argc, char** argv)
 {
 
-#ifdef USE_KOKKOS
-    printf("Using Kokkos\n");
-#endif
 #ifdef USE_OMPSS
     printf("Using OMPSS\n");
 #endif
 #ifdef USE_OPENMP
     printf("Using OpenMP\n");
 #endif
+#ifdef USE_OPENCL
+    printf("Using OpenCL\n");
+
+    initOpenCL();
+#endif
 
 #ifdef USE_KOKKOS
+    printf("Using Kokkos\n");
+
     Kokkos::initialize(argc, argv);
 
     std::ostringstream msg;
@@ -47,8 +55,11 @@ int main(int argc, char** argv)
 #endif
     std::cerr << msg.str() << std::endl;
 #endif
-#ifdef USE_OPENCL
-    initOpenCL();
+
+
+#ifdef USE_CUDA
+    printf("Using CUDA\n");
+    initCuda();
 #endif
 
     clover_init_comms(argc, argv);

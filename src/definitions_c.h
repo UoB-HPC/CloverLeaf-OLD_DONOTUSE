@@ -25,6 +25,10 @@
 #include "opencldefs.h"
 #endif
 
+#ifdef USE_CUDA
+#include "cudadefs.h"
+#endif
+
 struct state_type {
     bool defined;
     double density,
@@ -149,6 +153,10 @@ extern int number_of_chunks;
 extern struct grid_type grid;
 
 #define BOSSPRINT(...) if(parallel.boss) fprintf(__VA_ARGS__)
+
+#ifndef kernelqual
+#define kernelqual
+#endif
 
 
 #endif

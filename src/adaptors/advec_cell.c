@@ -144,6 +144,94 @@ void advec_cell(
 }
 
 #endif
+#if defined(USE_CUDA)
+
+#include <math.h>
+#include "../kernels/ftocmacros.h"
+#include "../kernels/advec_cell_kernel_c.c"
+
+void advec_cell(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    struct tile_type tile,
+    int dir,
+    int sweep_number)
+{
+    const_field_1d_t vertexdx = tile.field.vertexdx;
+    const_field_1d_t vertexdy = tile.field.vertexdy;
+    const_field_2d_t volume = tile.field.volume;
+    field_2d_t       density1 = tile.field.density1;
+    field_2d_t       energy1 = tile.field.energy1;
+    field_2d_t       mass_flux_x = tile.field.mass_flux_x;
+    const_field_2d_t vol_flux_x = tile.field.vol_flux_x;
+    field_2d_t       mass_flux_y = tile.field.mass_flux_y;
+    const_field_2d_t vol_flux_y = tile.field.vol_flux_y;
+    field_2d_t       pre_vol = tile.field.work_array1;
+    field_2d_t       post_vol = tile.field.work_array2;
+    field_2d_t       pre_mass = tile.field.work_array3;
+    field_2d_t       post_mass = tile.field.work_array4;
+    field_2d_t       advec_vol = tile.field.work_array5;
+    field_2d_t       post_ener = tile.field.work_array6;
+    field_2d_t       ener_flux = tile.field.work_array7;
+
+    int g_xdir = 1, g_ydir = 2;
+    if (dir == g_xdir) {
+        DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
+            xsweep(
+                j, k,
+                x_min, x_max, y_min, y_max,
+                pre_vol, post_vol, volume, vol_flux_x, vol_flux_y,
+                sweep_number
+            );
+        });
+        DOUBLEFOR(y_min, y_max, x_min, x_max + 2, {
+            xcomp1(
+                j,  k,
+                x_min, x_max, y_min, y_max,
+                mass_flux_x, ener_flux, vol_flux_x,
+                pre_vol, density1, energy1, vertexdx
+            );
+        });
+
+        DOUBLEFOR(y_min, y_max, x_min, x_max, {
+            xcomp2(
+                j, k,
+                x_min, x_max, y_min, y_max,
+                pre_mass, post_mass, post_ener, advec_vol,
+                density1, energy1, pre_vol, mass_flux_x,
+                ener_flux, vol_flux_x
+            );
+        });
+    }
+    if (dir == g_ydir) {
+        DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
+            ysweep(
+                j, k,
+                x_min, x_max, y_min, y_max,
+                pre_vol, post_vol, volume, vol_flux_x, vol_flux_y,
+                sweep_number
+            );
+        });
+        DOUBLEFOR(y_min, y_max + 2, x_min , x_max , {
+            ycomp1(
+                j,  k,
+                x_min,  x_max, y_min,  y_max,
+                mass_flux_y, ener_flux, vol_flux_y, pre_vol,
+                density1, energy1, vertexdy
+            );
+        });
+        DOUBLEFOR(y_min, y_max, x_min, x_max, {
+            ycomp2(
+                j, k,
+                x_min, x_max, y_min, y_max,
+                pre_mass, post_mass, post_ener, advec_vol, density1,
+                energy1, pre_vol, mass_flux_y, ener_flux, vol_flux_y
+            );
+        });
+    }
+}
+
+#endif
 
 #if defined(USE_OPENCL)
 #include <math.h>

@@ -2,6 +2,7 @@
 #include "definitions_c.h"
 // #include "kernels/generate_chunk_kernel_c.c"
 #include "adaptors/generate_chunk.c"
+#include <stdlib.h>
 
 
 void generate_chunk(int tile)

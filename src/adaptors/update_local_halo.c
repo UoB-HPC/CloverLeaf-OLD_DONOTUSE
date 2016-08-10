@@ -73,6 +73,78 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
 }
 #endif
 
+#if defined(USE_CUDA)
+
+void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields, int depth)
+{
+    int x_min = tile.t_xmin,
+        x_max = tile.t_xmax,
+        y_min = tile.t_ymin,
+        y_max = tile.t_ymax;
+
+    for (int j = x_min - depth; j <= x_max + depth; j++) {
+#pragma ivdep
+        for (int k = 1; k <= depth; k++) {
+            update_halo_kernel_1(
+                j, k,
+                tile.t_xmin,
+                tile.t_xmax,
+                tile.t_ymin,
+                tile.t_ymax,
+                chunk_neighbours,
+                tile.tile_neighbours,
+                tile.field.density0,
+                tile.field.density1,
+                tile.field.energy0,
+                tile.field.energy1,
+                tile.field.pressure,
+                tile.field.viscosity,
+                tile.field.soundspeed,
+                tile.field.xvel0,
+                tile.field.yvel0,
+                tile.field.xvel1,
+                tile.field.yvel1,
+                tile.field.vol_flux_x,
+                tile.field.mass_flux_x,
+                tile.field.vol_flux_y,
+                tile.field.mass_flux_y,
+                fields,
+                depth);
+        }
+    }
+    for (int k = y_min - depth; k <= y_max + depth; k++) {
+#pragma ivdep
+        for (int j = 1; j <= depth; j++) {
+            update_halo_kernel_2(
+                j, k,
+                tile.t_xmin,
+                tile.t_xmax,
+                tile.t_ymin,
+                tile.t_ymax,
+                chunk_neighbours,
+                tile.tile_neighbours,
+                tile.field.density0,
+                tile.field.density1,
+                tile.field.energy0,
+                tile.field.energy1,
+                tile.field.pressure,
+                tile.field.viscosity,
+                tile.field.soundspeed,
+                tile.field.xvel0,
+                tile.field.yvel0,
+                tile.field.xvel1,
+                tile.field.yvel1,
+                tile.field.vol_flux_x,
+                tile.field.mass_flux_x,
+                tile.field.vol_flux_y,
+                tile.field.mass_flux_y,
+                fields,
+                depth);
+        }
+    }
+}
+#endif
+
 
 #if defined(USE_OPENCL)
 

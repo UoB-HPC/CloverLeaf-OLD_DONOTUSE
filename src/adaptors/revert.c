@@ -47,6 +47,97 @@ void revert(struct chunk_type chunk)
 
 }
 #endif
+
+#if defined(USE_CUDA)
+
+#include "../definitions_c.h"
+#include "../kernels/revert_kernel_c.c"
+
+__global__ void revert_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* density0,
+    double* density1,
+    double* energy0,
+    double* energy1)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    revert_kernel_c_(
+        j, k,
+        x_min,
+        x_max,
+        y_min,
+        y_max,
+        density0,
+        density1,
+        energy0,
+        energy1);
+}
+
+void revert(struct chunk_type chunk)
+{
+    for (int tile = 0; tile < tiles_per_chunk; tile++) {
+        int x_min = chunk.tiles[tile].t_xmin,
+            x_max = chunk.tiles[tile].t_xmax,
+            y_min = chunk.tiles[tile].t_ymin,
+            y_max = chunk.tiles[tile].t_ymax;
+        gpuErrchk(cudaMemcpy(
+                      chunk.tiles[tile].field.d_density0,
+                      chunk.tiles[tile].field.density0,
+                      chunk.tiles[tile].field.density0_size * sizeof(double),
+                      cudaMemcpyHostToDevice));
+        gpuErrchk(cudaMemcpy(
+                      chunk.tiles[tile].field.d_density1,
+                      chunk.tiles[tile].field.density1,
+                      chunk.tiles[tile].field.density1_size * sizeof(double),
+                      cudaMemcpyHostToDevice));
+        gpuErrchk(cudaMemcpy(
+                      chunk.tiles[tile].field.d_energy0,
+                      chunk.tiles[tile].field.energy0,
+                      chunk.tiles[tile].field.energy0_size * sizeof(double),
+                      cudaMemcpyHostToDevice));
+        gpuErrchk(cudaMemcpy(
+                      chunk.tiles[tile].field.d_energy1,
+                      chunk.tiles[tile].field.energy1,
+                      chunk.tiles[tile].field.energy1_size * sizeof(double),
+                      cudaMemcpyHostToDevice));
+
+        dim3 size((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
+        revert_kernel <<< size, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            chunk.tiles[tile].field.d_density0,
+            chunk.tiles[tile].field.d_density1,
+            chunk.tiles[tile].field.d_energy0,
+            chunk.tiles[tile].field.d_energy1);
+
+        gpuErrchk(cudaMemcpy(
+                      chunk.tiles[tile].field.density0,
+                      chunk.tiles[tile].field.d_density0,
+                      chunk.tiles[tile].field.density0_size * sizeof(double),
+                      cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaMemcpy(
+                      chunk.tiles[tile].field.density1,
+                      chunk.tiles[tile].field.d_density1,
+                      chunk.tiles[tile].field.density1_size * sizeof(double),
+                      cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaMemcpy(
+                      chunk.tiles[tile].field.energy0,
+                      chunk.tiles[tile].field.d_energy0,
+                      chunk.tiles[tile].field.energy0_size * sizeof(double),
+                      cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaMemcpy(
+                      chunk.tiles[tile].field.energy1,
+                      chunk.tiles[tile].field.d_energy1,
+                      chunk.tiles[tile].field.energy1_size * sizeof(double),
+                      cudaMemcpyDeviceToHost));
+    }
+}
+#endif
+
+
 #if defined(USE_OPENCL)
 #include "../kernels/revert_kernel_c.c"
 #include "../definitions_c.h"

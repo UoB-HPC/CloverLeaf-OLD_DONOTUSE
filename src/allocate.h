@@ -15,4 +15,8 @@ void allocate();
 #include "allocate_opencl.c"
 #endif
 
+#if defined(USE_CUDA)
+#include "allocate_cuda.c"
+#endif
+
 #endif
