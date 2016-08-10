@@ -1,8 +1,7 @@
 
-#include "update_tile_halo.h"
-#include "definitions_c.h"
-// #include "ftocmacros.h"
-#include "kernels/update_tile_halo_kernel.c"
+#if defined(USE_OPENMP) || defined(USE_OMPSS)
+#include "../definitions_c.h"
+#include "../kernels/update_tile_halo_kernel.c"
 
 // void __update_tile_halo_kernel_module_MOD_update_tile_halo_t_kernel();
 
@@ -192,3 +191,14 @@ void update_tile_halo(int* fields, int depth)
         }
     }
 }
+
+#endif
+
+#if defined(USE_KOKKOS) || defined(USE_OPENCL)
+
+void update_tile_halo(int* fields, int depth)
+{
+    // TODO
+}
+
+#endif

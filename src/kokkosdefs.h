@@ -5,29 +5,7 @@
         (i_index) - (i_lb))
 
 
-// outer y's, inner x's
-// #define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
-// Kokkos::parallel_for((y_to) - (y_from) + 1, KOKKOS_LAMBDA (const int& i) { \
-//             int k = i + (y_from); \
-//         _Pragma("ivdep") \
-//         for(int j = (x_from); j <= (x_to); j++) { \
-//             body ;\
-//         } \
-//     });
 
-// double kokkos - needs policy stuff
-// #define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
-//     Kokkos::parallel_for((y_to) - (y_from) + 1, KOKKOS_LAMBDA (const int& i) { \
-//         int k = i + (y_from); \
-//         Kokkos::parallel_for((x_to) - (x_from) + 1, KOKKOS_LAMBDA (const int& f) { \
-//             int j = f + (x_from); \
-//             body ;\
-//         }); \
-//     });
-
-
-
-// outer y's, inner x's
 #define DOUBLEFOR(y_from, y_to, x_from, x_to, body) \
     Kokkos::parallel_for(Kokkos::RangePolicy<Kokkos::DefaultExecutionSpace>(0, (y_to) - (y_from) + 1), KOKKOS_LAMBDA (const int& i) { \
         int k = i + (y_from); \

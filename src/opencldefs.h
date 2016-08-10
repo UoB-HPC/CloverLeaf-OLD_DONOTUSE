@@ -4,6 +4,7 @@
 extern cl::Context        openclContext;
 extern cl::CommandQueue   openclQueue;
 extern cl::Program        openclProgram;
+
 const char* getErrorString(cl_int);
 #define checkOclErr(err) {if ((err) != CL_SUCCESS){fprintf(stderr,"Line %d: %s\n", __LINE__, getErrorString(err));exit(1);}}
 
@@ -140,7 +141,8 @@ struct field_type {
         0, \
         sizeof(double) * size);
 
-#define unmapoclmem(devbuf, hostbuf) openclQueue.enqueueUnmapMemObject(*(devbuf), (hostbuf));
+#define unmapoclmem(devbuf, hostbuf) \
+    openclQueue.enqueueUnmapMemObject(*(devbuf), (hostbuf));
 
 #define DOUBLEFOR(k_from, k_to, j_from, j_to, body) \
     for(int k = (k_from); k <= (k_to); k++) { \
@@ -149,7 +151,6 @@ struct field_type {
             body; \
         } \
     }
-
 
 
 #define acclerate_local_size       cl::NullRange
@@ -189,7 +190,7 @@ struct field_type {
 
 #define update_halo_local_size     cl::NullRange
 
-#define update_halo_local_size     cl::NullRange
+#define viscosity_local_size       cl::NullRange
 
 
 #include "openclaccessdefs.h"

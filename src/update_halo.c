@@ -1,7 +1,7 @@
 #include "update_halo.h"
 #include "definitions_c.h"
 #include "timer_c.h"
-#include "update_tile_halo.h"
+#include "adaptors/update_tile_halo.c"
 // #include "kernels/update_halo_kernel_c.c"
 #include "adaptors/update_halo.c"
 #include "clover.h"
