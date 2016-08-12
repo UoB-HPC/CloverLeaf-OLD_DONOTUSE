@@ -8,6 +8,7 @@ This is a C/C++ version of cloverleaf partially/fully ported to OpenMP, Kokkos, 
 *   Look at using ompss tasks on tiles rather than loops
 *   Get clover_exchange working for different libraries
 *   Figure out why OpenCL version is slow on AMD
+*   Implement reductions in OpenCL version
 *   Implement visit file output
 *   Start a raja port
 *   rewrite file parsing
