@@ -62,6 +62,19 @@ void calc_dt_adaptor(int tile, double* local_dt)
 #include "../kernels/calc_dt_kernel_c.c"
 #include "../definitions_c.h"
 
+__device unsigned long next_power_of_2(unsigned long v)
+{
+    v--;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v++;
+    return v;
+
+}
+
 __global__ void calc_dt_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
@@ -82,6 +95,8 @@ __global__ void calc_dt_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
+    int lid = threadIdx.y * blockDim.x + threadIdx.x;
+
     if (j <= x_max && k <= y_max) {
         double val = calc_dt_kernel_c_(
                          j, k,
@@ -100,7 +115,16 @@ __global__ void calc_dt_kernel(
                          xvel0,
                          yvel0,
                          work_array1);
+
         WORK_ARRAY(work_array1, j, k) = val;
+        // for (int s = next_power_of_2(blockDim.x * blockDim.y / 2);
+        //         s > 0; s >> 1) {
+        //     if (s < blockDim.x * blockDim.y / 2) {
+        //         if (lid < s) {
+        //             work_array1[lid] = work_array1[lid] + work_array1[lid * 2];
+        //         }
+        //     }
+        // }
     }
 }
 
