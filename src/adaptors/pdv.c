@@ -110,68 +110,99 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
 
 #include "../kernels/PdV_kernel_c.c"
 
+__global__ void pdv_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double dt,
+    const double* xarea,
+    const double* yarea,
+    const double* volume,
+    const double* density0,
+    double*       density1,
+    const double* energy0,
+    double*       energy1,
+    const double* pressure,
+    const double* viscosity,
+    const double* xvel0,
+    const double* xvel1,
+    const double* yvel0,
+    const double* yvel1,
+    double*       volume_change,
+    int predict)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+    if (predict == 0) {
+        pdv_kernel_predict_c_(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            dt,
+            xarea,
+            yarea,
+            volume,
+            density0,
+            density1,
+            energy0,
+            energy1,
+            pressure,
+            viscosity,
+            xvel0,
+            xvel1,
+            yvel0,
+            yvel1,
+            volume_change);
+    } else {
+        pdv_kernel_no_predict_c_(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            dt,
+            xarea,
+            yarea,
+            volume,
+            density0,
+            density1,
+            energy0,
+            energy1,
+            pressure,
+            viscosity,
+            xvel0,
+            xvel1,
+            yvel0,
+            yvel1,
+            volume_change);
+    }
+}
+
 void pdv(struct chunk_type chunk, bool predict, double dt)
 {
-    if (predict) {
-        for (int tile = 0; tile < tiles_per_chunk; tile++) {
-            DOUBLEFOR(
-                chunk.tiles[tile].t_ymin,
-                chunk.tiles[tile].t_ymax,
-                chunk.tiles[tile].t_xmin,
-            chunk.tiles[tile].t_xmax, {
-                pdv_kernel_predict_c_(
-                    j, k,
-                    chunk.tiles[tile].t_xmin,
-                    chunk.tiles[tile].t_xmax,
-                    chunk.tiles[tile].t_ymin,
-                    chunk.tiles[tile].t_ymax,
-                    dt,
-                    chunk.tiles[tile].field.xarea,
-                    chunk.tiles[tile].field.yarea,
-                    chunk.tiles[tile].field.volume,
-                    chunk.tiles[tile].field.density0,
-                    chunk.tiles[tile].field.density1,
-                    chunk.tiles[tile].field.energy0,
-                    chunk.tiles[tile].field.energy1,
-                    chunk.tiles[tile].field.pressure,
-                    chunk.tiles[tile].field.viscosity,
-                    chunk.tiles[tile].field.xvel0,
-                    chunk.tiles[tile].field.xvel1,
-                    chunk.tiles[tile].field.yvel0,
-                    chunk.tiles[tile].field.yvel1,
-                    chunk.tiles[tile].field.work_array1);
-            });
-        }
-    } else {
-        for (int tile = 0; tile < tiles_per_chunk; tile++) {
-            DOUBLEFOR(
-                chunk.tiles[tile].t_ymin,
-                chunk.tiles[tile].t_ymax,
-                chunk.tiles[tile].t_xmin,
-            chunk.tiles[tile].t_xmax, {
-                pdv_kernel_no_predict_c_(
-                    j, k,
-                    chunk.tiles[tile].t_xmin,
-                    chunk.tiles[tile].t_xmax,
-                    chunk.tiles[tile].t_ymin,
-                    chunk.tiles[tile].t_ymax,
-                    dt,
-                    chunk.tiles[tile].field.xarea,
-                    chunk.tiles[tile].field.yarea,
-                    chunk.tiles[tile].field.volume,
-                    chunk.tiles[tile].field.density0,
-                    chunk.tiles[tile].field.density1,
-                    chunk.tiles[tile].field.energy0,
-                    chunk.tiles[tile].field.energy1,
-                    chunk.tiles[tile].field.pressure,
-                    chunk.tiles[tile].field.viscosity,
-                    chunk.tiles[tile].field.xvel0,
-                    chunk.tiles[tile].field.xvel1,
-                    chunk.tiles[tile].field.yvel0,
-                    chunk.tiles[tile].field.yvel1,
-                    chunk.tiles[tile].field.work_array1);
-            });
-        }
+
+    for (int tile = 0; tile < tiles_per_chunk; tile++) {
+
+        int x_min = chunk.tiles[tile].t_xmin,
+            x_max = chunk.tiles[tile].t_xmax,
+            y_min = chunk.tiles[tile].t_ymin,
+            y_max = chunk.tiles[tile].t_ymax;
+
+        dim3 size((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
+        pdv_kernel <<< size, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            dt,
+            chunk.tiles[tile].field.d_xarea,
+            chunk.tiles[tile].field.d_yarea,
+            chunk.tiles[tile].field.d_volume,
+            chunk.tiles[tile].field.d_density0,
+            chunk.tiles[tile].field.d_density1,
+            chunk.tiles[tile].field.d_energy0,
+            chunk.tiles[tile].field.d_energy1,
+            chunk.tiles[tile].field.d_pressure,
+            chunk.tiles[tile].field.d_viscosity,
+            chunk.tiles[tile].field.d_xvel0,
+            chunk.tiles[tile].field.d_xvel1,
+            chunk.tiles[tile].field.d_yvel0,
+            chunk.tiles[tile].field.d_yvel1,
+            chunk.tiles[tile].field.d_work_array1,
+            predict ? 0 : 1);
     }
 }
 #endif

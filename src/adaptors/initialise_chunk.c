@@ -67,6 +67,51 @@ void initialise_chunk(int tile)
         chunk.tiles[tile].field.volume,
         chunk.tiles[tile].field.xarea,
         chunk.tiles[tile].field.yarea);
+
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_vertexx,
+                         chunk.tiles[tile].field.vertexx,
+                         chunk.tiles[tile].field.vertexx_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_vertexdx,
+                         chunk.tiles[tile].field.vertexdx,
+                         chunk.tiles[tile].field.vertexdx_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_vertexy,
+                         chunk.tiles[tile].field.vertexy,
+                         chunk.tiles[tile].field.vertexy_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_vertexdy,
+                         chunk.tiles[tile].field.vertexdy,
+                         chunk.tiles[tile].field.vertexdy_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_cellx,
+                         chunk.tiles[tile].field.cellx,
+                         chunk.tiles[tile].field.cellx_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_celldx,
+                         chunk.tiles[tile].field.celldx,
+                         chunk.tiles[tile].field.celldx_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_celly,
+                         chunk.tiles[tile].field.celly,
+                         chunk.tiles[tile].field.celly_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_celldy,
+                         chunk.tiles[tile].field.celldy,
+                         chunk.tiles[tile].field.celldy_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_volume,
+                         chunk.tiles[tile].field.volume,
+                         chunk.tiles[tile].field.volume_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_xarea,
+                         chunk.tiles[tile].field.xarea,
+                         chunk.tiles[tile].field.xarea_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(chunk.tiles[tile].field.d_yarea,
+                         chunk.tiles[tile].field.yarea,
+                         chunk.tiles[tile].field.yarea_size * sizeof(double),
+                         cudaMemcpyHostToDevice));
 }
 
 #endif

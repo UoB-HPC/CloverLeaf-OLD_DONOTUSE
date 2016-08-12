@@ -83,26 +83,6 @@ void revert(struct chunk_type chunk)
             x_max = chunk.tiles[tile].t_xmax,
             y_min = chunk.tiles[tile].t_ymin,
             y_max = chunk.tiles[tile].t_ymax;
-        gpuErrchk(cudaMemcpy(
-                      chunk.tiles[tile].field.d_density0,
-                      chunk.tiles[tile].field.density0,
-                      chunk.tiles[tile].field.density0_size * sizeof(double),
-                      cudaMemcpyHostToDevice));
-        gpuErrchk(cudaMemcpy(
-                      chunk.tiles[tile].field.d_density1,
-                      chunk.tiles[tile].field.density1,
-                      chunk.tiles[tile].field.density1_size * sizeof(double),
-                      cudaMemcpyHostToDevice));
-        gpuErrchk(cudaMemcpy(
-                      chunk.tiles[tile].field.d_energy0,
-                      chunk.tiles[tile].field.energy0,
-                      chunk.tiles[tile].field.energy0_size * sizeof(double),
-                      cudaMemcpyHostToDevice));
-        gpuErrchk(cudaMemcpy(
-                      chunk.tiles[tile].field.d_energy1,
-                      chunk.tiles[tile].field.energy1,
-                      chunk.tiles[tile].field.energy1_size * sizeof(double),
-                      cudaMemcpyHostToDevice));
 
         dim3 size((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
         revert_kernel <<< size, dim3(1, 1) >>> (
@@ -112,27 +92,6 @@ void revert(struct chunk_type chunk)
             chunk.tiles[tile].field.d_density1,
             chunk.tiles[tile].field.d_energy0,
             chunk.tiles[tile].field.d_energy1);
-
-        gpuErrchk(cudaMemcpy(
-                      chunk.tiles[tile].field.density0,
-                      chunk.tiles[tile].field.d_density0,
-                      chunk.tiles[tile].field.density0_size * sizeof(double),
-                      cudaMemcpyDeviceToHost));
-        gpuErrchk(cudaMemcpy(
-                      chunk.tiles[tile].field.density1,
-                      chunk.tiles[tile].field.d_density1,
-                      chunk.tiles[tile].field.density1_size * sizeof(double),
-                      cudaMemcpyDeviceToHost));
-        gpuErrchk(cudaMemcpy(
-                      chunk.tiles[tile].field.energy0,
-                      chunk.tiles[tile].field.d_energy0,
-                      chunk.tiles[tile].field.energy0_size * sizeof(double),
-                      cudaMemcpyDeviceToHost));
-        gpuErrchk(cudaMemcpy(
-                      chunk.tiles[tile].field.energy1,
-                      chunk.tiles[tile].field.d_energy1,
-                      chunk.tiles[tile].field.energy1_size * sizeof(double),
-                      cudaMemcpyDeviceToHost));
     }
 }
 #endif

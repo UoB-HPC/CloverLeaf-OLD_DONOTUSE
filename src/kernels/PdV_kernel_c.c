@@ -31,7 +31,7 @@
 // #include "../definitions_c.h"
 
 
-void pdv_kernel_predict_c_(
+kernelqual void pdv_kernel_predict_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     double dt,
@@ -96,7 +96,7 @@ void pdv_kernel_predict_c_(
                                * WORK_ARRAY(volume_change, j, k);
 }
 
-void pdv_kernel_no_predict_c_(
+kernelqual void pdv_kernel_no_predict_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     double dt,

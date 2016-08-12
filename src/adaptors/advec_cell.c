@@ -150,6 +150,174 @@ void advec_cell(
 #include "../kernels/ftocmacros.h"
 #include "../kernels/advec_cell_kernel_c.c"
 
+
+__global__ void xsweep_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* pre_vol,
+    double* post_vol,
+    const double* volume,
+    const double* vol_flux_x,
+    const double* vol_flux_y,
+    int sweep_number)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
+
+    xsweep(
+        j, k,
+        x_min, x_max,
+        y_min, y_max,
+        pre_vol,
+        post_vol,
+        volume,
+        vol_flux_x,
+        vol_flux_y,
+        sweep_number);
+
+}
+
+__global__ void ysweep_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* pre_vol,
+    double* post_vol,
+    const double* volume,
+    const double* vol_flux_x,
+    const double* vol_flux_y,
+    int sweep_number)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
+
+    ysweep(
+        j, k,
+        x_min, x_max,
+        y_min, y_max,
+        pre_vol,
+        post_vol,
+        volume,
+        vol_flux_x,
+        vol_flux_y,
+        sweep_number);
+
+}
+
+__global__ void xcomp1_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* mass_flux_x,
+    double* ener_flux,
+    double* vol_flux_x,
+    double* pre_vol,
+    double* density1,
+    double* energy1,
+    double* vertexdx)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    xcomp1(
+        j,  k,
+        x_min, x_max, y_min, y_max,
+        mass_flux_x,
+        ener_flux,
+        vol_flux_x,
+        pre_vol,
+        density1,
+        energy1,
+        vertexdx);
+}
+
+__global__ void ycomp1_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* mass_flux_x,
+    double* ener_flux,
+    double* vol_flux_x,
+    double* pre_vol,
+    double* density1,
+    double* energy1,
+    double* vertexdx)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    ycomp1(
+        j,  k,
+        x_min, x_max, y_min, y_max,
+        mass_flux_x,
+        ener_flux,
+        vol_flux_x,
+        pre_vol,
+        density1,
+        energy1,
+        vertexdx);
+}
+
+__global__ void xcomp2_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* pre_mass,
+    double* post_mass,
+    double* post_ener,
+    double* advec_vol,
+    double* density1,
+    double* energy1,
+    double* pre_vol,
+    double* mass_flux_x,
+    double* ener_flux,
+    double* vol_flux_x)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    xcomp2(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        pre_mass,
+        post_mass,
+        post_ener,
+        advec_vol,
+        density1,
+        energy1,
+        pre_vol,
+        mass_flux_x,
+        ener_flux,
+        vol_flux_x);
+}
+__global__ void ycomp2_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* pre_mass,
+    double* post_mass,
+    double* post_ener,
+    double* advec_vol,
+    double* density1,
+    double* energy1,
+    double* pre_vol,
+    double* mass_flux_x,
+    double* ener_flux,
+    double* vol_flux_x)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    ycomp2(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        pre_mass,
+        post_mass,
+        post_ener,
+        advec_vol,
+        density1,
+        energy1,
+        pre_vol,
+        mass_flux_x,
+        ener_flux,
+        vol_flux_x);
+}
+
 void advec_cell(
     int x_min, int x_max,
     int y_min, int y_max,
@@ -157,77 +325,90 @@ void advec_cell(
     int dir,
     int sweep_number)
 {
-    const_field_1d_t vertexdx = tile.field.vertexdx;
-    const_field_1d_t vertexdy = tile.field.vertexdy;
-    const_field_2d_t volume = tile.field.volume;
-    field_2d_t       density1 = tile.field.density1;
-    field_2d_t       energy1 = tile.field.energy1;
-    field_2d_t       mass_flux_x = tile.field.mass_flux_x;
-    const_field_2d_t vol_flux_x = tile.field.vol_flux_x;
-    field_2d_t       mass_flux_y = tile.field.mass_flux_y;
-    const_field_2d_t vol_flux_y = tile.field.vol_flux_y;
-    field_2d_t       pre_vol = tile.field.work_array1;
-    field_2d_t       post_vol = tile.field.work_array2;
-    field_2d_t       pre_mass = tile.field.work_array3;
-    field_2d_t       post_mass = tile.field.work_array4;
-    field_2d_t       advec_vol = tile.field.work_array5;
-    field_2d_t       post_ener = tile.field.work_array6;
-    field_2d_t       ener_flux = tile.field.work_array7;
-
     int g_xdir = 1, g_ydir = 2;
-    if (dir == g_xdir) {
-        DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
-            xsweep(
-                j, k,
-                x_min, x_max, y_min, y_max,
-                pre_vol, post_vol, volume, vol_flux_x, vol_flux_y,
-                sweep_number
-            );
-        });
-        DOUBLEFOR(y_min, y_max, x_min, x_max + 2, {
-            xcomp1(
-                j,  k,
-                x_min, x_max, y_min, y_max,
-                mass_flux_x, ener_flux, vol_flux_x,
-                pre_vol, density1, energy1, vertexdx
-            );
-        });
 
-        DOUBLEFOR(y_min, y_max, x_min, x_max, {
-            xcomp2(
-                j, k,
-                x_min, x_max, y_min, y_max,
-                pre_mass, post_mass, post_ener, advec_vol,
-                density1, energy1, pre_vol, mass_flux_x,
-                ener_flux, vol_flux_x
-            );
-        });
+
+
+    if (dir == g_xdir) {
+        dim3 size1((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1);
+        xsweep_kernel <<< size1, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array1,
+            tile.field.d_work_array2,
+            tile.field.d_volume,
+            tile.field.d_vol_flux_x,
+            tile.field.d_vol_flux_y,
+            sweep_number);
+
+        dim3 size2((x_max + 2) - (x_min) + 1, (y_max) - (y_min) + 1);
+        xcomp1_kernel <<< size2, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_mass_flux_x,
+            tile.field.d_work_array7,
+            tile.field.d_vol_flux_x,
+            tile.field.d_work_array1,
+            tile.field.d_density1,
+            tile.field.d_energy1,
+            tile.field.d_vertexdx);
+
+
+        dim3 size3((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
+        xcomp2_kernel <<< size3, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array3,
+            tile.field.d_work_array4,
+            tile.field.d_work_array6,
+            tile.field.d_work_array5,
+            tile.field.d_density1,
+            tile.field.d_energy1,
+            tile.field.d_work_array1,
+            tile.field.d_mass_flux_x,
+            tile.field.d_work_array7,
+            tile.field.d_vol_flux_x);
+
     }
     if (dir == g_ydir) {
-        DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
-            ysweep(
-                j, k,
-                x_min, x_max, y_min, y_max,
-                pre_vol, post_vol, volume, vol_flux_x, vol_flux_y,
-                sweep_number
-            );
-        });
-        DOUBLEFOR(y_min, y_max + 2, x_min , x_max , {
-            ycomp1(
-                j,  k,
-                x_min,  x_max, y_min,  y_max,
-                mass_flux_y, ener_flux, vol_flux_y, pre_vol,
-                density1, energy1, vertexdy
-            );
-        });
-        DOUBLEFOR(y_min, y_max, x_min, x_max, {
-            ycomp2(
-                j, k,
-                x_min, x_max, y_min, y_max,
-                pre_mass, post_mass, post_ener, advec_vol, density1,
-                energy1, pre_vol, mass_flux_y, ener_flux, vol_flux_y
-            );
-        });
+        dim3 size1((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1);
+        ysweep_kernel <<< size1, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array1,
+            tile.field.d_work_array2,
+            tile.field.d_volume,
+            tile.field.d_vol_flux_x,
+            tile.field.d_vol_flux_y,
+            sweep_number);
+
+        dim3 size2((x_max) - (x_min) + 1, (y_max + 2) - (y_min) + 1);
+        ycomp1_kernel <<< size2, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_mass_flux_y,
+            tile.field.d_work_array7,
+            tile.field.d_vol_flux_y,
+            tile.field.d_work_array1,
+            tile.field.d_density1,
+            tile.field.d_energy1,
+            tile.field.d_vertexdy);
+
+
+        dim3 size3((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
+        ycomp2_kernel <<< size3, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array3,
+            tile.field.d_work_array4,
+            tile.field.d_work_array6,
+            tile.field.d_work_array5,
+            tile.field.d_density1,
+            tile.field.d_energy1,
+            tile.field.d_work_array1,
+            tile.field.d_mass_flux_y,
+            tile.field.d_work_array7,
+            tile.field.d_vol_flux_y);
     }
 }
 

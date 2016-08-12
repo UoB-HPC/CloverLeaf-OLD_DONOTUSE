@@ -24,7 +24,7 @@
 // #include "ftocmacros.h"
 // #include "../definitions_c.h"
 
-void flux_calc_x_kernel(
+kernelqual void flux_calc_x_kernel(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,
@@ -42,7 +42,7 @@ void flux_calc_x_kernel(
            + XVEL1(xvel1, j, k + 1));
 }
 
-void flux_calc_y_kernel(
+kernelqual void flux_calc_y_kernel(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,

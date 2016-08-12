@@ -28,7 +28,7 @@
 // #include "../definitions_c.h"
 
 
-void xsweep(
+kernelqual void xsweep(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,
@@ -57,7 +57,7 @@ void xsweep(
 }
 
 
-void ysweep(
+kernelqual void ysweep(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,
@@ -85,7 +85,7 @@ void ysweep(
     }
 }
 
-void xcomp1(
+kernelqual void xcomp1(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,
@@ -145,7 +145,7 @@ void xcomp1(
 }
 
 
-void ycomp1(
+kernelqual void ycomp1(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,
@@ -205,7 +205,7 @@ void ycomp1(
 }
 
 
-void xcomp2(
+kernelqual void xcomp2(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,
@@ -238,7 +238,7 @@ void xcomp2(
     ENERGY1(energy1, j, k) = WORK_ARRAY(post_ener, j, k);
 }
 
-void ycomp2(
+kernelqual void ycomp2(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,

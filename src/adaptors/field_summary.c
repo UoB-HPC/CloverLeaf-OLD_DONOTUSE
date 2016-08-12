@@ -50,7 +50,6 @@ void field_summary(
             }
         }
 
-
         *vol   += _vol;
         *mass  += _mass;
         *ie    += _ie;
@@ -76,6 +75,38 @@ void field_summary(
 
     for (int tilen = 0; tilen < tiles_per_chunk; tilen++) {
         struct tile_type tile = chunk.tiles[tilen];
+
+        gpuErrchk(cudaMemcpy(
+                      tile.field.volume,
+                      tile.field.d_volume,
+                      tile.field.volume_size * sizeof(double),
+                      cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaMemcpy(
+                      tile.field.density0,
+                      tile.field.d_density0,
+                      tile.field.density0_size * sizeof(double),
+                      cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaMemcpy(
+                      tile.field.energy0,
+                      tile.field.d_energy0,
+                      tile.field.energy0_size * sizeof(double),
+                      cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaMemcpy(
+                      tile.field.pressure,
+                      tile.field.d_pressure,
+                      tile.field.pressure_size * sizeof(double),
+                      cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaMemcpy(
+                      tile.field.xvel0,
+                      tile.field.d_xvel0,
+                      tile.field.xvel0_size * sizeof(double),
+                      cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaMemcpy(
+                      tile.field.yvel0,
+                      tile.field.d_yvel0,
+                      tile.field.yvel0_size * sizeof(double),
+                      cudaMemcpyDeviceToHost));
+
         int x_min = tile.t_xmin,
             x_max = tile.t_xmax,
             y_min = tile.t_ymin,

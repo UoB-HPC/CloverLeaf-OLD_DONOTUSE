@@ -69,6 +69,7 @@ void start()
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
         initialise_chunk(tile);
         generate_chunk(tile);
+
     }
     advect_x = true;
 

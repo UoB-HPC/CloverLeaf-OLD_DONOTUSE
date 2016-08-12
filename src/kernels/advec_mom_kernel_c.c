@@ -29,7 +29,7 @@
 // #include "../definitions_c.h"
 
 
-void ms1(
+kernelqual void ms1(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t       pre_vol,
@@ -46,7 +46,7 @@ void ms1(
                                 - VOL_FLUX_X(vol_flux_x, j, k);
 }
 
-void ms2(
+kernelqual void ms2(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t       pre_vol,
@@ -63,7 +63,7 @@ void ms2(
                                 - VOL_FLUX_Y(vol_flux_y, j, k);
 }
 
-void ms3(
+kernelqual void ms3(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t       pre_vol,
@@ -78,7 +78,7 @@ void ms3(
                                 - VOL_FLUX_Y(vol_flux_y, j, k);
 }
 
-void ms4(
+kernelqual void ms4(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t       pre_vol,
@@ -93,7 +93,7 @@ void ms4(
                                 - VOL_FLUX_X(vol_flux_x, j, k);
 }
 
-void dx1(
+kernelqual void dx1(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t node_flux,
@@ -106,7 +106,7 @@ void dx1(
                                      + MASS_FLUX_X(mass_flux_x, j + 1, k));
 }
 
-void dy1(
+kernelqual void dy1(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t node_flux,
@@ -120,7 +120,7 @@ void dy1(
 
 }
 
-void dx2(
+kernelqual void dx2(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t node_mass_post,
@@ -143,7 +143,7 @@ void dx2(
                                       - WORK_ARRAY(node_flux, j - 1, k) + WORK_ARRAY(node_flux, j, k);
 }
 
-void dy2(
+kernelqual void dy2(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t node_mass_post,
@@ -167,7 +167,7 @@ void dy2(
 
 }
 
-void dx3(
+kernelqual void dx3(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t mom_flux,
@@ -205,7 +205,7 @@ void dx3(
                                  * WORK_ARRAY(node_flux, j, k);
 }
 
-void dy3(
+kernelqual void dy3(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t mom_flux,
@@ -244,7 +244,7 @@ void dy3(
 
 }
 
-void dx4(
+kernelqual void dx4(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t vel1,
@@ -259,7 +259,7 @@ void dx4(
                       / WORK_ARRAY(node_mass_post, j, k);
 }
 
-void dy4(
+kernelqual void dy4(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t vel1,

@@ -221,6 +221,253 @@ void advec_mom(
 #include "../kernels/ftocmacros.h"
 #include "../kernels/advec_mom_kernel_c.c"
 
+__global__ void ms1_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double*       pre_vol,
+    double*       post_vol ,
+    const double* volume ,
+    const double* vol_flux_x ,
+    const double* vol_flux_y)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
+
+    ms1(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        pre_vol,
+        post_vol ,
+        volume ,
+        vol_flux_x ,
+        vol_flux_y);
+}
+
+__global__ void ms2_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double*       pre_vol,
+    double*       post_vol ,
+    const double* volume ,
+    const double* vol_flux_x ,
+    const double* vol_flux_y)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
+
+    ms2(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        pre_vol,
+        post_vol ,
+        volume ,
+        vol_flux_x ,
+        vol_flux_y);
+}
+
+__global__ void ms3_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double*       pre_vol,
+    double*       post_vol ,
+    const double* volume ,
+    const double* vol_flux_x ,
+    const double* vol_flux_y)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
+
+    ms3(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        pre_vol,
+        post_vol ,
+        volume ,
+        vol_flux_x ,
+        vol_flux_y);
+}
+
+__global__ void ms4_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double*       pre_vol,
+    double*       post_vol ,
+    const double* volume ,
+    const double* vol_flux_x ,
+    const double* vol_flux_y)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
+
+    ms4(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        pre_vol,
+        post_vol ,
+        volume ,
+        vol_flux_x ,
+        vol_flux_y);
+}
+
+__global__ void dx1_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* node_flux,
+    const double* mass_flux_x)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    dx1(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        node_flux,
+        mass_flux_x);
+}
+
+__global__ void dy1_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* node_flux,
+    const double* mass_flux_x)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
+
+    dy1(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        node_flux,
+        mass_flux_x);
+}
+
+__global__ void dx2_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* node_mass_post,
+    double* node_mass_pre,
+    const double* density1,
+    const double* post_vol,
+    const double* node_flux)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 1;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    dx2(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        node_mass_post,
+        node_mass_pre,
+        density1,
+        post_vol,
+        node_flux);
+}
+__global__ void dy2_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* node_mass_post,
+    double* node_mass_pre,
+    const double* density1,
+    const double* post_vol,
+    const double* node_flux)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 1;
+
+    dy2(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        node_mass_post,
+        node_mass_pre,
+        density1,
+        post_vol,
+        node_flux);
+}
+
+__global__ void dx3_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* mom_flux,
+    const double* node_flux,
+    const double* node_mass_pre,
+    const double* celldx,
+    const double* vel1)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 1;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    dx3(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        mom_flux,
+        node_flux,
+        node_mass_pre,
+        celldx,
+        vel1);
+}
+
+__global__ void dy3_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* mom_flux,
+    const double* node_flux,
+    const double* node_mass_pre,
+    const double* celldx,
+    const double* vel1)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 1;
+
+    dy3(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        mom_flux,
+        node_flux,
+        node_mass_pre,
+        celldx,
+        vel1);
+}
+
+__global__ void dx4_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* vel1,
+    const double* node_mass_pre,
+    const double* mom_flux,
+    const double* node_mass_post)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    dx4(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        vel1,
+        node_mass_pre,
+        mom_flux,
+        node_mass_post);
+}
+
+__global__ void dy4_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* vel1,
+    const double* node_mass_pre,
+    const double* mom_flux,
+    const double* node_mass_post)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    dy4(
+        j, k,
+        x_min, x_max, y_min, y_max,
+        vel1,
+        node_mass_pre,
+        mom_flux,
+        node_mass_post);
+}
+
 void advec_mom(
     int which_vel,
     struct tile_type tile,
@@ -228,123 +475,130 @@ void advec_mom(
     int sweep_number,
     int direction)
 {
-    const_field_2d_t mass_flux_x    = tile.field.mass_flux_x;
-    const_field_2d_t vol_flux_x     = tile.field.vol_flux_x;
-    const_field_2d_t mass_flux_y    = tile.field.mass_flux_y;
-    const_field_2d_t vol_flux_y     = tile.field.vol_flux_y;
-    const_field_2d_t volume         = tile.field.volume;
-    const_field_2d_t density1       = tile.field.density1;
-    field_2d_t       node_flux      = tile.field.work_array1;
-    field_2d_t       node_mass_post = tile.field.work_array2;
-    field_2d_t       node_mass_pre  = tile.field.work_array3;
-    field_2d_t       mom_flux       = tile.field.work_array4;
-    field_2d_t       pre_vol        = tile.field.work_array5;
-    field_2d_t       post_vol       = tile.field.work_array6;
-    const_field_1d_t celldx         = tile.field.celldx;
-    const_field_1d_t celldy         = tile.field.celldy;
+
     field_2d_t vel1 = which_vel == 1 ? tile.field.xvel1 : tile.field.yvel1;
+    double* d_vel1 = which_vel == 1 ? tile.field.d_xvel1 : tile.field.d_yvel1;
+    int vel1_size = which_vel == 1 ? tile.field.xvel1_size : tile.field.yvel1_size;
+
     int mom_sweep = direction + 2 * (sweep_number - 1);
+
     if (mom_sweep == 1) {
-        DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
-            ms1(j, k, x_min, x_max, y_min, y_max, pre_vol, post_vol, volume, vol_flux_x, vol_flux_y);
-        });
+        dim3 size1((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1);
+        ms1_kernel <<< size1, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array5,
+            tile.field.d_work_array6,
+            tile.field.d_volume,
+            tile.field.d_vol_flux_x,
+            tile.field.d_vol_flux_y);
+
     } else if (mom_sweep == 2) {
-        DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
-            ms2(j, k, x_min, x_max, y_min, y_max, pre_vol, post_vol, volume, vol_flux_x, vol_flux_y);
-        });
+        dim3 size1((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1);
+        ms2_kernel <<< size1, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array5,
+            tile.field.d_work_array6,
+            tile.field.d_volume,
+            tile.field.d_vol_flux_x,
+            tile.field.d_vol_flux_y);
     } else if (mom_sweep == 3) {
-        DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
-            ms3(j, k, x_min, x_max, y_min, y_max, pre_vol, post_vol, volume, vol_flux_x, vol_flux_y);
-        });
+        dim3 size1((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1);
+        ms3_kernel <<< size1, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array5,
+            tile.field.d_work_array6,
+            tile.field.d_volume,
+            tile.field.d_vol_flux_x,
+            tile.field.d_vol_flux_y);
     } else if (mom_sweep == 4) {
-        DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
-            ms4(j, k, x_min, x_max, y_min, y_max, pre_vol, post_vol, volume, vol_flux_x, vol_flux_y);
-        });
+        dim3 size1((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1);
+        ms4_kernel <<< size1, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array5,
+            tile.field.d_work_array6,
+            tile.field.d_volume,
+            tile.field.d_vol_flux_x,
+            tile.field.d_vol_flux_y);
     }
 
     if (direction == X) {
-        DOUBLEFOR(y_min, y_max + 1, x_min - 2, x_max + 2, {
-            dx1(
-                j, k,
-                x_min, x_max, y_min, y_max,
-                node_flux,
-                mass_flux_x);
-        });
+        dim3 size1((x_max + 2) - (x_min - 2) + 1, (y_max + 1) - (y_min) + 1);
+        dx1_kernel <<< size1, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array1,
+            tile.field.d_mass_flux_x);
 
-        DOUBLEFOR(y_min, y_max + 1, x_min - 1, x_max + 2, {
-            dx2(
-                j, k,
-                x_min, x_max, y_min, y_max,
-                node_mass_post,
-                node_mass_pre,
-                density1,
-                post_vol,
-                node_flux);
-        });
+        dim3 size2((x_max + 2) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1);
+        dx2_kernel <<< size2, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array2,
+            tile.field.d_work_array3,
+            tile.field.d_density1,
+            tile.field.d_work_array6,
+            tile.field.d_work_array1);
 
-        DOUBLEFOR(y_min, y_max + 1, x_min - 1, x_max + 1, {
-            dx3(
-                j, k,
-                x_min, x_max, y_min, y_max,
-                mom_flux,
-                node_flux,
-                node_mass_pre,
-                celldx,
-                vel1);
-        });
+        dim3 size3((x_max + 1) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1);
+        dx3_kernel <<< size3, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array4,
+            tile.field.d_work_array1,
+            tile.field.d_work_array3,
+            tile.field.d_celldx,
+            d_vel1);
 
-        DOUBLEFOR(y_min, y_max + 1, x_min, x_max + 1, {
-            dx4(
-                j, k,
-                x_min, x_max, y_min, y_max,
-                vel1,
-                node_mass_pre,
-                mom_flux,
-                node_mass_post);
+        dim3 size4((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1);
+        dx4_kernel <<< size4, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            d_vel1,
+            tile.field.d_work_array3,
+            tile.field.d_work_array4,
+            tile.field.d_work_array2);
 
-        });
     } else if (direction == Y) {
-        DOUBLEFOR(y_min - 2, y_max + 2, x_min , x_max + 1, {
+        dim3 size1((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 2) + 1);
+        dy1_kernel <<< size1, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array1,
+            tile.field.d_mass_flux_y);
 
-            dy1(
-                j,  k,
-                x_min,  x_max,  y_min,  y_max,
-                node_flux,
-                mass_flux_y);
+        dim3 size2((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 1) + 1);
+        dy2_kernel <<< size2, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array2,
+            tile.field.d_work_array3,
+            tile.field.d_density1,
+            tile.field.d_work_array6,
+            tile.field.d_work_array1);
 
-        });
+        dim3 size3((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min - 1) + 1);
+        dy3_kernel <<< size3, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            tile.field.d_work_array4,
+            tile.field.d_work_array1,
+            tile.field.d_work_array3,
+            tile.field.d_celldy,
+            d_vel1);
 
-        DOUBLEFOR(y_min - 1, y_max + 2, x_min, x_max + 1, {
-            dy2(
-                j,  k,
-                x_min,  x_max,  y_min,  y_max,
-                node_mass_post,
-                node_mass_pre,
-                density1,
-                post_vol,
-                node_flux);
-        });
+        dim3 size4((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1);
+        dy4_kernel <<< size4, dim3(1, 1) >>> (
+            x_min, x_max,
+            y_min, y_max,
+            d_vel1,
+            tile.field.d_work_array3,
+            tile.field.d_work_array4,
+            tile.field.d_work_array2);
 
-        DOUBLEFOR(y_min - 1, y_max + 1, x_min , x_max + 1, {
-            dy3(
-                j, k,
-                x_min, x_max, y_min, y_max,
-                mom_flux,
-                node_flux,
-                node_mass_pre,
-                celldy,
-                vel1);
-        });
-
-        DOUBLEFOR(y_min, y_max + 1, x_min, x_max + 1, {
-            dy4(
-                j, k,
-                x_min, x_max, y_min, y_max,
-                vel1,
-                node_mass_pre,
-                mom_flux,
-                node_mass_post);
-        });
     }
 }
 #endif

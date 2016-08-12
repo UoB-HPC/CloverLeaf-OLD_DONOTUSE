@@ -30,7 +30,7 @@ void field_summary()
     }
 
     field_summary(&vol, &ie, &ke, &mass, &press);
-    printf("mass=%e\n", mass);
+    // printf("mass=%e\n", mass);
     clover_sum(&vol);
     clover_sum(&mass);
     clover_sum(&press);

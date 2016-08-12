@@ -89,7 +89,7 @@
         } \
     }
 
-void update_halo_kernel_1(
+kernelqual void update_halo_kernel_1(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     flag_t chunk_neighbours,
@@ -129,7 +129,7 @@ void update_halo_kernel_1(
     update1(j, k, FIELD_MASS_FLUX_Y, mass_flux_y, MASS_FLUX_Y);
 }
 
-void update_halo_kernel_2(
+kernelqual void update_halo_kernel_2(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     flag_t chunk_neighbours,

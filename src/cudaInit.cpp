@@ -1,2 +1,5 @@
 
-int initCuda() {}
+int initCuda()
+{
+
+}

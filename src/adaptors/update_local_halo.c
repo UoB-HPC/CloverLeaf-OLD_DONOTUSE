@@ -75,6 +75,113 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
 
 #if defined(USE_CUDA)
 
+
+__global__ void update_halo_1_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    int* chunk_neighbours,
+    int* tile_neighbours,
+    double* density0,
+    double* density1,
+    double* energy0,
+    double* energy1,
+    double* pressure,
+    double* viscosity,
+    double* soundspeed,
+    double* xvel0,
+    double* yvel0,
+    double* xvel1,
+    double* yvel1,
+    double* vol_flux_x,
+    double* mass_flux_x,
+    double* vol_flux_y,
+    double* mass_flux_y,
+    int* fields,
+    int depth)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + (x_min - depth);
+    int k = threadIdx.y + blockIdx.y * blockDim.y + 1;
+
+    update_halo_kernel_1(
+        j, k,
+        x_min,
+        x_max,
+        y_min,
+        y_max,
+        chunk_neighbours,
+        tile_neighbours,
+        density0,
+        density1,
+        energy0,
+        energy1,
+        pressure,
+        viscosity,
+        soundspeed,
+        xvel0,
+        yvel0,
+        xvel1,
+        yvel1,
+        vol_flux_x,
+        mass_flux_x,
+        vol_flux_y,
+        mass_flux_y,
+        fields,
+        depth);
+}
+__global__ void update_halo_2_kernel(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    int* chunk_neighbours,
+    int* tile_neighbours,
+    double* density0,
+    double* density1,
+    double* energy0,
+    double* energy1,
+    double* pressure,
+    double* viscosity,
+    double* soundspeed,
+    double* xvel0,
+    double* yvel0,
+    double* xvel1,
+    double* yvel1,
+    double* vol_flux_x,
+    double* mass_flux_x,
+    double* vol_flux_y,
+    double* mass_flux_y,
+    int* fields,
+    int depth)
+{
+    int j = threadIdx.x + blockIdx.x * blockDim.x + 1;
+    int k = threadIdx.y + blockIdx.y * blockDim.y + (y_min - depth);
+
+    update_halo_kernel_2(
+        j, k,
+        x_min,
+        x_max,
+        y_min,
+        y_max,
+        chunk_neighbours,
+        tile_neighbours,
+        density0,
+        density1,
+        energy0,
+        energy1,
+        pressure,
+        viscosity,
+        soundspeed,
+        xvel0,
+        yvel0,
+        xvel1,
+        yvel1,
+        vol_flux_x,
+        mass_flux_x,
+        vol_flux_y,
+        mass_flux_y,
+        fields,
+        depth);
+}
+
+
 void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields, int depth)
 {
     int x_min = tile.t_xmin,
@@ -82,66 +189,80 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
         y_min = tile.t_ymin,
         y_max = tile.t_ymax;
 
-    for (int j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-        for (int k = 1; k <= depth; k++) {
-            update_halo_kernel_1(
-                j, k,
-                tile.t_xmin,
-                tile.t_xmax,
-                tile.t_ymin,
-                tile.t_ymax,
-                chunk_neighbours,
-                tile.tile_neighbours,
-                tile.field.density0,
-                tile.field.density1,
-                tile.field.energy0,
-                tile.field.energy1,
-                tile.field.pressure,
-                tile.field.viscosity,
-                tile.field.soundspeed,
-                tile.field.xvel0,
-                tile.field.yvel0,
-                tile.field.xvel1,
-                tile.field.yvel1,
-                tile.field.vol_flux_x,
-                tile.field.mass_flux_x,
-                tile.field.vol_flux_y,
-                tile.field.mass_flux_y,
-                fields,
-                depth);
-        }
-    }
-    for (int k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-        for (int j = 1; j <= depth; j++) {
-            update_halo_kernel_2(
-                j, k,
-                tile.t_xmin,
-                tile.t_xmax,
-                tile.t_ymin,
-                tile.t_ymax,
-                chunk_neighbours,
-                tile.tile_neighbours,
-                tile.field.density0,
-                tile.field.density1,
-                tile.field.energy0,
-                tile.field.energy1,
-                tile.field.pressure,
-                tile.field.viscosity,
-                tile.field.soundspeed,
-                tile.field.xvel0,
-                tile.field.yvel0,
-                tile.field.xvel1,
-                tile.field.yvel1,
-                tile.field.vol_flux_x,
-                tile.field.mass_flux_x,
-                tile.field.vol_flux_y,
-                tile.field.mass_flux_y,
-                fields,
-                depth);
-        }
-    }
+    int* d_chunk_neighbours = NULL;
+    gpuErrchk(cudaMalloc(&d_chunk_neighbours, sizeof(int) * 4));
+
+    gpuErrchk(cudaMemcpy(
+                  d_chunk_neighbours,
+                  chunk_neighbours,
+                  4 * sizeof(int),
+                  cudaMemcpyHostToDevice));
+
+    int* d_tile_neighbours = NULL;
+    gpuErrchk(cudaMalloc(&d_tile_neighbours, sizeof(int) * 4));
+
+    gpuErrchk(cudaMemcpy(
+                  d_tile_neighbours,
+                  tile.tile_neighbours,
+                  4 * sizeof(int),
+                  cudaMemcpyHostToDevice));
+
+    int* d_fields = NULL;
+    gpuErrchk(cudaMalloc(&d_fields, sizeof(int) * NUM_FIELDS));
+
+    gpuErrchk(cudaMemcpy(
+                  d_fields,
+                  fields,
+                  NUM_FIELDS * sizeof(int),
+                  cudaMemcpyHostToDevice));
+
+    dim3 size((x_max + depth) - (x_min - depth) + 1, (depth - 1) + 1);
+    update_halo_1_kernel <<< size, dim3(1, 1) >>> (
+        x_min, x_max,
+        y_min, y_max,
+        d_chunk_neighbours,
+        d_tile_neighbours,
+        tile.field.d_density0,
+        tile.field.d_density1,
+        tile.field.d_energy0,
+        tile.field.d_energy1,
+        tile.field.d_pressure,
+        tile.field.d_viscosity,
+        tile.field.d_soundspeed,
+        tile.field.d_xvel0,
+        tile.field.d_yvel0,
+        tile.field.d_xvel1,
+        tile.field.d_yvel1,
+        tile.field.d_vol_flux_x,
+        tile.field.d_mass_flux_x,
+        tile.field.d_vol_flux_y,
+        tile.field.d_mass_flux_y,
+        d_fields,
+        depth);
+
+    dim3 size2((depth - 1) + 1, (y_max + depth) - (y_min - depth) + 1);
+    update_halo_2_kernel <<< size2, dim3(1, 1) >>> (
+        x_min, x_max,
+        y_min, y_max,
+        d_chunk_neighbours,
+        d_tile_neighbours,
+        tile.field.d_density0,
+        tile.field.d_density1,
+        tile.field.d_energy0,
+        tile.field.d_energy1,
+        tile.field.d_pressure,
+        tile.field.d_viscosity,
+        tile.field.d_soundspeed,
+        tile.field.d_xvel0,
+        tile.field.d_yvel0,
+        tile.field.d_xvel1,
+        tile.field.d_yvel1,
+        tile.field.d_vol_flux_x,
+        tile.field.d_mass_flux_x,
+        tile.field.d_vol_flux_y,
+        tile.field.d_mass_flux_y,
+        d_fields,
+        depth);
 }
 #endif
 

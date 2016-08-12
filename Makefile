@@ -28,13 +28,12 @@ OBJECTS = data_c.o \
 	advection.o \
 	reset_field.o \
 	visit.o \
+	update_halo.o \
 	accelerate.o
 
-	# update_tile_halo.o 
 MPIOBJECTS = clover.o \
 	initialise.o \
 	hydro.o \
-	update_halo.o \
 	timestep.o \
 	start.o \
 	field_summary.o
@@ -47,7 +46,7 @@ ifdef USE_KOKKOS
     ifeq ($(USE_KOKKOS),gpu)
         CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
         MPI_FLAGS += -lcudart
-        FLAGS += -O3
+        FLAGS := --show $(FLAGS) -O3 "-x,c++"
 
         KOKKOS_CUDA_OPTIONS = "enable_lambda"
         KOKKOS_DEVICE= "Cuda"
@@ -84,6 +83,16 @@ ifdef USE_OPENCL
         MPI_FLAGS += -lOpenCL -DUSE_OPENCL
     endif
     FLAGS += $(MPI_FLAGS)
+endif
+
+ifdef USE_CUDA
+    CC = nvcc
+
+    MPI_FLAGS += -DUSE_CUDA \
+        -L/nfs/modules/cuda/7.5.18/lib64 -lcudart
+
+    FLAGS += -x cu -std=c++11 -DUSE_CUDA \
+        -I/nfs/modules/openmpi/1.10.3/include
 endif
 
 OBJDIR    = obj

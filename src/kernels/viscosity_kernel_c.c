@@ -29,7 +29,7 @@
 // #include <math.h>
 // #include "../definitions_c.h"
 
-void viscosity_kernel_c_(
+kernelqual void viscosity_kernel_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     const_field_1d_t celldx,

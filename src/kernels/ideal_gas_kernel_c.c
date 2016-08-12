@@ -29,7 +29,7 @@
 // #include "../definitions_c.h"
 
 
-void ideal_gas_kernel_c_(
+kernelqual void ideal_gas_kernel_c_(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,

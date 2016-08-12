@@ -29,7 +29,7 @@
 // #include <math.h>
 // #include "../definitions_c.h"
 
-double calc_dt_kernel_c_(
+kernelqual double calc_dt_kernel_c_(
     int j, int k,
     int x_min,
     int x_max,
@@ -49,6 +49,13 @@ double calc_dt_kernel_c_(
     const_field_2d_t yvel0,
     field_2d_t dtmin)
 {
+    double dtc_safe = 0.7,
+           dtu_safe = 0.5,
+           dtv_safe = 0.5,
+           dtdiv_safe = 0.7;
+    double g_small = 1.0e-16,
+           g_big  = 1.0e+21;
+
     double dsx = FIELD_1D(celldx, j,  x_min - 2);
     double dsy = FIELD_1D(celldy, k,  y_min - 2);
 
