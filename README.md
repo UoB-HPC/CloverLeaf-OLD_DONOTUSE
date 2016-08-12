@@ -1,6 +1,6 @@
 # CloverLeaf
 
-This is a C/C++ version of cloverleaf partially/fully ported to OpenMP, Kokkos, Ompss, OpenCL.
+This is a C/C++ version of cloverleaf partially/fully ported to OpenMP, Kokkos, Ompss, OpenCL, CUDA.
 
 
 # Todo
@@ -9,12 +9,15 @@ This is a C/C++ version of cloverleaf partially/fully ported to OpenMP, Kokkos, 
 *   Get clover_exchange working for different libraries
 *   Figure out why OpenCL version is slow on AMD
 *   Implement reductions in OpenCL version
+*   Implement reductions in CUDA version
 *   Implement visit file output
-*   Start a raja port
+*   Start a raja/openmp offload port
 *   rewrite file parsing
 *   reduce number of warnings
 *   writeup how to compile
-
+*   put ompss tasks over tiles
+*   make sure mpi is still working for all the versions
+*   get kokkos compiling CUDA
 
 <!-- # CloverLeaf_Serial
 
