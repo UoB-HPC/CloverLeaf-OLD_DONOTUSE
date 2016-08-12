@@ -145,6 +145,9 @@ void field_summary(
         *ke    += _ke;
         *press += _press;
     }
+
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 #endif
 

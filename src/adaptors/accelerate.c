@@ -78,21 +78,22 @@ __global__ void accelerate_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    accelerate_kernel_c_(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        xarea,
-        yarea,
-        volume,
-        density0 ,
-        pressure ,
-        viscosity,
-        xvel0,
-        yvel0,
-        xvel1,
-        yvel1,
-        dt);
+    if (j <= x_max && k <= y_max)
+        accelerate_kernel_c_(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            xarea,
+            yarea,
+            volume,
+            density0 ,
+            pressure ,
+            viscosity,
+            xvel0,
+            yvel0,
+            xvel1,
+            yvel1,
+            dt);
 }
 
 void accelerate_adaptor()
@@ -103,8 +104,11 @@ void accelerate_adaptor()
             y_min = chunk.tiles[tile].t_ymin,
             y_max = chunk.tiles[tile].t_ymax;
 
-        dim3 size((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1);
-        accelerate_kernel <<< size, dim3(1, 1) >>> (
+        dim3 size = numBlocks(
+                        dim3((x_max + 1) - (x_min) + 1,
+                             (y_max + 1) - (y_min) + 1),
+                        accelerate_blocksize);
+        accelerate_kernel <<< size, accelerate_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             chunk.tiles[tile].field.d_xarea,
@@ -119,6 +123,9 @@ void accelerate_adaptor()
             chunk.tiles[tile].field.d_yvel1,
             dt);
     }
+
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 
 #endif

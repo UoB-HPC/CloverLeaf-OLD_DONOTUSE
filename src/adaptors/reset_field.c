@@ -70,20 +70,21 @@ __global__ void reset_field_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    reset_field_kernel_c_(
-        j, k,
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        density0,
-        density1,
-        energy0,
-        energy1,
-        xvel0,
-        xvel1,
-        yvel0,
-        yvel1);
+    if (j <= x_max + 1 && k <= y_max + 1)
+        reset_field_kernel_c_(
+            j, k,
+            x_min,
+            x_max,
+            y_min,
+            y_max,
+            density0,
+            density1,
+            energy0,
+            energy1,
+            xvel0,
+            xvel1,
+            yvel0,
+            yvel1);
 }
 
 void reset_field(struct chunk_type chunk)
@@ -94,8 +95,11 @@ void reset_field(struct chunk_type chunk)
             y_min = chunk.tiles[tile].t_ymin,
             y_max = chunk.tiles[tile].t_ymax;
 
-        dim3 size((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1);
-        reset_field_kernel <<< size, dim3(1, 1) >>> (
+        dim3 size = numBlocks(
+                        dim3((x_max + 1) - (x_min) + 1,
+                             (y_max + 1) - (y_min) + 1),
+                        reset_field_blocksize);
+        reset_field_kernel <<< size, reset_field_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             chunk.tiles[tile].field.d_density0,
@@ -107,6 +111,9 @@ void reset_field(struct chunk_type chunk)
             chunk.tiles[tile].field.d_yvel0,
             chunk.tiles[tile].field.d_yvel1);
     }
+
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 #endif
 

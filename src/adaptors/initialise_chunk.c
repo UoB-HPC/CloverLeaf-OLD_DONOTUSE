@@ -112,6 +112,9 @@ void initialise_chunk(int tile)
                          chunk.tiles[tile].field.yarea,
                          chunk.tiles[tile].field.yarea_size * sizeof(double),
                          cudaMemcpyHostToDevice));
+
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 
 #endif

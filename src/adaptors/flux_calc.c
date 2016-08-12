@@ -95,15 +95,16 @@ __global__ void flux_calc_x_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    flux_calc_x_kernel(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        dt,
-        xarea,
-        xvel0,
-        xvel1,
-        vol_flux_x);
+    if (j <= x_max && k <= y_max)
+        flux_calc_x_kernel(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            dt,
+            xarea,
+            xvel0,
+            xvel1,
+            vol_flux_x);
 }
 __global__ void flux_calc_y_kernel(
     int x_min, int x_max,
@@ -117,15 +118,16 @@ __global__ void flux_calc_y_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    flux_calc_y_kernel(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        dt,
-        xarea,
-        xvel0,
-        xvel1,
-        vol_flux_x);
+    if (j <= x_max && k <= y_max)
+        flux_calc_y_kernel(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            dt,
+            xarea,
+            xvel0,
+            xvel1,
+            vol_flux_x);
 }
 
 void flux_calc(struct chunk_type chunk, double dt)
@@ -137,8 +139,11 @@ void flux_calc(struct chunk_type chunk, double dt)
             y_min = chunk.tiles[tile].t_ymin,
             y_max = chunk.tiles[tile].t_ymax;
 
-        dim3 size1((x_max + 1) - (x_min) + 1, (y_max) - (y_min) + 1);
-        flux_calc_x_kernel <<< size1, dim3(1, 1) >>> (
+        dim3 size1 = numBlocks(
+                         dim3((x_max + 1) - (x_min) + 1,
+                              (y_max) - (y_min) + 1),
+                         flux_calc_x_blocksize);
+        flux_calc_x_kernel <<< size1, flux_calc_x_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             dt,
@@ -147,8 +152,11 @@ void flux_calc(struct chunk_type chunk, double dt)
             chunk.tiles[tile].field.d_xvel1,
             chunk.tiles[tile].field.d_vol_flux_x);
 
-        dim3 size2((x_max) - (x_min) + 1, (y_max + 1) - (y_min) + 1);
-        flux_calc_y_kernel <<< size2, dim3(1, 1) >>> (
+        dim3 size2 = numBlocks(
+                         dim3((x_max) - (x_min) + 1,
+                              (y_max + 1) - (y_min) + 1),
+                         flux_calc_y_blocksize);
+        flux_calc_y_kernel <<< size2, flux_calc_y_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             dt,
@@ -158,6 +166,8 @@ void flux_calc(struct chunk_type chunk, double dt)
             chunk.tiles[tile].field.d_vol_flux_y);
     }
 
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 #endif
 

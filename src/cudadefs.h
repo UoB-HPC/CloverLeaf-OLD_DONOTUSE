@@ -251,3 +251,48 @@ inline void gpuAssert(cudaError_t code, const char* file, int line)
         exit(code);
     }
 }
+#include <math.h>
+inline dim3 numBlocks(dim3 globalSize, dim3 threadsPerBlock)
+{
+    return dim3(ceil(globalSize.x / (double)threadsPerBlock.x),
+                ceil(globalSize.y / (double)threadsPerBlock.y));
+}
+
+#define accelerate_blocksize      dim3(8,8)
+
+#define advec_cell_x1_blocksize   dim3(8,8)
+#define advec_cell_x2_blocksize   dim3(8,8)
+#define advec_cell_x3_blocksize   dim3(8,8)
+#define advec_cell_y1_blocksize   dim3(8,8)
+#define advec_cell_y2_blocksize   dim3(8,8)
+#define advec_cell_y3_blocksize   dim3(8,8)
+
+#define advec_mom_ms1_blocksize   dim3(8,8)
+#define advec_mom_ms2_blocksize   dim3(8,8)
+#define advec_mom_ms3_blocksize   dim3(8,8)
+#define advec_mom_ms4_blocksize   dim3(8,8)
+#define advec_mom_x1_blocksize    dim3(8,8)
+#define advec_mom_x2_blocksize    dim3(8,8)
+#define advec_mom_x3_blocksize    dim3(8,8)
+#define advec_mom_x4_blocksize    dim3(8,8)
+#define advec_mom_y1_blocksize    dim3(8,8)
+#define advec_mom_y2_blocksize    dim3(8,8)
+#define advec_mom_y3_blocksize    dim3(8,8)
+#define advec_mom_y4_blocksize    dim3(8,8)
+
+#define dtmin_blocksize           dim3(8,8)
+
+#define flux_calc_x_blocksize     dim3(8,8)
+#define flux_calc_y_blocksize     dim3(8,8)
+
+#define ideal_gas_blocksize       dim3(8,8)
+
+#define pdv_kernel_blocksize      dim3(8,8)
+
+#define reset_field_blocksize     dim3(8,8)
+
+#define revert_blocksize          dim3(8,8)
+
+#define update_halo_blocksize     dim3(8,8)
+
+#define viscosity_blocksize       dim3(8,8)

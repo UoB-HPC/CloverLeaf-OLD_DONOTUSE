@@ -87,14 +87,15 @@ __global__ void ideal_gas_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    ideal_gas_kernel_c_(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        density,
-        energy,
-        pressure,
-        soundspeed);
+    if (j <= x_max && k <= y_max)
+        ideal_gas_kernel_c_(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            density,
+            energy,
+            pressure,
+            soundspeed);
 }
 
 void ideal_gas_adaptor(int tile, bool predict)
@@ -104,9 +105,12 @@ void ideal_gas_adaptor(int tile, bool predict)
         y_min = chunk.tiles[tile].t_ymin,
         y_max = chunk.tiles[tile].t_ymax;
 
-    dim3 size((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
+    dim3 size = numBlocks(
+                    dim3((x_max) - (x_min) + 1,
+                         (y_max) - (y_min) + 1),
+                    ideal_gas_blocksize);
     if (predict) {
-        ideal_gas_kernel <<< size, dim3(1, 1) >>> (
+        ideal_gas_kernel <<< size, ideal_gas_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             chunk.tiles[tile].field.d_density1,
@@ -114,7 +118,7 @@ void ideal_gas_adaptor(int tile, bool predict)
             chunk.tiles[tile].field.d_pressure,
             chunk.tiles[tile].field.d_soundspeed);
     } else {
-        ideal_gas_kernel <<< size, dim3(1, 1) >>> (
+        ideal_gas_kernel <<< size, ideal_gas_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             chunk.tiles[tile].field.d_density0,
@@ -122,6 +126,9 @@ void ideal_gas_adaptor(int tile, bool predict)
             chunk.tiles[tile].field.d_pressure,
             chunk.tiles[tile].field.d_soundspeed);
     }
+
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 #endif
 

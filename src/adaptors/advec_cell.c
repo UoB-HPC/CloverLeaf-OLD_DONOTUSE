@@ -164,16 +164,17 @@ __global__ void xsweep_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
 
-    xsweep(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        pre_vol,
-        post_vol,
-        volume,
-        vol_flux_x,
-        vol_flux_y,
-        sweep_number);
+    if (j <= x_max + 2 && k <= y_max + 2)
+        xsweep(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            pre_vol,
+            post_vol,
+            volume,
+            vol_flux_x,
+            vol_flux_y,
+            sweep_number);
 
 }
 
@@ -190,16 +191,17 @@ __global__ void ysweep_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
 
-    ysweep(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        pre_vol,
-        post_vol,
-        volume,
-        vol_flux_x,
-        vol_flux_y,
-        sweep_number);
+    if (j <= x_max + 2 && k <= y_max + 2)
+        ysweep(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            pre_vol,
+            post_vol,
+            volume,
+            vol_flux_x,
+            vol_flux_y,
+            sweep_number);
 
 }
 
@@ -217,16 +219,17 @@ __global__ void xcomp1_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    xcomp1(
-        j,  k,
-        x_min, x_max, y_min, y_max,
-        mass_flux_x,
-        ener_flux,
-        vol_flux_x,
-        pre_vol,
-        density1,
-        energy1,
-        vertexdx);
+    if (j <= x_max + 2 && k <= y_max)
+        xcomp1(
+            j,  k,
+            x_min, x_max, y_min, y_max,
+            mass_flux_x,
+            ener_flux,
+            vol_flux_x,
+            pre_vol,
+            density1,
+            energy1,
+            vertexdx);
 }
 
 __global__ void ycomp1_kernel(
@@ -243,16 +246,17 @@ __global__ void ycomp1_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    ycomp1(
-        j,  k,
-        x_min, x_max, y_min, y_max,
-        mass_flux_x,
-        ener_flux,
-        vol_flux_x,
-        pre_vol,
-        density1,
-        energy1,
-        vertexdx);
+    if (j <= x_max && k <= y_max + 2)
+        ycomp1(
+            j,  k,
+            x_min, x_max, y_min, y_max,
+            mass_flux_x,
+            ener_flux,
+            vol_flux_x,
+            pre_vol,
+            density1,
+            energy1,
+            vertexdx);
 }
 
 __global__ void xcomp2_kernel(
@@ -272,19 +276,20 @@ __global__ void xcomp2_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    xcomp2(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        pre_mass,
-        post_mass,
-        post_ener,
-        advec_vol,
-        density1,
-        energy1,
-        pre_vol,
-        mass_flux_x,
-        ener_flux,
-        vol_flux_x);
+    if (j <= x_max && k <= y_max)
+        xcomp2(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            pre_mass,
+            post_mass,
+            post_ener,
+            advec_vol,
+            density1,
+            energy1,
+            pre_vol,
+            mass_flux_x,
+            ener_flux,
+            vol_flux_x);
 }
 __global__ void ycomp2_kernel(
     int x_min, int x_max,
@@ -303,19 +308,20 @@ __global__ void ycomp2_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    ycomp2(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        pre_mass,
-        post_mass,
-        post_ener,
-        advec_vol,
-        density1,
-        energy1,
-        pre_vol,
-        mass_flux_x,
-        ener_flux,
-        vol_flux_x);
+    if (j <= x_max + 2 && k <= y_max + 2)
+        ycomp2(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            pre_mass,
+            post_mass,
+            post_ener,
+            advec_vol,
+            density1,
+            energy1,
+            pre_vol,
+            mass_flux_x,
+            ener_flux,
+            vol_flux_x);
 }
 
 void advec_cell(
@@ -330,8 +336,11 @@ void advec_cell(
 
 
     if (dir == g_xdir) {
-        dim3 size1((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1);
-        xsweep_kernel <<< size1, dim3(1, 1) >>> (
+        dim3 size1 = numBlocks(
+                         dim3((x_max + 2) - (x_min - 2) + 1,
+                              (y_max + 2) - (y_min - 2) + 1),
+                         advec_cell_x1_blocksize);
+        xsweep_kernel <<< size1, advec_cell_x1_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             tile.field.d_work_array1,
@@ -341,8 +350,11 @@ void advec_cell(
             tile.field.d_vol_flux_y,
             sweep_number);
 
-        dim3 size2((x_max + 2) - (x_min) + 1, (y_max) - (y_min) + 1);
-        xcomp1_kernel <<< size2, dim3(1, 1) >>> (
+        dim3 size2 = numBlocks(
+                         dim3((x_max + 2) - (x_min) + 1,
+                              (y_max) - (y_min) + 1),
+                         advec_cell_x2_blocksize);
+        xcomp1_kernel <<< size2, advec_cell_x2_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             tile.field.d_mass_flux_x,
@@ -354,8 +366,11 @@ void advec_cell(
             tile.field.d_vertexdx);
 
 
-        dim3 size3((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
-        xcomp2_kernel <<< size3, dim3(1, 1) >>> (
+        dim3 size3 = numBlocks(
+                         dim3((x_max) - (x_min) + 1,
+                              (y_max) - (y_min) + 1),
+                         advec_cell_x3_blocksize);
+        xcomp2_kernel <<< size3, advec_cell_x3_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             tile.field.d_work_array3,
@@ -371,8 +386,10 @@ void advec_cell(
 
     }
     if (dir == g_ydir) {
-        dim3 size1((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1);
-        ysweep_kernel <<< size1, dim3(1, 1) >>> (
+        dim3 size1 = numBlocks(
+                         dim3((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+                         advec_cell_y1_blocksize);
+        ysweep_kernel <<< size1, advec_cell_y1_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             tile.field.d_work_array1,
@@ -382,8 +399,11 @@ void advec_cell(
             tile.field.d_vol_flux_y,
             sweep_number);
 
-        dim3 size2((x_max) - (x_min) + 1, (y_max + 2) - (y_min) + 1);
-        ycomp1_kernel <<< size2, dim3(1, 1) >>> (
+        dim3 size2 = numBlocks(
+                         dim3((x_max) - (x_min) + 1,
+                              (y_max + 2) - (y_min) + 1),
+                         advec_cell_y2_blocksize);
+        ycomp1_kernel <<< size2, advec_cell_y2_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             tile.field.d_mass_flux_y,
@@ -395,8 +415,10 @@ void advec_cell(
             tile.field.d_vertexdy);
 
 
-        dim3 size3((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
-        ycomp2_kernel <<< size3, dim3(1, 1) >>> (
+        dim3 size3 = numBlocks(
+                         dim3((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+                         advec_cell_y3_blocksize);
+        ycomp2_kernel <<< size3, advec_cell_y3_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             tile.field.d_work_array3,
@@ -410,6 +432,9 @@ void advec_cell(
             tile.field.d_work_array7,
             tile.field.d_vol_flux_y);
     }
+
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 
 #endif

@@ -71,19 +71,20 @@ __global__ void viscosity_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    viscosity_kernel_c_(
-        j, k,
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        celldx,
-        celldy,
-        density0,
-        pressure,
-        viscosity,
-        xvel0,
-        yvel0);
+    if (j <= x_max && k <= y_max)
+        viscosity_kernel_c_(
+            j, k,
+            x_min,
+            x_max,
+            y_min,
+            y_max,
+            celldx,
+            celldy,
+            density0,
+            pressure,
+            viscosity,
+            xvel0,
+            yvel0);
 }
 
 void viscosity(struct chunk_type chunk)
@@ -94,8 +95,11 @@ void viscosity(struct chunk_type chunk)
             y_min = chunk.tiles[tile].t_ymin,
             y_max = chunk.tiles[tile].t_ymax;
 
-        dim3 size((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
-        viscosity_kernel <<< size, dim3(1, 1) >>> (
+        dim3 size = numBlocks(
+                        dim3((x_max) - (x_min) + 1,
+                             (y_max) - (y_min) + 1),
+                        viscosity_blocksize);
+        viscosity_kernel <<< size, viscosity_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             chunk.tiles[tile].field.d_celldx,
@@ -106,6 +110,9 @@ void viscosity(struct chunk_type chunk)
             chunk.tiles[tile].field.d_xvel0,
             chunk.tiles[tile].field.d_yvel0);
     }
+
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 #endif
 

@@ -101,32 +101,32 @@ __global__ void update_halo_1_kernel(
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + (x_min - depth);
     int k = threadIdx.y + blockIdx.y * blockDim.y + 1;
-
-    update_halo_kernel_1(
-        j, k,
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        chunk_neighbours,
-        tile_neighbours,
-        density0,
-        density1,
-        energy0,
-        energy1,
-        pressure,
-        viscosity,
-        soundspeed,
-        xvel0,
-        yvel0,
-        xvel1,
-        yvel1,
-        vol_flux_x,
-        mass_flux_x,
-        vol_flux_y,
-        mass_flux_y,
-        fields,
-        depth);
+    if (j <= x_max + depth && k <= depth)
+        update_halo_kernel_1(
+            j, k,
+            x_min,
+            x_max,
+            y_min,
+            y_max,
+            chunk_neighbours,
+            tile_neighbours,
+            density0,
+            density1,
+            energy0,
+            energy1,
+            pressure,
+            viscosity,
+            soundspeed,
+            xvel0,
+            yvel0,
+            xvel1,
+            yvel1,
+            vol_flux_x,
+            mass_flux_x,
+            vol_flux_y,
+            mass_flux_y,
+            fields,
+            depth);
 }
 __global__ void update_halo_2_kernel(
     int x_min, int x_max,
@@ -154,31 +154,32 @@ __global__ void update_halo_2_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + 1;
     int k = threadIdx.y + blockIdx.y * blockDim.y + (y_min - depth);
 
-    update_halo_kernel_2(
-        j, k,
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        chunk_neighbours,
-        tile_neighbours,
-        density0,
-        density1,
-        energy0,
-        energy1,
-        pressure,
-        viscosity,
-        soundspeed,
-        xvel0,
-        yvel0,
-        xvel1,
-        yvel1,
-        vol_flux_x,
-        mass_flux_x,
-        vol_flux_y,
-        mass_flux_y,
-        fields,
-        depth);
+    if (j <= depth && k <= y_max + depth)
+        update_halo_kernel_2(
+            j, k,
+            x_min,
+            x_max,
+            y_min,
+            y_max,
+            chunk_neighbours,
+            tile_neighbours,
+            density0,
+            density1,
+            energy0,
+            energy1,
+            pressure,
+            viscosity,
+            soundspeed,
+            xvel0,
+            yvel0,
+            xvel1,
+            yvel1,
+            vol_flux_x,
+            mass_flux_x,
+            vol_flux_y,
+            mass_flux_y,
+            fields,
+            depth);
 }
 
 
@@ -216,8 +217,11 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
                   NUM_FIELDS * sizeof(int),
                   cudaMemcpyHostToDevice));
 
-    dim3 size((x_max + depth) - (x_min - depth) + 1, (depth - 1) + 1);
-    update_halo_1_kernel <<< size, dim3(1, 1) >>> (
+    dim3 size = numBlocks(
+                    dim3((x_max + depth) - (x_min - depth) + 1,
+                         (depth - 1) + 1),
+                    update_halo_blocksize);
+    update_halo_1_kernel <<< size, update_halo_blocksize >>> (
         x_min, x_max,
         y_min, y_max,
         d_chunk_neighbours,
@@ -240,8 +244,11 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
         d_fields,
         depth);
 
-    dim3 size2((depth - 1) + 1, (y_max + depth) - (y_min - depth) + 1);
-    update_halo_2_kernel <<< size2, dim3(1, 1) >>> (
+    dim3 size2 = numBlocks(
+                     dim3((depth - 1) + 1,
+                          (y_max + depth) - (y_min - depth) + 1),
+                     update_halo_blocksize);
+    update_halo_2_kernel <<< size2, update_halo_blocksize >>> (
         x_min, x_max,
         y_min, y_max,
         d_chunk_neighbours,
@@ -263,6 +270,9 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
         tile.field.d_mass_flux_y,
         d_fields,
         depth);
+
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 #endif
 

@@ -82,24 +82,26 @@ __global__ void calc_dt_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    double val = calc_dt_kernel_c_(
-                     j, k,
-                     x_min, x_max,
-                     y_min, y_max,
-                     xarea,
-                     yarea,
-                     celldx,
-                     celldy,
-                     volume,
-                     density0,
-                     energy0,
-                     pressure,
-                     viscosity,
-                     soundspeed,
-                     xvel0,
-                     yvel0,
-                     work_array1);
-    WORK_ARRAY(work_array1, j, k) = val;
+    if (j <= x_max && k <= y_max) {
+        double val = calc_dt_kernel_c_(
+                         j, k,
+                         x_min, x_max,
+                         y_min, y_max,
+                         xarea,
+                         yarea,
+                         celldx,
+                         celldy,
+                         volume,
+                         density0,
+                         energy0,
+                         pressure,
+                         viscosity,
+                         soundspeed,
+                         xvel0,
+                         yvel0,
+                         work_array1);
+        WORK_ARRAY(work_array1, j, k) = val;
+    }
 }
 
 void calc_dt_adaptor(int tile, double* local_dt)
@@ -109,8 +111,11 @@ void calc_dt_adaptor(int tile, double* local_dt)
         x_max = chunk.tiles[tile].t_xmax,
         y_min = chunk.tiles[tile].t_ymin,
         y_max = chunk.tiles[tile].t_ymax;
-    dim3 size((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
-    calc_dt_kernel <<< size, dim3(1, 1)>>>(
+    dim3 size = numBlocks(
+                    dim3((x_max) - (x_min) + 1,
+                         (y_max) - (y_min) + 1),
+                    dtmin_blocksize);
+    calc_dt_kernel <<< size, dtmin_blocksize>>>(
         x_min, x_max,
         y_min, y_max,
         chunk.tiles[tile].field.d_xarea,

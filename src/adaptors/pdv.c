@@ -132,45 +132,46 @@ __global__ void pdv_kernel(
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
-    if (predict == 0) {
-        pdv_kernel_predict_c_(
-            j, k,
-            x_min, x_max, y_min, y_max,
-            dt,
-            xarea,
-            yarea,
-            volume,
-            density0,
-            density1,
-            energy0,
-            energy1,
-            pressure,
-            viscosity,
-            xvel0,
-            xvel1,
-            yvel0,
-            yvel1,
-            volume_change);
-    } else {
-        pdv_kernel_no_predict_c_(
-            j, k,
-            x_min, x_max, y_min, y_max,
-            dt,
-            xarea,
-            yarea,
-            volume,
-            density0,
-            density1,
-            energy0,
-            energy1,
-            pressure,
-            viscosity,
-            xvel0,
-            xvel1,
-            yvel0,
-            yvel1,
-            volume_change);
-    }
+    if (j <= x_max && k <= y_max)
+        if (predict == 0) {
+            pdv_kernel_predict_c_(
+                j, k,
+                x_min, x_max, y_min, y_max,
+                dt,
+                xarea,
+                yarea,
+                volume,
+                density0,
+                density1,
+                energy0,
+                energy1,
+                pressure,
+                viscosity,
+                xvel0,
+                xvel1,
+                yvel0,
+                yvel1,
+                volume_change);
+        } else {
+            pdv_kernel_no_predict_c_(
+                j, k,
+                x_min, x_max, y_min, y_max,
+                dt,
+                xarea,
+                yarea,
+                volume,
+                density0,
+                density1,
+                energy0,
+                energy1,
+                pressure,
+                viscosity,
+                xvel0,
+                xvel1,
+                yvel0,
+                yvel1,
+                volume_change);
+        }
 }
 
 void pdv(struct chunk_type chunk, bool predict, double dt)
@@ -183,8 +184,11 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
             y_min = chunk.tiles[tile].t_ymin,
             y_max = chunk.tiles[tile].t_ymax;
 
-        dim3 size((x_max) - (x_min) + 1, (y_max) - (y_min) + 1);
-        pdv_kernel <<< size, dim3(1, 1) >>> (
+        dim3 size = numBlocks(
+                        dim3((x_max) - (x_min) + 1,
+                             (y_max) - (y_min) + 1),
+                        pdv_kernel_blocksize);
+        pdv_kernel <<< size, pdv_kernel_blocksize >>> (
             x_min, x_max,
             y_min, y_max,
             dt,
@@ -204,6 +208,9 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
             chunk.tiles[tile].field.d_work_array1,
             predict ? 0 : 1);
     }
+
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 #endif
 

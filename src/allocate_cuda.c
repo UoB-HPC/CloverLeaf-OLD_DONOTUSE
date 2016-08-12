@@ -72,43 +72,43 @@ void allocate()
         chunk.tiles[tile].field.yarea_size           = size2d(xmin - 2, xmax + 2, ymin - 2, ymax + 3);
 
 
-        chunk.tiles[tile].field.density0   = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.density0_size, 4096);
-        chunk.tiles[tile].field.density1   = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.density1_size, 4096);
-        chunk.tiles[tile].field.energy0    = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.energy0_size, 4096);
-        chunk.tiles[tile].field.energy1    = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.energy1_size, 4096);
-        chunk.tiles[tile].field.pressure   = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.pressure_size, 4096);
-        chunk.tiles[tile].field.viscosity  = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.viscosity_size, 4096);
-        chunk.tiles[tile].field.soundspeed = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.soundspeed_size, 4096);
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.density0   , sizeof(double) * chunk.tiles[tile].field.density0_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.density1   , sizeof(double) * chunk.tiles[tile].field.density1_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.energy0    , sizeof(double) * chunk.tiles[tile].field.energy0_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.energy1    , sizeof(double) * chunk.tiles[tile].field.energy1_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.pressure   , sizeof(double) * chunk.tiles[tile].field.pressure_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.viscosity  , sizeof(double) * chunk.tiles[tile].field.viscosity_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.soundspeed , sizeof(double) * chunk.tiles[tile].field.soundspeed_size));
 
-        chunk.tiles[tile].field.xvel0 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.xvel0_size, 4096);
-        chunk.tiles[tile].field.xvel1 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.xvel1_size, 4096);
-        chunk.tiles[tile].field.yvel0 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.yvel0_size, 4096);
-        chunk.tiles[tile].field.yvel1 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.yvel1_size, 4096);
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.xvel0 , sizeof(double) * chunk.tiles[tile].field.xvel0_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.xvel1 , sizeof(double) * chunk.tiles[tile].field.xvel1_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.yvel0 , sizeof(double) * chunk.tiles[tile].field.yvel0_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.yvel1 , sizeof(double) * chunk.tiles[tile].field.yvel1_size));
 
-        chunk.tiles[tile].field.vol_flux_x  = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.vol_flux_x_size, 4096);
-        chunk.tiles[tile].field.mass_flux_x = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.mass_flux_x_size, 4096);
-        chunk.tiles[tile].field.vol_flux_y  = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.vol_flux_y_size, 4096);
-        chunk.tiles[tile].field.mass_flux_y = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.mass_flux_y_size, 4096);
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.vol_flux_x  , sizeof(double) * chunk.tiles[tile].field.vol_flux_x_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.mass_flux_x , sizeof(double) * chunk.tiles[tile].field.mass_flux_x_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.vol_flux_y  , sizeof(double) * chunk.tiles[tile].field.vol_flux_y_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.mass_flux_y , sizeof(double) * chunk.tiles[tile].field.mass_flux_y_size));
 
-        chunk.tiles[tile].field.work_array1 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.work_array1_size, 4096);
-        chunk.tiles[tile].field.work_array2 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.work_array2_size, 4096);
-        chunk.tiles[tile].field.work_array3 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.work_array3_size, 4096);
-        chunk.tiles[tile].field.work_array4 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.work_array4_size, 4096);
-        chunk.tiles[tile].field.work_array5 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.work_array5_size, 4096);
-        chunk.tiles[tile].field.work_array6 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.work_array6_size, 4096);
-        chunk.tiles[tile].field.work_array7 = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.work_array7_size, 4096);
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.work_array1 , sizeof(double) * chunk.tiles[tile].field.work_array1_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.work_array2 , sizeof(double) * chunk.tiles[tile].field.work_array2_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.work_array3 , sizeof(double) * chunk.tiles[tile].field.work_array3_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.work_array4 , sizeof(double) * chunk.tiles[tile].field.work_array4_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.work_array5 , sizeof(double) * chunk.tiles[tile].field.work_array5_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.work_array6 , sizeof(double) * chunk.tiles[tile].field.work_array6_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.work_array7 , sizeof(double) * chunk.tiles[tile].field.work_array7_size));
 
-        chunk.tiles[tile].field.cellx    = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.cellx_size, 4096);
-        chunk.tiles[tile].field.celly    = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.celly_size, 4096);
-        chunk.tiles[tile].field.vertexx  = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.vertexx_size, 4096);
-        chunk.tiles[tile].field.vertexy  = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.vertexy_size, 4096);
-        chunk.tiles[tile].field.celldx   = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.celldx_size, 4096);
-        chunk.tiles[tile].field.celldy   = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.celldy_size, 4096);
-        chunk.tiles[tile].field.vertexdx = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.vertexdx_size, 4096);
-        chunk.tiles[tile].field.vertexdy = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.vertexdy_size, 4096);
-        chunk.tiles[tile].field.volume   = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.volume_size, 4096);
-        chunk.tiles[tile].field.xarea    = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.xarea_size, 4096);
-        chunk.tiles[tile].field.yarea    = (double*)aligned_malloc(sizeof(double) * chunk.tiles[tile].field.yarea_size, 4096);
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.cellx    , sizeof(double) * chunk.tiles[tile].field.cellx_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.celly    , sizeof(double) * chunk.tiles[tile].field.celly_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.vertexx  , sizeof(double) * chunk.tiles[tile].field.vertexx_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.vertexy  , sizeof(double) * chunk.tiles[tile].field.vertexy_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.celldx   , sizeof(double) * chunk.tiles[tile].field.celldx_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.celldy   , sizeof(double) * chunk.tiles[tile].field.celldy_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.vertexdx , sizeof(double) * chunk.tiles[tile].field.vertexdx_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.vertexdy , sizeof(double) * chunk.tiles[tile].field.vertexdy_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.volume   , sizeof(double) * chunk.tiles[tile].field.volume_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.xarea    , sizeof(double) * chunk.tiles[tile].field.xarea_size));
+        gpuErrchk(cudaMallocHost(&chunk.tiles[tile].field.yarea    , sizeof(double) * chunk.tiles[tile].field.yarea_size));
 
 
 
