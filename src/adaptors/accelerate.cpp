@@ -2,7 +2,7 @@
 #include "../definitions_c.h"
 
 #if defined(USE_KOKKOS)
-#include "kokkos/accelerate.c"
+#include "kokkos/accelerate.cpp"
 
 void accelerate_adaptor()
 {

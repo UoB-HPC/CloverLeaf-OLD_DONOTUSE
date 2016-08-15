@@ -1,7 +1,7 @@
 #include "generate_chunk.h"
 #include "definitions_c.h"
 // #include "kernels/generate_chunk_kernel_c.c"
-#include "adaptors/generate_chunk.c"
+#include "adaptors/generate_chunk.cpp"
 #include <stdlib.h>
 
 

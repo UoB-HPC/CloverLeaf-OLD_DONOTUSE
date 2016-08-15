@@ -1,6 +1,6 @@
 #include "calc_dt.h"
 #include "definitions_c.h"
-#include "adaptors/calc_dt.c"
+#include "adaptors/calc_dt.cpp"
 #include "string.h"
 
 void calc_dt(int tile,

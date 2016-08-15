@@ -1,6 +1,6 @@
 #include "ideal_gas.h"
 #include "definitions_c.h"
-#include "adaptors/ideal_gas.c"
+#include "adaptors/ideal_gas.cpp"
 
 
 void ideal_gas(int tile, bool predict)

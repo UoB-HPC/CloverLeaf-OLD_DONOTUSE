@@ -4,7 +4,7 @@
 #include "stdlib.h"
 #include "ideal_gas.h"
 #include "clover.h"
-#include "adaptors/field_summary.c"
+#include "adaptors/field_summary.cpp"
 #include <math.h>
 
 void field_summary()

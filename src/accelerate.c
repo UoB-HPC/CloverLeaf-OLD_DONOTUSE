@@ -1,6 +1,6 @@
 #include "accelerate.h"
 #include "definitions_c.h"
-#include "adaptors/accelerate.c"
+#include "adaptors/accelerate.cpp"
 #include "timer_c.h"
 
 void accelerate_kokkos();

@@ -1,9 +1,9 @@
 #include "update_halo.h"
 #include "definitions_c.h"
 #include "timer_c.h"
-#include "adaptors/update_tile_halo.c"
+#include "adaptors/update_tile_halo.cpp"
 // #include "kernels/update_halo_kernel_c.c"
-#include "adaptors/update_local_halo.c"
+#include "adaptors/update_local_halo.cpp"
 #include "clover.h"
 
 void update_halo(int* fields, int depth)

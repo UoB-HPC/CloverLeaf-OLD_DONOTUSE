@@ -53,6 +53,8 @@
 
 #define flag_t               int*
 
+#define kernelqual   __device__ __host__
+
 struct field_type {
     field_2d_t density0;
     field_2d_t density1;

@@ -1,6 +1,6 @@
 #include "flux_calc.h"
 // #include "kernels/flux_calc_kernel_c.c"
-#include "adaptors/flux_calc.c"
+#include "adaptors/flux_calc.cpp"
 #include "definitions_c.h"
 #include "timer_c.h"
 

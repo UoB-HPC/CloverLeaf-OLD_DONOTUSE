@@ -1,6 +1,6 @@
 #include "definitions_c.h"
 #include <stdlib.h>
-#include "adaptors/initialise_chunk.c"
+#include "adaptors/initialise_chunk.cpp"
 #include "generate_chunk.h"
 #include "ideal_gas.h"
 #include "update_halo.h"

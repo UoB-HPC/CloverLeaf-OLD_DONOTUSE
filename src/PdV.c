@@ -2,7 +2,7 @@
 #include "definitions_c.h"
 #include "timer_c.h"
 #include "ideal_gas.h"
-#include "adaptors/pdv.c"
+#include "adaptors/pdv.cpp"
 #include "revert.h"
 #include "update_halo.h"
 

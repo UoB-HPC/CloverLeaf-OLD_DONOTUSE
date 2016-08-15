@@ -1,6 +1,6 @@
 #include "reset_field.h"
 #include "definitions_c.h"
-#include "adaptors/reset_field.c"
+#include "adaptors/reset_field.cpp"
 #include "timer_c.h"
 
 
