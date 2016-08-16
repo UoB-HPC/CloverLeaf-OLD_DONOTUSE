@@ -87,10 +87,10 @@ __global__ void flux_calc_x_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
     double dt,
-    const double* xarea,
-    const double* xvel0,
-    const double* xvel1,
-    double*       vol_flux_x)
+    const_field_2d_t xarea,
+    const_field_2d_t xvel0,
+    const_field_2d_t xvel1,
+    field_2d_t vol_flux_x)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
@@ -110,10 +110,10 @@ __global__ void flux_calc_y_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
     double dt,
-    const double* xarea,
-    const double* xvel0,
-    const double* xvel1,
-    double*       vol_flux_x)
+    const_field_2d_t xarea,
+    const_field_2d_t xvel0,
+    const_field_2d_t xvel1,
+    field_2d_t vol_flux_x)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;

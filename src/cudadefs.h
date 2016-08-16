@@ -173,11 +173,11 @@ struct field_type {
 #define FIELD_1D(d, i, j)      d[FTNREF1D(i, j)]
 
 
-#define const_field_2d_t     const double* __restrict__
-#define field_2d_t           double* __restrict__
+#define const_field_2d_t     const double* __restrict
+#define field_2d_t           double* __restrict
 
-#define const_field_1d_t     const double* __restrict__
-#define field_1d_t           double* __restrict__
+#define const_field_1d_t     const double* __restrict
+#define field_1d_t           double* __restrict
 
 #define flag_t               int*
 
@@ -191,6 +191,7 @@ inline void gpuAssert(cudaError_t code, const char* file, int line)
         exit(code);
     }
 }
+
 #include <math.h>
 inline dim3 numBlocks(dim3 globalSize, dim3 threadsPerBlock)
 {

@@ -79,19 +79,19 @@ __device__ unsigned long next_power_of_2(unsigned long v)
 __global__ void calc_dt_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* xarea,
-    double* yarea,
-    double* celldx,
-    double* celldy,
-    double* volume,
-    double* density0,
-    double* energy0,
-    double* pressure,
-    double* viscosity,
-    double* soundspeed,
-    double* xvel0,
-    double* yvel0,
-    double* work_array1)
+    const_field_2d_t xarea,
+    const_field_2d_t yarea,
+    const_field_1d_t celldx,
+    const_field_1d_t celldy,
+    const_field_2d_t volume,
+    const_field_2d_t density0,
+    const_field_2d_t energy0 ,
+    const_field_2d_t pressure,
+    const_field_2d_t viscosity,
+    const_field_2d_t soundspeed,
+    const_field_2d_t xvel0,
+    const_field_2d_t yvel0,
+    field_2d_t work_array1)
 {
     extern __shared__ double sdata[];
 

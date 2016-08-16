@@ -60,13 +60,13 @@ void viscosity(struct chunk_type chunk)
 __global__ void viscosity_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    const double* celldx,
-    const double* celldy,
-    const double* density0,
-    const double* pressure,
-    double*       viscosity,
-    const double* xvel0,
-    const double* yvel0)
+    const_field_1d_t celldx,
+    const_field_1d_t celldy,
+    const_field_2d_t density0,
+    const_field_2d_t pressure,
+    field_2d_t       viscosity,
+    const_field_2d_t xvel0,
+    const_field_2d_t yvel0)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;

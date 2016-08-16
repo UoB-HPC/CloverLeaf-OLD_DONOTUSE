@@ -63,16 +63,16 @@ void accelerate_adaptor()
 __global__ void accelerate_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    const double* xarea,
-    const double* yarea,
-    const double* volume,
-    const double* density0 ,
-    const double* pressure ,
-    const double* viscosity,
-    double*       xvel0,
-    double*       yvel0,
-    double*       xvel1,
-    double*       yvel1,
+    const_field_2d_t xarea,
+    const_field_2d_t yarea,
+    const_field_2d_t volume,
+    const_field_2d_t density0 ,
+    const_field_2d_t pressure ,
+    const_field_2d_t viscosity,
+    field_2d_t       xvel0,
+    field_2d_t       yvel0,
+    field_2d_t       xvel1,
+    field_2d_t       yvel1,
     double dt)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;

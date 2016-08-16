@@ -79,10 +79,10 @@ void ideal_gas_adaptor(int tile, bool predict)
 __global__ void ideal_gas_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    const double*   density,
-    const double*   energy,
-    double*         pressure,
-    double*         soundspeed)
+    const_field_2d_t   density,
+    const_field_2d_t   energy,
+    field_2d_t         pressure,
+    field_2d_t         soundspeed)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;

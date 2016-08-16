@@ -154,11 +154,11 @@ void advec_cell(
 __global__ void xsweep_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* pre_vol,
-    double* post_vol,
-    const double* volume,
-    const double* vol_flux_x,
-    const double* vol_flux_y,
+    field_2d_t pre_vol,
+    field_2d_t post_vol,
+    const_field_2d_t volume,
+    const_field_2d_t vol_flux_x,
+    const_field_2d_t vol_flux_y,
     int sweep_number)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
@@ -181,11 +181,11 @@ __global__ void xsweep_kernel(
 __global__ void ysweep_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* pre_vol,
-    double* post_vol,
-    const double* volume,
-    const double* vol_flux_x,
-    const double* vol_flux_y,
+    field_2d_t pre_vol,
+    field_2d_t post_vol,
+    const_field_2d_t volume,
+    const_field_2d_t vol_flux_x,
+    const_field_2d_t vol_flux_y,
     int sweep_number)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
@@ -208,13 +208,13 @@ __global__ void ysweep_kernel(
 __global__ void xcomp1_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* mass_flux_x,
-    double* ener_flux,
-    double* vol_flux_x,
-    double* pre_vol,
-    double* density1,
-    double* energy1,
-    double* vertexdx)
+    field_2d_t mass_flux_x,
+    field_2d_t ener_flux,
+    const_field_2d_t vol_flux_x,
+    const_field_2d_t pre_vol,
+    const_field_2d_t density1,
+    const_field_2d_t energy1,
+    const_field_1d_t vertexdx)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
@@ -235,13 +235,13 @@ __global__ void xcomp1_kernel(
 __global__ void ycomp1_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* mass_flux_x,
-    double* ener_flux,
-    double* vol_flux_x,
-    double* pre_vol,
-    double* density1,
-    double* energy1,
-    double* vertexdx)
+    field_2d_t mass_flux_x,
+    field_2d_t ener_flux,
+    const_field_2d_t vol_flux_x,
+    const_field_2d_t pre_vol,
+    const_field_2d_t density1,
+    const_field_2d_t energy1,
+    const_field_1d_t vertexdx)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
@@ -262,16 +262,16 @@ __global__ void ycomp1_kernel(
 __global__ void xcomp2_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* pre_mass,
-    double* post_mass,
-    double* post_ener,
-    double* advec_vol,
-    double* density1,
-    double* energy1,
-    double* pre_vol,
-    double* mass_flux_x,
-    double* ener_flux,
-    double* vol_flux_x)
+    field_2d_t pre_mass,
+    field_2d_t post_mass,
+    field_2d_t post_ener,
+    field_2d_t advec_vol,
+    field_2d_t density1,
+    field_2d_t energy1,
+    const_field_2d_t pre_vol,
+    const_field_2d_t mass_flux_x,
+    const_field_2d_t ener_flux,
+    const_field_2d_t vol_flux_x)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
@@ -294,16 +294,16 @@ __global__ void xcomp2_kernel(
 __global__ void ycomp2_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* pre_mass,
-    double* post_mass,
-    double* post_ener,
-    double* advec_vol,
-    double* density1,
-    double* energy1,
-    double* pre_vol,
-    double* mass_flux_x,
-    double* ener_flux,
-    double* vol_flux_x)
+    field_2d_t pre_mass,
+    field_2d_t post_mass,
+    field_2d_t post_ener,
+    field_2d_t advec_vol,
+    field_2d_t density1,
+    field_2d_t energy1,
+    const_field_2d_t pre_vol,
+    const_field_2d_t mass_flux_x,
+    const_field_2d_t ener_flux,
+    const_field_2d_t vol_flux_x)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;

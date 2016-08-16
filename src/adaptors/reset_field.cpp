@@ -58,14 +58,14 @@ void reset_field(struct chunk_type chunk)
 __global__ void reset_field_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double*       density0,
-    const double* density1,
-    double*       energy0,
-    const double* energy1,
-    double*       xvel0,
-    const double* xvel1,
-    double*       yvel0,
-    const double* yvel1)
+    field_2d_t       density0,
+    const_field_2d_t density1,
+    field_2d_t       energy0,
+    const_field_2d_t energy1,
+    field_2d_t       xvel0,
+    const_field_2d_t xvel1,
+    field_2d_t       yvel0,
+    const_field_2d_t yvel1)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;

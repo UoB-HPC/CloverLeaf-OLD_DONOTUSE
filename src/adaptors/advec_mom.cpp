@@ -224,11 +224,11 @@ void advec_mom(
 __global__ void ms1_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double*       pre_vol,
-    double*       post_vol ,
-    const double* volume ,
-    const double* vol_flux_x ,
-    const double* vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
@@ -247,11 +247,11 @@ __global__ void ms1_kernel(
 __global__ void ms2_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double*       pre_vol,
-    double*       post_vol ,
-    const double* volume ,
-    const double* vol_flux_x ,
-    const double* vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
@@ -270,11 +270,11 @@ __global__ void ms2_kernel(
 __global__ void ms3_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double*       pre_vol,
-    double*       post_vol ,
-    const double* volume ,
-    const double* vol_flux_x ,
-    const double* vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
@@ -293,11 +293,11 @@ __global__ void ms3_kernel(
 __global__ void ms4_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double*       pre_vol,
-    double*       post_vol ,
-    const double* volume ,
-    const double* vol_flux_x ,
-    const double* vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
@@ -316,8 +316,8 @@ __global__ void ms4_kernel(
 __global__ void dx1_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* node_flux,
-    const double* mass_flux_x)
+    field_2d_t node_flux,
+    const_field_2d_t mass_flux_x)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 2;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
@@ -333,8 +333,8 @@ __global__ void dx1_kernel(
 __global__ void dy1_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* node_flux,
-    const double* mass_flux_x)
+    field_2d_t node_flux,
+    const_field_2d_t mass_flux_x)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 2;
@@ -350,11 +350,11 @@ __global__ void dy1_kernel(
 __global__ void dx2_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* node_mass_post,
-    double* node_mass_pre,
-    const double* density1,
-    const double* post_vol,
-    const double* node_flux)
+    field_2d_t node_mass_post,
+    field_2d_t node_mass_pre,
+    const_field_2d_t density1,
+    const_field_2d_t post_vol,
+    const_field_2d_t node_flux)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 1;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
@@ -372,11 +372,11 @@ __global__ void dx2_kernel(
 __global__ void dy2_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* node_mass_post,
-    double* node_mass_pre,
-    const double* density1,
-    const double* post_vol,
-    const double* node_flux)
+    field_2d_t node_mass_post,
+    field_2d_t node_mass_pre,
+    const_field_2d_t density1,
+    const_field_2d_t post_vol,
+    const_field_2d_t node_flux)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 1;
@@ -395,11 +395,11 @@ __global__ void dy2_kernel(
 __global__ void dx3_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* mom_flux,
-    const double* node_flux,
-    const double* node_mass_pre,
-    const double* celldx,
-    const double* vel1)
+    field_2d_t mom_flux,
+    const_field_2d_t node_flux,
+    const_field_2d_t node_mass_pre,
+    const_field_1d_t celldx,
+    const_field_2d_t vel1)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min - 1;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
@@ -418,11 +418,11 @@ __global__ void dx3_kernel(
 __global__ void dy3_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* mom_flux,
-    const double* node_flux,
-    const double* node_mass_pre,
-    const double* celldx,
-    const double* vel1)
+    field_2d_t mom_flux,
+    const_field_2d_t node_flux,
+    const_field_2d_t node_mass_pre,
+    const_field_1d_t celldx,
+    const_field_2d_t vel1)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min - 1;
@@ -441,10 +441,10 @@ __global__ void dy3_kernel(
 __global__ void dx4_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* vel1,
-    const double* node_mass_pre,
-    const double* mom_flux,
-    const double* node_mass_post)
+    field_2d_t vel1,
+    const_field_2d_t node_mass_pre,
+    const_field_2d_t mom_flux,
+    const_field_2d_t node_mass_post)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
@@ -462,10 +462,10 @@ __global__ void dx4_kernel(
 __global__ void dy4_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* vel1,
-    const double* node_mass_pre,
-    const double* mom_flux,
-    const double* node_mass_post)
+    field_2d_t vel1,
+    const_field_2d_t node_mass_pre,
+    const_field_2d_t mom_flux,
+    const_field_2d_t node_mass_post)
 {
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
@@ -487,10 +487,7 @@ void advec_mom(
     int sweep_number,
     int direction)
 {
-
-    field_2d_t vel1 = which_vel == 1 ? tile.field.xvel1 : tile.field.yvel1;
     double* d_vel1 = which_vel == 1 ? tile.field.d_xvel1 : tile.field.d_yvel1;
-    int vel1_size = which_vel == 1 ? tile.field.xvel1_size : tile.field.yvel1_size;
 
     int mom_sweep = direction + 2 * (sweep_number - 1);
 
