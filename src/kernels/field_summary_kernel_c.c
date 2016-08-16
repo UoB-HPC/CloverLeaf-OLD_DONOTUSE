@@ -28,7 +28,7 @@
 #include <math.h>
 #include "../definitions_c.h"
 
-void field_summary_kernel(
+kernelqual void field_summary_kernel(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,

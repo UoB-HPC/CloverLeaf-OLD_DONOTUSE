@@ -152,6 +152,7 @@ struct field_type {
         } \
     }
 
+#define kernelqual inline
 
 #define acclerate_local_size       cl::NDRange(16,16)
 

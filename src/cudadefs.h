@@ -201,7 +201,7 @@ struct field_type {
 
 #define flag_t               int*
 
-#define kernelqual   __device__
+#define kernelqual   __device__ inline
 
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 inline void gpuAssert(cudaError_t code, const char* file, int line)
@@ -241,6 +241,7 @@ inline dim3 numBlocks(dim3 globalSize, dim3 threadsPerBlock)
 #define advec_mom_y4_blocksize    dim3(16,16)
 
 #define dtmin_blocksize           dim3(16,16)
+#define field_summary_blocksize   dim3(16,16)
 
 #define flux_calc_x_blocksize     dim3(16,16)
 #define flux_calc_y_blocksize     dim3(16,16)
