@@ -10,7 +10,8 @@ void calc_dt_adaptor(int tile, double* local_dt)
                       chunk.tiles[tile].t_xmin,
                       chunk.tiles[tile].t_xmax,
                       chunk.tiles[tile].t_ymin,
-                      chunk.tiles[tile].t_ymax);
+                      chunk.tiles[tile].t_ymax,
+                      g_big);
     f.compute(dt);
     *local_dt = dt;
 }
@@ -62,7 +63,7 @@ void calc_dt_adaptor(int tile, double* local_dt)
 #include "../kernels/calc_dt_kernel_c.c"
 #include "../definitions_c.h"
 
-__device unsigned long next_power_of_2(unsigned long v)
+__device__ unsigned long next_power_of_2(unsigned long v)
 {
     v--;
     v |= v >> 1;
@@ -92,11 +93,19 @@ __global__ void calc_dt_kernel(
     double* yvel0,
     double* work_array1)
 {
+    extern __shared__ double sdata[];
+
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    int lid = threadIdx.y * blockDim.x + threadIdx.x;
+    int x = threadIdx.x,
+        y = threadIdx.y;
+    int lid = x + blockDim.x * y;
+    int gid = blockIdx.x + gridDim.x * blockIdx.y;
 
+    int lsize = blockDim.x * blockDim.y;
+
+    sdata[lid] = 1000.0;
     if (j <= x_max && k <= y_max) {
         double val = calc_dt_kernel_c_(
                          j, k,
@@ -115,16 +124,18 @@ __global__ void calc_dt_kernel(
                          xvel0,
                          yvel0,
                          work_array1);
-
-        WORK_ARRAY(work_array1, j, k) = val;
-        // for (int s = next_power_of_2(blockDim.x * blockDim.y / 2);
-        //         s > 0; s >> 1) {
-        //     if (s < blockDim.x * blockDim.y / 2) {
-        //         if (lid < s) {
-        //             work_array1[lid] = work_array1[lid] + work_array1[lid * 2];
-        //         }
-        //     }
-        // }
+        sdata[lid] = val;
+    }
+    __syncthreads();
+    for (int s = lsize / 2; s > 0; s /= 2) {
+        if (lid < s) {
+            if (sdata[lid + s] < sdata[lid])
+                sdata[lid] = sdata[lid + s];
+        }
+        __syncthreads();
+    }
+    if (lid == 0) {
+        work_array1[gid] = sdata[0];
     }
 }
 
@@ -139,41 +150,39 @@ void calc_dt_adaptor(int tile, double* local_dt)
                     dim3((x_max) - (x_min) + 1,
                          (y_max) - (y_min) + 1),
                     dtmin_blocksize);
-    calc_dt_kernel <<< size, dtmin_blocksize>>>(
-        x_min, x_max,
-        y_min, y_max,
-        chunk.tiles[tile].field.d_xarea,
-        chunk.tiles[tile].field.d_yarea,
-        chunk.tiles[tile].field.d_celldx,
-        chunk.tiles[tile].field.d_celldy,
-        chunk.tiles[tile].field.d_volume,
-        chunk.tiles[tile].field.d_density0,
-        chunk.tiles[tile].field.d_energy0,
-        chunk.tiles[tile].field.d_pressure,
-        chunk.tiles[tile].field.d_viscosity,
-        chunk.tiles[tile].field.d_soundspeed,
-        chunk.tiles[tile].field.d_xvel0,
-        chunk.tiles[tile].field.d_yvel0,
-        chunk.tiles[tile].field.d_work_array1);
+    calc_dt_kernel <<< size,
+                   dtmin_blocksize,
+                   dtmin_blocksize.x* dtmin_blocksize.y* sizeof(double)>>>(
+                       x_min, x_max,
+                       y_min, y_max,
+                       chunk.tiles[tile].field.d_xarea,
+                       chunk.tiles[tile].field.d_yarea,
+                       chunk.tiles[tile].field.d_celldx,
+                       chunk.tiles[tile].field.d_celldy,
+                       chunk.tiles[tile].field.d_volume,
+                       chunk.tiles[tile].field.d_density0,
+                       chunk.tiles[tile].field.d_energy0,
+                       chunk.tiles[tile].field.d_pressure,
+                       chunk.tiles[tile].field.d_viscosity,
+                       chunk.tiles[tile].field.d_soundspeed,
+                       chunk.tiles[tile].field.d_xvel0,
+                       chunk.tiles[tile].field.d_yvel0,
+                       chunk.tiles[tile].field.d_work_array1);
 
     gpuErrchk(cudaMemcpy(
                   chunk.tiles[tile].field.work_array1,
                   chunk.tiles[tile].field.d_work_array1,
-                  chunk.tiles[tile].field.work_array1_size * sizeof(double),
+                  size.x * size.y * sizeof(double),
                   cudaMemcpyDeviceToHost));
-    int jmin = -1, kmin = -1;
-    for (int k = chunk.tiles[tile].t_ymin; k <= chunk.tiles[tile].t_ymax; k++) {
-        for (int j = chunk.tiles[tile].t_xmin; j <= chunk.tiles[tile].t_xmax; j++) {
-            double val = WORK_ARRAY(chunk.tiles[tile].field.work_array1, j, k);
-            if (val < dt) {
-                dt = val;
-                jmin = j;
-                kmin = k;
-            }
+    for (int i = 0; i < size.x * size.y; i++) {
+        double val = chunk.tiles[tile].field.work_array1[i];
+        if (val < dt) {
+            dt = val;
         }
     }
     *local_dt = dt;
-    cudaDeviceSynchronize();
+    if (profiler_on)
+        cudaDeviceSynchronize();
 }
 #endif
 

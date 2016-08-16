@@ -128,17 +128,20 @@ struct calc_dt_functor {
            dtmin;
     Kokkos::View<double*> celldx,
            celldy;
+    double g_big;
 
     struct tile_type tile;
 
     calc_dt_functor(
         struct tile_type _tile,
-        int _x_from, int _x_to, int _y_from, int _y_to):
+        int _x_from, int _x_to, int _y_from, int _y_to,
+        double _g_big):
 
         tile(_tile),
         x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
         x_min(_tile.t_xmin), x_max(_tile.t_xmax),
         y_min(_tile.t_ymin), y_max(_tile.t_ymax),
+        g_big(_g_big),
 
         xarea(*(_tile.field.xarea)),
         yarea(*(_tile.field.yarea)),

@@ -113,42 +113,75 @@ void allocate()
 
 
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_density0,   chunk.tiles[tile].field.density0_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_density0, 0,   chunk.tiles[tile].field.density0_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_density1,   chunk.tiles[tile].field.density1_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_density1, 0,   chunk.tiles[tile].field.density1_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_energy0,    chunk.tiles[tile].field.energy0_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_energy0, 0,    chunk.tiles[tile].field.energy0_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_energy1,    chunk.tiles[tile].field.energy1_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_energy1, 0,    chunk.tiles[tile].field.energy1_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_pressure,   chunk.tiles[tile].field.pressure_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_pressure, 0,   chunk.tiles[tile].field.pressure_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_viscosity,  chunk.tiles[tile].field.viscosity_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_viscosity, 0,  chunk.tiles[tile].field.viscosity_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_soundspeed, chunk.tiles[tile].field.soundspeed_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_soundspeed, 0, chunk.tiles[tile].field.soundspeed_size * sizeof(double)));
 
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_xvel0 , chunk.tiles[tile].field.xvel0_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_xvel0, 0 , chunk.tiles[tile].field.xvel0_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_xvel1 , chunk.tiles[tile].field.xvel1_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_xvel1, 0 , chunk.tiles[tile].field.xvel1_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_yvel0 , chunk.tiles[tile].field.yvel0_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_yvel0, 0 , chunk.tiles[tile].field.yvel0_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_yvel1 , chunk.tiles[tile].field.yvel1_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_yvel1, 0 , chunk.tiles[tile].field.yvel1_size * sizeof(double)));
 
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_vol_flux_x  , chunk.tiles[tile].field.vol_flux_x_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_vol_flux_x, 0  , chunk.tiles[tile].field.vol_flux_x_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_mass_flux_x , chunk.tiles[tile].field.mass_flux_x_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_mass_flux_x, 0 , chunk.tiles[tile].field.mass_flux_x_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_vol_flux_y  , chunk.tiles[tile].field.vol_flux_y_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_vol_flux_y, 0  , chunk.tiles[tile].field.vol_flux_y_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_mass_flux_y , chunk.tiles[tile].field.mass_flux_y_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_mass_flux_y, 0 , chunk.tiles[tile].field.mass_flux_y_size * sizeof(double)));
 
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_work_array1 , chunk.tiles[tile].field.work_array1_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_work_array1, 0 , chunk.tiles[tile].field.work_array1_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_work_array2 , chunk.tiles[tile].field.work_array2_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_work_array2, 0 , chunk.tiles[tile].field.work_array2_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_work_array3 , chunk.tiles[tile].field.work_array3_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_work_array3, 0 , chunk.tiles[tile].field.work_array3_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_work_array4 , chunk.tiles[tile].field.work_array4_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_work_array4, 0 , chunk.tiles[tile].field.work_array4_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_work_array5 , chunk.tiles[tile].field.work_array5_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_work_array5, 0 , chunk.tiles[tile].field.work_array5_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_work_array6 , chunk.tiles[tile].field.work_array6_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_work_array6, 0 , chunk.tiles[tile].field.work_array6_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_work_array7 , chunk.tiles[tile].field.work_array7_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_work_array7, 0 , chunk.tiles[tile].field.work_array7_size * sizeof(double)));
 
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_cellx    , chunk.tiles[tile].field.cellx_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_cellx, 0    , chunk.tiles[tile].field.cellx_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_celly    , chunk.tiles[tile].field.celly_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_celly, 0    , chunk.tiles[tile].field.celly_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_vertexx  , chunk.tiles[tile].field.vertexx_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_vertexx, 0  , chunk.tiles[tile].field.vertexx_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_vertexy  , chunk.tiles[tile].field.vertexy_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_vertexy, 0  , chunk.tiles[tile].field.vertexy_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_celldx   , chunk.tiles[tile].field.celldx_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_celldx, 0   , chunk.tiles[tile].field.celldx_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_celldy   , chunk.tiles[tile].field.celldy_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_celldy, 0   , chunk.tiles[tile].field.celldy_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_vertexdx , chunk.tiles[tile].field.vertexdx_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_vertexdx, 0 , chunk.tiles[tile].field.vertexdx_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_vertexdy , chunk.tiles[tile].field.vertexdy_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_vertexdy, 0 , chunk.tiles[tile].field.vertexdy_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_volume   , chunk.tiles[tile].field.volume_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_volume, 0   , chunk.tiles[tile].field.volume_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_xarea    , chunk.tiles[tile].field.xarea_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_xarea, 0    , chunk.tiles[tile].field.xarea_size * sizeof(double)));
         gpuErrchk(cudaMalloc(&chunk.tiles[tile].field.d_yarea    , chunk.tiles[tile].field.yarea_size * sizeof(double)));
+        gpuErrchk(cudaMemset(chunk.tiles[tile].field.d_yarea, 0    , chunk.tiles[tile].field.yarea_size * sizeof(double)));
 
 
         // TODO first touch

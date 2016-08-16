@@ -1,6 +1,6 @@
 
 #include <Kokkos_Core.hpp>
-#include "../../kernels/pdv_kernel_c.c"
+#include "../../kernels/PdV_kernel_c.c"
 
 using namespace Kokkos;
 

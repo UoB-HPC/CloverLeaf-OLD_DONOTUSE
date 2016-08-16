@@ -53,7 +53,11 @@
 
 #define flag_t               int*
 
+#if defined(__NVCC__)
 #define kernelqual   __device__ __host__
+#else
+#define kernelqual
+#endif
 
 struct field_type {
     field_2d_t density0;
