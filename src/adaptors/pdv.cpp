@@ -108,7 +108,25 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
 
 #if defined(USE_CUDA)
 
+// #define LOCALXVEL0(d, j, k) \
+//     d[(((j) - (blockIdx.x * blockDim.x + x_min)) + (blockDim.x+1) * \
+//             ((k) - (blockIdx.y * blockDim.y + y_min)))]
+
+// #define XVEL0Orig(d, j, k) VEL(d, j, k)
+// #undef XVEL0
+// #define XVEL0(d, j, k) LOCALXVEL0(d, j, k)
+
+// #define LOCALYVEL0(d, j, k) \
+//     d[(((j) - (blockIdx.x * blockDim.x + x_min)) + (blockDim.x+1) * \
+//             ((k) - (blockIdx.y * blockDim.y + y_min)))]
+
+// #define YVEL0Orig(d, j, k) VEL(d, j, k)
+// #undef YVEL0
+// #define YVEL0(d, j, k) LOCALYVEL0(d, j, k)
+
 #include "../kernels/PdV_kernel_c.c"
+
+
 
 __global__ void pdv_kernel(
     int x_min, int x_max,
@@ -130,8 +148,32 @@ __global__ void pdv_kernel(
     field_2d_t       volume_change,
     int predict)
 {
+    // extern __shared__ double shared[];
+    // double* sharedxvel0 = shared;
+    // double* sharedyvel0 = &shared[blockDim.x * blockDim.y];
+
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
+
+    // XVEL0(sharedxvel0, j, k) = XVEL0Orig(xvel0, j, k);
+    // YVEL0(sharedyvel0, j, k) = YVEL0Orig(yvel0, j, k);
+
+    // if (threadIdx.x == blockDim.x - 1) {
+    //     XVEL0(sharedxvel0, j + 1, k) = XVEL0Orig(xvel0, j + 1, k);
+    //     YVEL0(sharedyvel0, j + 1, k) = YVEL0Orig(yvel0, j + 1, k);
+    // }
+
+    // if (threadIdx.y == blockDim.y - 1) {
+    //     XVEL0(sharedxvel0, j, k + 1) = XVEL0Orig(xvel0, j, k + 1);
+    //     YVEL0(sharedyvel0, j, k + 1) = YVEL0Orig(yvel0, j, k + 1);
+    // }
+    // if (threadIdx.x == blockDim.x - 1 && threadIdx.y == blockDim.y - 1) {
+    //     XVEL0(sharedxvel0, j + 1, k + 1) = XVEL0Orig(xvel0, j + 1, k + 1);
+    //     YVEL0(sharedyvel0, j + 1, k + 1) = YVEL0Orig(yvel0, j + 1, k + 1);
+    // }
+
+    __syncthreads();
+
     if (j <= x_max && k <= y_max)
         if (predict == 0) {
             pdv_kernel_predict_c_(
@@ -188,25 +230,28 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
                         dim3((x_max) - (x_min) + 1,
                              (y_max) - (y_min) + 1),
                         pdv_kernel_blocksize);
-        pdv_kernel <<< size, pdv_kernel_blocksize >>> (
-            x_min, x_max,
-            y_min, y_max,
-            dt,
-            chunk.tiles[tile].field.d_xarea,
-            chunk.tiles[tile].field.d_yarea,
-            chunk.tiles[tile].field.d_volume,
-            chunk.tiles[tile].field.d_density0,
-            chunk.tiles[tile].field.d_density1,
-            chunk.tiles[tile].field.d_energy0,
-            chunk.tiles[tile].field.d_energy1,
-            chunk.tiles[tile].field.d_pressure,
-            chunk.tiles[tile].field.d_viscosity,
-            chunk.tiles[tile].field.d_xvel0,
-            chunk.tiles[tile].field.d_xvel1,
-            chunk.tiles[tile].field.d_yvel0,
-            chunk.tiles[tile].field.d_yvel1,
-            chunk.tiles[tile].field.d_work_array1,
-            predict ? 0 : 1);
+        pdv_kernel <<< size, pdv_kernel_blocksize,
+                   (pdv_kernel_blocksize.x + 1)*
+                   (pdv_kernel_blocksize.y + 1)*
+                   sizeof(double) * 2 >>> (
+                       x_min, x_max,
+                       y_min, y_max,
+                       dt,
+                       chunk.tiles[tile].field.d_xarea,
+                       chunk.tiles[tile].field.d_yarea,
+                       chunk.tiles[tile].field.d_volume,
+                       chunk.tiles[tile].field.d_density0,
+                       chunk.tiles[tile].field.d_density1,
+                       chunk.tiles[tile].field.d_energy0,
+                       chunk.tiles[tile].field.d_energy1,
+                       chunk.tiles[tile].field.d_pressure,
+                       chunk.tiles[tile].field.d_viscosity,
+                       chunk.tiles[tile].field.d_xvel0,
+                       chunk.tiles[tile].field.d_xvel1,
+                       chunk.tiles[tile].field.d_yvel0,
+                       chunk.tiles[tile].field.d_yvel1,
+                       chunk.tiles[tile].field.d_work_array1,
+                       predict ? 0 : 1);
     }
 
     if (profiler_on)

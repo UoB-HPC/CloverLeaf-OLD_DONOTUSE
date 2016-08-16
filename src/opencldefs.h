@@ -154,44 +154,44 @@ struct field_type {
 
 #define kernelqual inline
 
-#define acclerate_local_size       cl::NDRange(16,16)
+#define acclerate_local_size       cl::NDRange(256,1)
 
-#define advec_cell_x1_local_size   cl::NDRange(16,16)
-#define advec_cell_x2_local_size   cl::NDRange(16,16)
-#define advec_cell_x3_local_size   cl::NDRange(16,16)
-#define advec_cell_y1_local_size   cl::NDRange(16,16)
-#define advec_cell_y2_local_size   cl::NDRange(16,16)
-#define advec_cell_y3_local_size   cl::NDRange(16,16)
+#define advec_cell_x1_local_size   cl::NDRange(256,1)
+#define advec_cell_x2_local_size   cl::NDRange(256,1)
+#define advec_cell_x3_local_size   cl::NDRange(256,1)
+#define advec_cell_y1_local_size   cl::NDRange(256,1)
+#define advec_cell_y2_local_size   cl::NDRange(256,1)
+#define advec_cell_y3_local_size   cl::NDRange(256,1)
 
-#define advec_mom_ms1_local_size   cl::NDRange(16,16)
-#define advec_mom_ms2_local_size   cl::NDRange(16,16)
-#define advec_mom_ms3_local_size   cl::NDRange(16,16)
-#define advec_mom_ms4_local_size   cl::NDRange(16,16)
-#define advec_mom_x1_local_size    cl::NDRange(16,16)
-#define advec_mom_x2_local_size    cl::NDRange(16,16)
-#define advec_mom_x3_local_size    cl::NDRange(16,16)
-#define advec_mom_x4_local_size    cl::NDRange(16,16)
-#define advec_mom_y1_local_size    cl::NDRange(16,16)
-#define advec_mom_y2_local_size    cl::NDRange(16,16)
-#define advec_mom_y3_local_size    cl::NDRange(16,16)
-#define advec_mom_y4_local_size    cl::NDRange(16,16)
+#define advec_mom_ms1_local_size   cl::NDRange(256,1)
+#define advec_mom_ms2_local_size   cl::NDRange(256,1)
+#define advec_mom_ms3_local_size   cl::NDRange(256,1)
+#define advec_mom_ms4_local_size   cl::NDRange(256,1)
+#define advec_mom_x1_local_size    cl::NDRange(256,1)
+#define advec_mom_x2_local_size    cl::NDRange(256,1)
+#define advec_mom_x3_local_size    cl::NDRange(256,1)
+#define advec_mom_x4_local_size    cl::NDRange(256,1)
+#define advec_mom_y1_local_size    cl::NDRange(256,1)
+#define advec_mom_y2_local_size    cl::NDRange(256,1)
+#define advec_mom_y3_local_size    cl::NDRange(256,1)
+#define advec_mom_y4_local_size    cl::NDRange(256,1)
 
-#define dtmin_local_size           cl::NDRange(16,16)
+#define dtmin_local_size           cl::NDRange(256,1)
 
-#define flux_calc_x_local_size     cl::NDRange(16,16)
-#define flux_calc_y_local_size     cl::NDRange(16,16)
+#define flux_calc_x_local_size     cl::NDRange(256,1)
+#define flux_calc_y_local_size     cl::NDRange(256,1)
 
-#define ideal_gas_local_size       cl::NDRange(16,16)
+#define ideal_gas_local_size       cl::NDRange(256,1)
 
-#define pdv_kernel_local_size      cl::NDRange(16,16)
+#define pdv_kernel_local_size      cl::NDRange(256,1)
 
-#define reset_field_local_size     cl::NDRange(16,16)
+#define reset_field_local_size     cl::NDRange(256,1)
 
-#define revert_local_size          cl::NDRange(16,16)
+#define revert_local_size          cl::NDRange(256,1)
 
-#define update_halo_local_size     cl::NDRange(16,16)
+#define update_halo_local_size     cl::NDRange(256,1)
 
-#define viscosity_local_size       cl::NDRange(16,16)
+#define viscosity_local_size       cl::NDRange(256,1)
 
 
 #include "openclaccessdefs.h"
