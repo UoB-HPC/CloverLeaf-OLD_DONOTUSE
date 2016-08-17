@@ -298,7 +298,8 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
         openclQueue.enqueueNDRangeKernel(
             pdv_kernel,
             cl::NullRange,
-            cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
+            calcGlobalSize(cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
+                           pdv_kernel_local_size),
             pdv_kernel_local_size);
     }
 

@@ -15,30 +15,33 @@ void kernel calc_dt_kernel(
     const global double* soundspeed,
     const global double* xvel0,
     const global double* yvel0,
-    global double* dtmin)
+    global double* dtmin,
+    local double* temp)
 {
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    double val = calc_dt_kernel_c_(
-                     j, k,
-                     x_min, x_max,
-                     y_min, y_max,
-                     xarea,
-                     yarea,
-                     celldx,
-                     celldy,
-                     volume,
-                     density0,
-                     energy0 ,
-                     pressure,
-                     viscosity,
-                     soundspeed,
-                     xvel0,
-                     yvel0,
-                     dtmin);
+    if (j <= x_max && k <= y_max) {
+        double val = calc_dt_kernel_c_(
+                         j, k,
+                         x_min, x_max,
+                         y_min, y_max,
+                         xarea,
+                         yarea,
+                         celldx,
+                         celldy,
+                         volume,
+                         density0,
+                         energy0 ,
+                         pressure,
+                         viscosity,
+                         soundspeed,
+                         xvel0,
+                         yvel0,
+                         dtmin);
 
-    WORK_ARRAY(dtmin, j, k) = val;
+        WORK_ARRAY(dtmin, j, k) = val;
+    }
 }
 
 // __kernel void reduce(__global float* buffer,

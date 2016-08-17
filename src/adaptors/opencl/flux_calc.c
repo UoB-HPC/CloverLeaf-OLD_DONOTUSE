@@ -12,15 +12,16 @@ void kernel flux_calc_x_kernel_(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    flux_calc_x_kernel(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        dt,
-        xarea,
-        xvel0,
-        xvel1,
-        vol_flux_x);
+    if (j <= x_max && k <= y_max)
+        flux_calc_x_kernel(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            dt,
+            xarea,
+            xvel0,
+            xvel1,
+            vol_flux_x);
 }
 
 void kernel flux_calc_y_kernel_(
@@ -35,13 +36,14 @@ void kernel flux_calc_y_kernel_(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    flux_calc_y_kernel(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        dt,
-        yarea,
-        yvel0,
-        yvel1,
-        vol_flux_y);
+    if (j <= x_max && k <= y_max)
+        flux_calc_y_kernel(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            dt,
+            yarea,
+            yvel0,
+            yvel1,
+            vol_flux_y);
 }

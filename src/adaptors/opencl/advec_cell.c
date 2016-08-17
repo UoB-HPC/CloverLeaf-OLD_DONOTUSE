@@ -11,16 +11,17 @@ void kernel xsweep_kernel(
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min - 2;
 
-    xsweep(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        pre_vol,
-        post_vol,
-        volume,
-        vol_flux_x,
-        vol_flux_y,
-        sweep_number);
+    if (j <= x_max + 2 && k <= y_max + 2)
+        xsweep(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            pre_vol,
+            post_vol,
+            volume,
+            vol_flux_x,
+            vol_flux_y,
+            sweep_number);
 }
 
 void kernel ysweep_kernel(
@@ -35,16 +36,17 @@ void kernel ysweep_kernel(
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min - 2;
 
-    ysweep(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        pre_vol,
-        post_vol,
-        volume,
-        vol_flux_x,
-        vol_flux_y,
-        sweep_number);
+    if (j <= x_max + 2 && k <= y_max + 2)
+        ysweep(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            pre_vol,
+            post_vol,
+            volume,
+            vol_flux_x,
+            vol_flux_y,
+            sweep_number);
 }
 
 
@@ -61,17 +63,18 @@ void kernel xcomp1_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    xcomp1(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        mass_flux_x,
-        ener_flux,
-        vol_flux_x,
-        pre_vol,
-        density1,
-        energy1,
-        vertexdx);
+    if (j <= x_max + 2 && k <= y_max)
+        xcomp1(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            mass_flux_x,
+            ener_flux,
+            vol_flux_x,
+            pre_vol,
+            density1,
+            energy1,
+            vertexdx);
 }
 
 
@@ -88,17 +91,18 @@ void kernel ycomp1_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    ycomp1(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        mass_flux_y,
-        ener_flux,
-        vol_flux_y,
-        pre_vol,
-        density1,
-        energy1,
-        vertexdy);
+    if (j <= x_max && k <= y_max + 2)
+        ycomp1(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            mass_flux_y,
+            ener_flux,
+            vol_flux_y,
+            pre_vol,
+            density1,
+            energy1,
+            vertexdy);
 }
 
 
@@ -119,20 +123,21 @@ void kernel xcomp2_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    xcomp2(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        pre_mass,
-        post_mass,
-        post_ener,
-        advec_vol,
-        density1,
-        energy1,
-        pre_vol,
-        mass_flux_x,
-        ener_flux,
-        vol_flux_x);
+    if (j <= x_max && k <= y_max)
+        xcomp2(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            pre_mass,
+            post_mass,
+            post_ener,
+            advec_vol,
+            density1,
+            energy1,
+            pre_vol,
+            mass_flux_x,
+            ener_flux,
+            vol_flux_x);
 }
 
 
@@ -152,19 +157,20 @@ void kernel ycomp2_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    ycomp2(
-        j, k,
-        x_min, x_max,
-        y_min, y_max,
-        pre_mass,
-        post_mass,
-        post_ener,
-        advec_vol,
-        density1,
-        energy1,
-        pre_vol,
-        mass_flux_y,
-        ener_flux,
-        vol_flux_y);
+    if (j <= x_max && k <= y_max)
+        ycomp2(
+            j, k,
+            x_min, x_max,
+            y_min, y_max,
+            pre_mass,
+            post_mass,
+            post_ener,
+            advec_vol,
+            density1,
+            energy1,
+            pre_vol,
+            mass_flux_y,
+            ener_flux,
+            vol_flux_y);
 }
 

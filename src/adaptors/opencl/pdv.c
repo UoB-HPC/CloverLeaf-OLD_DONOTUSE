@@ -23,42 +23,43 @@ void kernel pdv_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    if (predict == 0)
-        pdv_kernel_predict_c_(
-            j, k,
-            x_min, x_max, y_min, y_max,
-            dt,
-            xarea,
-            yarea,
-            volume,
-            density0,
-            density1,
-            energy0,
-            energy1,
-            pressure,
-            viscosity,
-            xvel0,
-            xvel1,
-            yvel0,
-            yvel1,
-            volume_change);
-    else
-        pdv_kernel_no_predict_c_(
-            j, k,
-            x_min, x_max, y_min, y_max,
-            dt,
-            xarea,
-            yarea,
-            volume,
-            density0,
-            density1,
-            energy0,
-            energy1,
-            pressure,
-            viscosity,
-            xvel0,
-            xvel1,
-            yvel0,
-            yvel1,
-            volume_change);
+    if (j <= x_max && k <= y_max)
+        if (predict == 0)
+            pdv_kernel_predict_c_(
+                j, k,
+                x_min, x_max, y_min, y_max,
+                dt,
+                xarea,
+                yarea,
+                volume,
+                density0,
+                density1,
+                energy0,
+                energy1,
+                pressure,
+                viscosity,
+                xvel0,
+                xvel1,
+                yvel0,
+                yvel1,
+                volume_change);
+        else
+            pdv_kernel_no_predict_c_(
+                j, k,
+                x_min, x_max, y_min, y_max,
+                dt,
+                xarea,
+                yarea,
+                volume,
+                density0,
+                density1,
+                energy0,
+                energy1,
+                pressure,
+                viscosity,
+                xvel0,
+                xvel1,
+                yvel0,
+                yvel1,
+                volume_change);
 }

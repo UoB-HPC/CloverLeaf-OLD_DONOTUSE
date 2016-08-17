@@ -159,7 +159,8 @@ void ideal_gas_adaptor(int tile, bool predict)
         openclQueue.enqueueNDRangeKernel(
             ideal_gas,
             cl::NullRange,
-            cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
+            calcGlobalSize(cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
+                           ideal_gas_local_size),
             ideal_gas_local_size);
     }
 

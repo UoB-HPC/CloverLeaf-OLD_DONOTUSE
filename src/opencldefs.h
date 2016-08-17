@@ -154,6 +154,31 @@ struct field_type {
 
 #define kernelqual inline
 
+inline int roundUp(int numToRound, int multiple)
+{
+    if (multiple == 0)
+        return numToRound;
+
+    int remainder = numToRound % multiple;
+    if (remainder == 0)
+        return numToRound;
+
+    return numToRound + multiple - remainder;
+}
+
+inline cl::NDRange calcGlobalSize(
+    cl::NDRange global,
+    cl::NDRange local)
+{
+    if (local == cl::NullRange)
+        return global;
+
+    return cl::NDRange(
+               roundUp(global[0], local[0]),
+               roundUp(global[1], local[1])
+           );
+}
+
 #define acclerate_local_size       cl::NDRange(256,1)
 
 #define advec_cell_x1_local_size   cl::NDRange(256,1)
@@ -189,7 +214,8 @@ struct field_type {
 
 #define revert_local_size          cl::NDRange(256,1)
 
-#define update_halo_local_size     cl::NDRange(256,1)
+#define update_halo_1_local_size   cl::NDRange(256,1)
+#define update_halo_2_local_size   cl::NDRange(256,1)
 
 #define viscosity_local_size       cl::NDRange(256,1)
 

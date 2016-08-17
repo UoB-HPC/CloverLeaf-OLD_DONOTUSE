@@ -146,7 +146,8 @@ void reset_field(struct chunk_type chunk)
         openclQueue.enqueueNDRangeKernel(
             reset_field,
             cl::NullRange,
-            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
+                           reset_field_local_size),
             reset_field_local_size);
     }
     if (profiler_on)

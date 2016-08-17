@@ -14,15 +14,16 @@ void kernel reset_field_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    reset_field_kernel_c_(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        density0,
-        density1,
-        energy0,
-        energy1,
-        xvel0,
-        xvel1,
-        yvel0,
-        yvel1);
+    if (j <= x_max + 1 && k <= y_max + 1)
+        reset_field_kernel_c_(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            density0,
+            density1,
+            energy0,
+            energy1,
+            xvel0,
+            xvel1,
+            yvel0,
+            yvel1);
 }

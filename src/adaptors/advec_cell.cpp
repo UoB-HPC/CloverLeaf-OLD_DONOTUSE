@@ -469,7 +469,8 @@ void advec_cell(
     field_2d_t       post_ener = tile.field.work_array6;
     field_2d_t       ener_flux = tile.field.work_array7;
 
-    int g_xdir = 1, g_ydir = 2;
+    int g_xdir = 1,
+        g_ydir = 2;
 
     if (dir == g_xdir) {
         cl::Kernel xsweep_kernel(openclProgram, "xsweep_kernel");
@@ -486,7 +487,8 @@ void advec_cell(
         openclQueue.enqueueNDRangeKernel(
             xsweep_kernel,
             cl::NullRange,
-            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+                           advec_cell_x1_local_size),
             advec_cell_x1_local_size);
 
         cl::Kernel xcomp1_kernel(openclProgram, "xcomp1_kernel");
@@ -504,7 +506,8 @@ void advec_cell(
         openclQueue.enqueueNDRangeKernel(
             xcomp1_kernel,
             cl::NullRange,
-            cl::NDRange((x_max + 2) - (x_min) + 1, (y_max) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 2) - (x_min) + 1, (y_max) - (y_min) + 1),
+                           advec_cell_x2_local_size),
             advec_cell_x2_local_size);
 
         cl::Kernel xcomp2_kernel(openclProgram, "xcomp2_kernel");
@@ -525,7 +528,8 @@ void advec_cell(
         openclQueue.enqueueNDRangeKernel(
             xcomp2_kernel,
             cl::NullRange,
-            cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+                           advec_cell_x3_local_size),
             advec_cell_x3_local_size);
     }
     if (dir == g_ydir) {
@@ -543,7 +547,8 @@ void advec_cell(
         openclQueue.enqueueNDRangeKernel(
             ysweep_kernel,
             cl::NullRange,
-            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+                           advec_cell_y1_local_size),
             advec_cell_y1_local_size);
 
         cl::Kernel ycomp1_kernel(openclProgram, "ycomp1_kernel");
@@ -561,7 +566,8 @@ void advec_cell(
         openclQueue.enqueueNDRangeKernel(
             ycomp1_kernel,
             cl::NullRange,
-            cl::NDRange((x_max) - (x_min) + 1, (y_max + 2) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max) - (x_min) + 1, (y_max + 2) - (y_min) + 1),
+                           advec_cell_y2_local_size),
             advec_cell_y2_local_size);
 
         cl::Kernel ycomp2_kernel(openclProgram, "ycomp2_kernel");
@@ -582,7 +588,8 @@ void advec_cell(
         openclQueue.enqueueNDRangeKernel(
             ycomp2_kernel,
             cl::NullRange,
-            cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+                           advec_cell_y3_local_size),
             advec_cell_y3_local_size);
     }
     if (profiler_on)

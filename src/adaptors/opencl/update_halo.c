@@ -25,31 +25,32 @@ void kernel update_halo_1_kernel(
     int j = get_global_id(0) + (x_min - depth);
     int k = get_global_id(1) + 1;
 
-    update_halo_kernel_1(
-        j, k,
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        chunk_neighbours,
-        tile_neighbours,
-        density0,
-        density1,
-        energy0,
-        energy1,
-        pressure,
-        viscosity,
-        soundspeed,
-        xvel0,
-        yvel0,
-        xvel1,
-        yvel1,
-        vol_flux_x,
-        mass_flux_x,
-        vol_flux_y,
-        mass_flux_y,
-        fields,
-        depth);
+    if (j <= x_max + depth && k <= depth)
+        update_halo_kernel_1(
+            j, k,
+            x_min,
+            x_max,
+            y_min,
+            y_max,
+            chunk_neighbours,
+            tile_neighbours,
+            density0,
+            density1,
+            energy0,
+            energy1,
+            pressure,
+            viscosity,
+            soundspeed,
+            xvel0,
+            yvel0,
+            xvel1,
+            yvel1,
+            vol_flux_x,
+            mass_flux_x,
+            vol_flux_y,
+            mass_flux_y,
+            fields,
+            depth);
 }
 
 void kernel update_halo_2_kernel(
@@ -78,29 +79,30 @@ void kernel update_halo_2_kernel(
     int j = get_global_id(0) + 1;
     int k = get_global_id(1) + (y_min - depth);
 
-    update_halo_kernel_2(
-        j, k,
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        chunk_neighbours,
-        tile_neighbours,
-        density0,
-        density1,
-        energy0,
-        energy1,
-        pressure,
-        viscosity,
-        soundspeed,
-        xvel0,
-        yvel0,
-        xvel1,
-        yvel1,
-        vol_flux_x,
-        mass_flux_x,
-        vol_flux_y,
-        mass_flux_y,
-        fields,
-        depth);
+    if (j <= depth && k <= y_max + depth)
+        update_halo_kernel_2(
+            j, k,
+            x_min,
+            x_max,
+            y_min,
+            y_max,
+            chunk_neighbours,
+            tile_neighbours,
+            density0,
+            density1,
+            energy0,
+            energy1,
+            pressure,
+            viscosity,
+            soundspeed,
+            xvel0,
+            yvel0,
+            xvel1,
+            yvel1,
+            vol_flux_x,
+            mass_flux_x,
+            vol_flux_y,
+            mass_flux_y,
+            fields,
+            depth);
 }

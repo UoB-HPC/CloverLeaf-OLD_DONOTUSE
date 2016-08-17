@@ -331,8 +331,9 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
     checkOclErr(openclQueue.enqueueNDRangeKernel(
                     update_halo_1,
                     cl::NullRange,
-                    cl::NDRange((x_max + depth) - (x_min - depth) + 1, depth - 1 + 1),
-                    cl::NullRange));
+                    calcGlobalSize(cl::NDRange((x_max + depth) - (x_min - depth) + 1, depth - 1 + 1),
+                                   update_halo_1_local_size),
+                    update_halo_1_local_size));
 
     cl::Kernel update_halo_2(openclProgram, "update_halo_2_kernel");
     update_halo_2.setArg(0,  x_min);
@@ -365,8 +366,9 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
     checkOclErr(openclQueue.enqueueNDRangeKernel(
                     update_halo_2,
                     cl::NullRange,
-                    cl::NDRange(depth - 1 + 1, (y_max + depth) - (y_min - depth) + 1),
-                    update_halo_local_size));
+                    calcGlobalSize(cl::NDRange(depth - 1 + 1, (y_max + depth) - (y_min - depth) + 1),
+                                   update_halo_2_local_size),
+                    update_halo_2_local_size));
     if (profiler_on)
         openclQueue.finish();
 }

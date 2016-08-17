@@ -12,14 +12,15 @@ void kernel ms1_kernel(
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min - 2;
 
-    ms1(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        pre_vol,
-        post_vol,
-        volume,
-        vol_flux_x,
-        vol_flux_y);
+    if (j <= x_max + 2 && k <= y_max + 2)
+        ms1(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            pre_vol,
+            post_vol,
+            volume,
+            vol_flux_x,
+            vol_flux_y);
 }
 
 
@@ -35,14 +36,15 @@ void kernel ms2_kernel(
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min - 2;
 
-    ms2(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        pre_vol,
-        post_vol,
-        volume,
-        vol_flux_x,
-        vol_flux_y);
+    if (j <= x_max + 2 && k <= y_max + 2)
+        ms2(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            pre_vol,
+            post_vol,
+            volume,
+            vol_flux_x,
+            vol_flux_y);
 }
 
 void kernel ms3_kernel(
@@ -57,14 +59,15 @@ void kernel ms3_kernel(
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min - 2;
 
-    ms3(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        pre_vol,
-        post_vol,
-        volume,
-        vol_flux_x,
-        vol_flux_y);
+    if (j <= x_max + 2 && k <= y_max + 2)
+        ms3(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            pre_vol,
+            post_vol,
+            volume,
+            vol_flux_x,
+            vol_flux_y);
 }
 
 void kernel ms4_kernel(
@@ -79,14 +82,15 @@ void kernel ms4_kernel(
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min - 2;
 
-    ms4(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        pre_vol,
-        post_vol,
-        volume,
-        vol_flux_x,
-        vol_flux_y);
+    if (j <= x_max + 2 && k <= y_max + 2)
+        ms4(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            pre_vol,
+            post_vol,
+            volume,
+            vol_flux_x,
+            vol_flux_y);
 }
 
 void kernel dx1_kernel(
@@ -98,11 +102,12 @@ void kernel dx1_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min - 2;
 
-    dx1(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        node_flux,
-        mass_flux_x);
+    if (j <= x_max + 2 && k <= y_max + 1)
+        dx1(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            node_flux,
+            mass_flux_x);
 }
 
 void kernel dy1_kernel(
@@ -114,11 +119,12 @@ void kernel dy1_kernel(
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min;
 
-    dy1(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        node_flux,
-        mass_flux_y);
+    if (j <= x_max + 1 && k <= y_max + 2)
+        dy1(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            node_flux,
+            mass_flux_y);
 }
 
 void kernel dx2_kernel(
@@ -133,14 +139,15 @@ void kernel dx2_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min - 1;
 
-    dx2(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        node_mass_post,
-        node_mass_pre,
-        density1,
-        post_vol,
-        node_flux);
+    if (j <= x_max + 1 && k <= y_max + 1)
+        dx2(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            node_mass_post,
+            node_mass_pre,
+            density1,
+            post_vol,
+            node_flux);
 }
 
 void kernel dy2_kernel(
@@ -155,14 +162,15 @@ void kernel dy2_kernel(
     int k = get_global_id(1) + y_min - 1;
     int j = get_global_id(0) + x_min;
 
-    dy2(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        node_mass_post,
-        node_mass_pre,
-        density1,
-        post_vol,
-        node_flux);
+    if (j <= x_max + 1 && k <= y_max + 1)
+        dy2(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            node_mass_post,
+            node_mass_pre,
+            density1,
+            post_vol,
+            node_flux);
 }
 
 void kernel dx3_kernel(
@@ -176,14 +184,15 @@ void kernel dx3_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min - 1;
 
-    dx3(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        mom_flux,
-        node_flux,
-        node_mass_pre,
-        celldx,
-        vel1);
+    if (j <= x_max + 1 && k <= y_max + 1)
+        dx3(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            mom_flux,
+            node_flux,
+            node_mass_pre,
+            celldx,
+            vel1);
 }
 
 void kernel dy3_kernel(
@@ -197,14 +206,15 @@ void kernel dy3_kernel(
     int k = get_global_id(1) + y_min - 1;
     int j = get_global_id(0) + x_min;
 
-    dy3(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        mom_flux,
-        node_flux,
-        node_mass_pre,
-        celldy,
-        vel1);
+    if (j <= x_max + 1 && k <= y_max + 1)
+        dy3(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            mom_flux,
+            node_flux,
+            node_mass_pre,
+            celldy,
+            vel1);
 }
 
 void kernel dx4_kernel(
@@ -217,13 +227,14 @@ void kernel dx4_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    dx4(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        vel1,
-        node_mass_pre,
-        mom_flux,
-        node_mass_post);
+    if (j <= x_max && k <= y_max)
+        dx4(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            vel1,
+            node_mass_pre,
+            mom_flux,
+            node_mass_post);
 }
 
 void kernel dy4_kernel(
@@ -236,11 +247,12 @@ void kernel dy4_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    dy4(
-        j, k,
-        x_min, x_max, y_min, y_max,
-        vel1,
-        node_mass_pre,
-        mom_flux,
-        node_mass_post);
+    if (j <= x_max  && k <= y_max)
+        dy4(
+            j, k,
+            x_min, x_max, y_min, y_max,
+            vel1,
+            node_mass_pre,
+            mom_flux,
+            node_mass_post);
 }

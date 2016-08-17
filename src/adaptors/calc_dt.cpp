@@ -152,7 +152,8 @@ void calc_dt_adaptor(int tile, double* local_dt)
                     dtmin_blocksize);
     calc_dt_kernel <<< size,
                    dtmin_blocksize,
-                   dtmin_blocksize.x* dtmin_blocksize.y* sizeof(double)>>>(
+                   dtmin_blocksize.x* dtmin_blocksize.y*
+                   sizeof(double)>>>(
                        x_min, x_max,
                        y_min, y_max,
                        chunk.tiles[tile].field.d_xarea,
@@ -216,11 +217,15 @@ void calc_dt_adaptor(int tile, double* local_dt)
         checkOclErr(calc_dt.setArg(14, *chunk.tiles[tile].field.d_xvel0));
         checkOclErr(calc_dt.setArg(15, *chunk.tiles[tile].field.d_yvel0));
         checkOclErr(calc_dt.setArg(16, *chunk.tiles[tile].field.d_work_array1));
-        // checkOclErr(calc_dt.setArg(17, sizeof(double) * 10 * 10, NULL));
+        checkOclErr(calc_dt.setArg(17, sizeof(double) *
+                                   dtmin_local_size[0] *
+                                   dtmin_local_size[1], NULL));
 
         checkOclErr(openclQueue.enqueueNDRangeKernel(
                         calc_dt, cl::NullRange,
-                        cl::NDRange(x_max - x_min + 1, y_max - y_min + 1),
+                        calcGlobalSize(
+                            cl::NDRange(x_max - x_min + 1, y_max - y_min + 1),
+                            dtmin_local_size),
                         dtmin_local_size));
 
         // cl::NDRange reductionLocalSize(1, 1);

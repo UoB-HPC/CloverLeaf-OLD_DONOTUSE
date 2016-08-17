@@ -158,7 +158,8 @@ void accelerate_adaptor()
         openclQueue.enqueueNDRangeKernel(
             accelerate_kernel,
             cl::NullRange,
-            cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
+            calcGlobalSize(cl::NDRange(xmax - xmin + 1, ymax - ymin + 1),
+                           acclerate_local_size),
             acclerate_local_size);
     }
     if (profiler_on)

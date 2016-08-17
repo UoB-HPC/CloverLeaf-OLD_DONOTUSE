@@ -128,7 +128,8 @@ void revert(struct chunk_type chunk)
         openclQueue.enqueueNDRangeKernel(
             revert,
             cl::NullRange,
-            cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max) - (x_min) + 1, (y_max) - (y_min) + 1),
+                           revert_local_size),
             revert_local_size);
     }
     if (profiler_on)

@@ -681,7 +681,8 @@ void advec_mom(
         ms1_kernel.setArg(8,  *tile.field.d_vol_flux_y);
         openclQueue.enqueueNDRangeKernel(
             ms1_kernel, cl::NullRange,
-            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+                           advec_mom_ms1_local_size),
             advec_mom_ms1_local_size);
     } else if (mom_sweep == 2) {
         cl::Kernel ms2_kernel(openclProgram, "ms2_kernel");
@@ -696,7 +697,8 @@ void advec_mom(
         ms2_kernel.setArg(8,  *tile.field.d_vol_flux_y);
         openclQueue.enqueueNDRangeKernel(
             ms2_kernel, cl::NullRange,
-            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+                           advec_mom_ms2_local_size),
             advec_mom_ms2_local_size);
     } else if (mom_sweep == 3) {
         cl::Kernel ms3_kernel(openclProgram, "ms3_kernel");
@@ -711,7 +713,8 @@ void advec_mom(
         ms3_kernel.setArg(8,  *tile.field.d_vol_flux_y);
         openclQueue.enqueueNDRangeKernel(
             ms3_kernel, cl::NullRange,
-            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+                           advec_mom_ms3_local_size),
             advec_mom_ms3_local_size);
     } else if (mom_sweep == 4) {
         cl::Kernel ms4_kernel(openclProgram, "ms4_kernel");
@@ -728,7 +731,8 @@ void advec_mom(
 
         openclQueue.enqueueNDRangeKernel(
             ms4_kernel, cl::NullRange,
-            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 2) - (y_min - 2) + 1),
+                           advec_mom_ms4_local_size),
             advec_mom_ms4_local_size);
     }
 
@@ -742,7 +746,8 @@ void advec_mom(
         dx1_kernel.setArg(5,  *tile.field.d_mass_flux_x);
         openclQueue.enqueueNDRangeKernel(
             dx1_kernel, cl::NullRange,
-            cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 1) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 2) - (x_min - 2) + 1, (y_max + 1) - (y_min) + 1),
+                           advec_mom_x1_local_size),
             advec_mom_x1_local_size);
 
         cl::Kernel dx2_kernel(openclProgram, "dx2_kernel");
@@ -757,7 +762,8 @@ void advec_mom(
         dx2_kernel.setArg(8,  *tile.field.d_work_array1);
         openclQueue.enqueueNDRangeKernel(
             dx2_kernel, cl::NullRange,
-            cl::NDRange((x_max + 2) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 2) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1),
+                           advec_mom_x2_local_size),
             advec_mom_x2_local_size);
 
         cl::Kernel dx3_kernel(openclProgram, "dx3_kernel");
@@ -772,7 +778,8 @@ void advec_mom(
         dx3_kernel.setArg(8,  *d_vel1);
         openclQueue.enqueueNDRangeKernel(
             dx3_kernel, cl::NullRange,
-            cl::NDRange((x_max + 1) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 1) - (x_min - 1) + 1, (y_max + 1) - (y_min) + 1),
+                           advec_mom_x3_local_size),
             advec_mom_x3_local_size);
 
         cl::Kernel dx4_kernel(openclProgram, "dx4_kernel");
@@ -786,7 +793,8 @@ void advec_mom(
         dx4_kernel.setArg(7,  *tile.field.d_work_array2);
         openclQueue.enqueueNDRangeKernel(
             dx4_kernel, cl::NullRange,
-            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
+                           advec_mom_x4_local_size),
             advec_mom_x4_local_size);
     } else if (direction == Y) {
         cl::Kernel dy1_kernel(openclProgram, "dy1_kernel");
@@ -798,7 +806,8 @@ void advec_mom(
         dy1_kernel.setArg(5,  *tile.field.d_mass_flux_y);
         openclQueue.enqueueNDRangeKernel(
             dy1_kernel, cl::NullRange,
-            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 2) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 2) + 1),
+                           advec_mom_y1_local_size),
             advec_mom_y1_local_size);
 
         cl::Kernel dy2_kernel(openclProgram, "dy2_kernel");
@@ -813,7 +822,8 @@ void advec_mom(
         dy2_kernel.setArg(8,  *tile.field.d_work_array1);
         openclQueue.enqueueNDRangeKernel(
             dy2_kernel, cl::NullRange,
-            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 1) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 2) - (y_min - 1) + 1),
+                           advec_mom_y2_local_size),
             advec_mom_y2_local_size);
 
         cl::Kernel dy3_kernel(openclProgram, "dy3_kernel");
@@ -828,7 +838,8 @@ void advec_mom(
         dy3_kernel.setArg(8,  *d_vel1);
         openclQueue.enqueueNDRangeKernel(
             dy3_kernel, cl::NullRange,
-            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min - 1) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min - 1) + 1),
+                           advec_mom_y3_local_size),
             advec_mom_y3_local_size);
 
         cl::Kernel dy4_kernel(openclProgram, "dy4_kernel");
@@ -842,7 +853,8 @@ void advec_mom(
         dy4_kernel.setArg(7,  *tile.field.d_work_array2);
         openclQueue.enqueueNDRangeKernel(
             dy4_kernel, cl::NullRange,
-            cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
+            calcGlobalSize(cl::NDRange((x_max + 1) - (x_min) + 1, (y_max + 1) - (y_min) + 1),
+                           advec_mom_y4_local_size),
             advec_mom_y4_local_size);
     }
     if (profiler_on)
