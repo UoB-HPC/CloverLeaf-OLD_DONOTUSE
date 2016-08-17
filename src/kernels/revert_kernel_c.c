@@ -33,9 +33,9 @@ kernelqual void revert_kernel_c_(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,
-    field_2d_t density0,
+    const_field_2d_t density0,
     field_2d_t density1,
-    field_2d_t energy0,
+    const_field_2d_t energy0,
     field_2d_t energy1)
 {
     DENSITY1(density1, j, k) = DENSITY0(density0, j, k);

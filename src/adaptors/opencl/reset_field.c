@@ -2,14 +2,14 @@
 void kernel reset_field_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    global double*       density0,
-    const global double* density1,
-    global double*       energy0,
-    const global double* energy1,
-    global double*       xvel0,
-    const global double* xvel1,
-    global double*       yvel0,
-    const global double* yvel1)
+    field_2d_t       density0,
+    const_field_2d_t density1,
+    field_2d_t       energy0,
+    const_field_2d_t energy1,
+    field_2d_t       xvel0,
+    const_field_2d_t xvel1,
+    field_2d_t       yvel0,
+    const_field_2d_t yvel1)
 {
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;

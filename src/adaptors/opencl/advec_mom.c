@@ -3,11 +3,11 @@
 void kernel ms1_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    global double*       pre_vol,
-    global double*       post_vol ,
-    const global double* volume ,
-    const global double* vol_flux_x ,
-    const global double* vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min - 2;
@@ -27,11 +27,11 @@ void kernel ms1_kernel(
 void kernel ms2_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    global double*       pre_vol,
-    global double*       post_vol ,
-    const global double* volume ,
-    const global double* vol_flux_x ,
-    const global double* vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min - 2;
@@ -50,11 +50,11 @@ void kernel ms2_kernel(
 void kernel ms3_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    global double*       pre_vol,
-    global double*       post_vol ,
-    const global double* volume ,
-    const global double* vol_flux_x ,
-    const global double* vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min - 2;
@@ -73,11 +73,11 @@ void kernel ms3_kernel(
 void kernel ms4_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    global double*       pre_vol,
-    global double*       post_vol ,
-    const global double* volume ,
-    const global double* vol_flux_x ,
-    const global double* vol_flux_y)
+    field_2d_t       pre_vol,
+    field_2d_t       post_vol ,
+    const_field_2d_t volume ,
+    const_field_2d_t vol_flux_x ,
+    const_field_2d_t vol_flux_y)
 {
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min - 2;
@@ -96,8 +96,8 @@ void kernel ms4_kernel(
 void kernel dx1_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    global double* node_flux,
-    const global double* mass_flux_x)
+    field_2d_t node_flux,
+    const_field_2d_t mass_flux_x)
 {
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min - 2;
@@ -113,8 +113,8 @@ void kernel dx1_kernel(
 void kernel dy1_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    global double* node_flux,
-    const global double* mass_flux_y)
+    field_2d_t node_flux,
+    const_field_2d_t mass_flux_y)
 {
     int k = get_global_id(1) + y_min - 2;
     int j = get_global_id(0) + x_min;
@@ -130,11 +130,11 @@ void kernel dy1_kernel(
 void kernel dx2_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    global double* node_mass_post,
-    global double* node_mass_pre,
-    const global double* density1,
-    const global double* post_vol,
-    const global double* node_flux)
+    field_2d_t node_mass_post,
+    field_2d_t node_mass_pre,
+    const_field_2d_t density1,
+    const_field_2d_t post_vol,
+    const_field_2d_t node_flux)
 {
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min - 1;
@@ -153,11 +153,11 @@ void kernel dx2_kernel(
 void kernel dy2_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    global double* node_mass_post,
-    global double* node_mass_pre,
-    const global double* density1,
-    const global double* post_vol,
-    const global double* node_flux)
+    field_2d_t node_mass_post,
+    field_2d_t node_mass_pre,
+    const_field_2d_t density1,
+    const_field_2d_t post_vol,
+    const_field_2d_t node_flux)
 {
     int k = get_global_id(1) + y_min - 1;
     int j = get_global_id(0) + x_min;
@@ -175,11 +175,11 @@ void kernel dy2_kernel(
 
 void kernel dx3_kernel(
     int x_min, int x_max, int y_min, int y_max,
-    global double* mom_flux,
-    const global double* node_flux,
-    const global double* node_mass_pre,
-    const global double* celldx,
-    const global double* vel1)
+    field_2d_t mom_flux,
+    const_field_2d_t node_flux,
+    const_field_2d_t node_mass_pre,
+    const_field_2d_t celldx,
+    const_field_2d_t vel1)
 {
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min - 1;
@@ -197,11 +197,11 @@ void kernel dx3_kernel(
 
 void kernel dy3_kernel(
     int x_min, int x_max, int y_min, int y_max,
-    global double* mom_flux,
-    const global double* node_flux,
-    const global double* node_mass_pre,
-    const global double* celldy,
-    const global double* vel1)
+    field_2d_t mom_flux,
+    const_field_2d_t node_flux,
+    const_field_2d_t node_mass_pre,
+    const_field_2d_t celldy,
+    const_field_2d_t vel1)
 {
     int k = get_global_id(1) + y_min - 1;
     int j = get_global_id(0) + x_min;
@@ -219,10 +219,10 @@ void kernel dy3_kernel(
 
 void kernel dx4_kernel(
     int x_min, int x_max, int y_min, int y_max,
-    global double* vel1,
-    const global double* node_mass_pre,
-    const global double* mom_flux,
-    const global double* node_mass_post)
+    field_2d_t vel1,
+    const_field_2d_t node_mass_pre,
+    const_field_2d_t mom_flux,
+    const_field_2d_t node_mass_post)
 {
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
@@ -239,10 +239,10 @@ void kernel dx4_kernel(
 
 void kernel dy4_kernel(
     int x_min, int x_max, int y_min, int y_max,
-    global double* vel1,
-    const global double* node_mass_pre,
-    const global double* mom_flux,
-    const global double* node_mass_post)
+    field_2d_t vel1,
+    const_field_2d_t node_mass_pre,
+    const_field_2d_t mom_flux,
+    const_field_2d_t node_mass_post)
 {
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;

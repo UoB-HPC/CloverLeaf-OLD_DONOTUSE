@@ -4,10 +4,10 @@ void kernel flux_calc_x_kernel_(
     int x_min, int x_max,
     int y_min, int y_max,
     double dt,
-    const global double* xarea,
-    const global double* xvel0,
-    const global double* xvel1,
-    global double* vol_flux_x)
+    const_field_2d_t xarea,
+    const_field_2d_t xvel0,
+    const_field_2d_t xvel1,
+    field_2d_t vol_flux_x)
 {
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
@@ -28,10 +28,10 @@ void kernel flux_calc_y_kernel_(
     int x_min, int x_max,
     int y_min, int y_max,
     double dt,
-    const global double* yarea,
-    const global double* yvel0,
-    const global double* yvel1,
-    global double* vol_flux_y)
+    const_field_2d_t yarea,
+    const_field_2d_t yvel0,
+    const_field_2d_t yvel1,
+    field_2d_t vol_flux_y)
 {
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;

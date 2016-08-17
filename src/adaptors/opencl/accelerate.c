@@ -3,16 +3,16 @@
 void kernel accelerate_kernel(
     int x_min, int x_max,
     int y_min, int y_max,
-    const global double* xarea,
-    const global double* yarea,
-    const global double* volume,
-    const global double* density0 ,
-    const global double* pressure ,
-    const global double* viscosity,
-    global double* xvel0,
-    global double* yvel0,
-    global double* xvel1,
-    global double* yvel1,
+    const_field_2d_t xarea,
+    const_field_2d_t yarea,
+    const_field_2d_t volume,
+    const_field_2d_t density0 ,
+    const_field_2d_t pressure ,
+    const_field_2d_t viscosity,
+    field_2d_t xvel0,
+    field_2d_t yvel0,
+    field_2d_t xvel1,
+    field_2d_t yvel1,
     double dt)
 {
     int j = get_global_id(0) + x_min;
