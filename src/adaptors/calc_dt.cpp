@@ -220,47 +220,27 @@ void calc_dt_adaptor(int tile, double* local_dt)
         checkOclErr(calc_dt.setArg(17, sizeof(double) *
                                    dtmin_local_size[0] *
                                    dtmin_local_size[1], NULL));
-
+        cl::NDRange global_size = calcGlobalSize(
+                                      cl::NDRange(x_max - x_min + 1, y_max - y_min + 1),
+                                      dtmin_local_size);
         checkOclErr(openclQueue.enqueueNDRangeKernel(
                         calc_dt, cl::NullRange,
-                        calcGlobalSize(
-                            cl::NDRange(x_max - x_min + 1, y_max - y_min + 1),
-                            dtmin_local_size),
+                        global_size,
                         dtmin_local_size));
 
-        // cl::NDRange reductionLocalSize(1, 1);
-
-        // cl::Kernel reduce(openclProgram, "reduce");
-        // checkOclErr(reduce.setArg(0, *chunk.tiles[tile].field.d_work_array1));
-        // checkOclErr(reduce.setArg(1, sizeof(double) * 960 * 960, NULL));
-        // checkOclErr(reduce.setArg(2, 960 * 960));
-        // checkOclErr(reduce.setArg(3, *chunk.tiles[tile].field.d_work_array2));
-
-        // checkOclErr(openclQueue.enqueueNDRangeKernel(
-        //                 reduce,
-        //                 cl::NullRange,
-        //                 cl::NDRange(100, 100),
-        //                 reductionLocalSize));
-
         openclQueue.finish();
-
+        int num_groups = (global_size[0] / dtmin_local_size[0]) *
+                         (global_size[1] / dtmin_local_size[1]);
         mapoclmem(chunk.tiles[tile].field.d_work_array1,
                   chunk.tiles[tile].field.work_array1,
-                  chunk.tiles[tile].field.work_array1_size,
+                  num_groups,
                   CL_MAP_READ);
 
-        for (int k = y_min; k <= y_max; k++) {
-            for (int j = x_min; j <= x_max; j++) {
-                double val = WORK_ARRAY(chunk.tiles[tile].field.work_array1, j, k);
-                if (val < min)
-                    min = val;
-            }
+        for (int i = 0; i < num_groups; i++) {
+            double val = chunk.tiles[tile].field.work_array1[i];
+            if (val < min)
+                min = val;
         }
-        // for (int i = 0; i < reductionLocalSize[0]*reductionLocalSize[1]; i++) {
-        //     double val = chunk.tiles[tile].field.work_array2[i];
-        //     if (val < min)
-        //         min = val;
-        // }
 
         unmapoclmem(chunk.tiles[tile].field.d_work_array1,
                     chunk.tiles[tile].field.work_array1);
