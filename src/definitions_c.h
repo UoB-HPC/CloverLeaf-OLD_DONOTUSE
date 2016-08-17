@@ -158,5 +158,9 @@ extern struct grid_type grid;
 #define kernelqual
 #endif
 
+#ifndef local_t
+#define local_t double*
+#endif
+
 
 #endif

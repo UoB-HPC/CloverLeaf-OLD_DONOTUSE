@@ -153,6 +153,7 @@ struct field_type {
     }
 
 #define kernelqual inline
+#define local_t    local double*
 
 inline int roundUp(int numToRound, int multiple)
 {
@@ -202,6 +203,7 @@ inline cl::NDRange calcGlobalSize(
 #define advec_mom_y4_local_size    cl::NDRange(256,1)
 
 #define dtmin_local_size           cl::NDRange(256,1)
+#define field_summary_local_size   cl::NDRange(256,1)
 
 #define flux_calc_x_local_size     cl::NDRange(256,1)
 #define flux_calc_y_local_size     cl::NDRange(256,1)

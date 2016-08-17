@@ -22,13 +22,13 @@
  *  pressure for the chunk is calculated.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ftocmacros.h"
-#include <math.h>
-#include "../definitions_c.h"
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include "ftocmacros.h"
+// #include <math.h>
+// #include "../definitions_c.h"
 
-kernelqual void field_summary_kernel(
+kernelqual void field_summary_kernel_(
     int j, int k,
     int x_min, int x_max,
     int y_min, int y_max,
@@ -38,11 +38,11 @@ kernelqual void field_summary_kernel(
     const_field_2d_t pressure,
     const_field_2d_t xvel0,
     const_field_2d_t yvel0,
-    double* vol,
-    double* mass,
-    double* ie,
-    double* ke,
-    double* press)
+    local_t vol,
+    local_t mass,
+    local_t ie,
+    local_t ke,
+    local_t press)
 {
     double vsqrd = 0.0;
     for (int kv = k; kv <= k + 1; kv++) {

@@ -38,7 +38,7 @@ void field_summary(
         #pragma omp parallel for reduction(+:_vol,_mass,_ie,_ke,_press)
         for (int k = y_min; k <= y_max; k++) {
             for (int j = x_min; j <= x_max; j++) {
-                field_summary_kernel(
+                field_summary_kernel_(
                     j, k,
                     x_min, x_max,
                     y_min, y_max,
@@ -98,7 +98,7 @@ __global__ void field_summary_kernel(
 
     if (j <= x_max && k <= y_max) {
 
-        field_summary_kernel(
+        field_summary_kernel_(
             j, k,
             x_min, x_max,
             y_min, y_max,
@@ -219,7 +219,6 @@ void field_summary(
 
 #if defined(USE_OPENCL)
 #include "../definitions_c.h"
-#include "../kernels/field_summary_kernel_c.c"
 
 void field_summary(
     double* vol,
@@ -247,51 +246,64 @@ void field_summary(
         field_2d_t xvel1    = tile.field.xvel1;
         field_2d_t yvel1    = tile.field.yvel1;
 
-        mapoclmem(tile.field.d_volume, volume, tile.field.volume_size, CL_MAP_READ);
-        mapoclmem(tile.field.d_density1, density1, tile.field.density1_size, CL_MAP_READ);
-        mapoclmem(tile.field.d_energy1, energy1, tile.field.energy1_size, CL_MAP_READ);
-        mapoclmem(tile.field.d_pressure, pressure, tile.field.pressure_size, CL_MAP_READ);
-        mapoclmem(tile.field.d_xvel1, xvel1, tile.field.xvel1_size, CL_MAP_READ);
-        mapoclmem(tile.field.d_yvel1, yvel1, tile.field.yvel1_size, CL_MAP_READ);
+        cl::Kernel field_summary(openclProgram, "field_summary_kernel");
 
-        double _vol   = 0.0,
-               _mass  = 0.0,
-               _ie    = 0.0,
-               _ke    = 0.0,
-               _press = 0.0;
+        checkOclErr(field_summary.setArg(0,  x_min));
+        checkOclErr(field_summary.setArg(1,  x_max));
+        checkOclErr(field_summary.setArg(2,  y_min));
+        checkOclErr(field_summary.setArg(3,  y_max));
 
-        for (int k = y_min; k <= y_max; k++) {
-            for (int j = x_min; j <= x_max; j++) {
-                field_summary_kernel(
-                    j, k,
-                    x_min, x_max,
-                    y_min, y_max,
-                    volume,
-                    density1, energy1,
-                    pressure,
-                    xvel1, yvel1,
-                    &_vol, &_mass, &_ie, &_ke, &_press);
-            }
+        // checkOclErr(field_summary.setArg(4, *tile.field.d_xarea));
+        checkOclErr(field_summary.setArg(4, *tile.field.d_volume));
+        checkOclErr(field_summary.setArg(5, *tile.field.d_density0));
+        checkOclErr(field_summary.setArg(6, *tile.field.d_energy0));
+        checkOclErr(field_summary.setArg(7, *tile.field.d_pressure));
+        checkOclErr(field_summary.setArg(8, *tile.field.d_xvel0));
+        checkOclErr(field_summary.setArg(9, *tile.field.d_yvel0));
+
+        checkOclErr(field_summary.setArg(10, *tile.field.d_work_array1));
+        checkOclErr(field_summary.setArg(11, *tile.field.d_work_array2));
+        checkOclErr(field_summary.setArg(12, *tile.field.d_work_array3));
+        checkOclErr(field_summary.setArg(13, *tile.field.d_work_array4));
+        checkOclErr(field_summary.setArg(14, *tile.field.d_work_array5));
+
+        checkOclErr(field_summary.setArg(15, sizeof(double) *dtmin_local_size[0] *dtmin_local_size[1], NULL));
+        checkOclErr(field_summary.setArg(16, sizeof(double) *dtmin_local_size[0] *dtmin_local_size[1], NULL));
+        checkOclErr(field_summary.setArg(17, sizeof(double) *dtmin_local_size[0] *dtmin_local_size[1], NULL));
+        checkOclErr(field_summary.setArg(18, sizeof(double) *dtmin_local_size[0] *dtmin_local_size[1], NULL));
+        checkOclErr(field_summary.setArg(19, sizeof(double) *dtmin_local_size[0] *dtmin_local_size[1], NULL));
+
+        cl::NDRange global_size = calcGlobalSize(
+                                      cl::NDRange(x_max - x_min + 1, y_max - y_min + 1),
+                                      field_summary_local_size);
+        checkOclErr(openclQueue.enqueueNDRangeKernel(
+                        field_summary, cl::NullRange,
+                        global_size,
+                        field_summary_local_size));
+
+        int num_groups = (global_size[0] / field_summary_local_size[0]) *
+                         (global_size[1] / field_summary_local_size[1]);
+
+        mapoclmem(tile.field.d_work_array1, tile.field.work_array1, num_groups, CL_MAP_READ);
+        mapoclmem(tile.field.d_work_array2, tile.field.work_array2, num_groups, CL_MAP_READ);
+        mapoclmem(tile.field.d_work_array3, tile.field.work_array3, num_groups, CL_MAP_READ);
+        mapoclmem(tile.field.d_work_array4, tile.field.work_array4, num_groups, CL_MAP_READ);
+        mapoclmem(tile.field.d_work_array5, tile.field.work_array5, num_groups, CL_MAP_READ);
+
+        for (int i = 0; i < num_groups; i++) {
+            *vol   += tile.field.work_array1[i];
+            *mass  += tile.field.work_array2[i];
+            *ie    += tile.field.work_array3[i];
+            *ke    += tile.field.work_array4[i];
+            *press += tile.field.work_array5[i];
         }
 
-        unmapoclmem(tile.field.d_volume,
-                    tile.field.volume);
-        unmapoclmem(tile.field.d_density1,
-                    tile.field.density1);
-        unmapoclmem(tile.field.d_energy1,
-                    tile.field.energy1);
-        unmapoclmem(tile.field.d_pressure,
-                    tile.field.pressure);
-        unmapoclmem(tile.field.d_xvel1,
-                    tile.field.xvel1);
-        unmapoclmem(tile.field.d_yvel1,
-                    tile.field.yvel1);
 
-        *vol   += _vol;
-        *mass  += _mass;
-        *ie    += _ie;
-        *ke    += _ke;
-        *press += _press;
+        unmapoclmem(tile.field.d_work_array1, tile.field.work_array1);
+        unmapoclmem(tile.field.d_work_array2, tile.field.work_array2);
+        unmapoclmem(tile.field.d_work_array3, tile.field.work_array3);
+        unmapoclmem(tile.field.d_work_array4, tile.field.work_array4);
+        unmapoclmem(tile.field.d_work_array5, tile.field.work_array5);
     }
     if (profiler_on)
         openclQueue.finish();

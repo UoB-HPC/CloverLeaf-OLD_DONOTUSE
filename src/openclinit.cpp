@@ -67,6 +67,9 @@ void initOpenCL()
     files.push_back("./src/kernels/update_halo_kernel_c.c");
     files.push_back("./src/adaptors/opencl/update_halo.c");
 
+    files.push_back("./src/kernels/field_summary_kernel_c.c");
+    files.push_back("./src/adaptors/opencl/field_summary.c");
+
     std::stringstream buffer;
     for (int i = 0; i < files.size(); i++) {
         std::ifstream t(files[i]);

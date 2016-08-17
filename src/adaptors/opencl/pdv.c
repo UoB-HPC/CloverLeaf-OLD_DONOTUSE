@@ -23,8 +23,8 @@ void kernel pdv_kernel(
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 
-    if (j <= x_max && k <= y_max)
-        if (predict == 0)
+    if (j <= x_max && k <= y_max) {
+        if (predict == 0) {
             pdv_kernel_predict_c_(
                 j, k,
                 x_min, x_max, y_min, y_max,
@@ -43,7 +43,7 @@ void kernel pdv_kernel(
                 yvel0,
                 yvel1,
                 volume_change);
-        else
+        } else {
             pdv_kernel_no_predict_c_(
                 j, k,
                 x_min, x_max, y_min, y_max,
@@ -62,4 +62,6 @@ void kernel pdv_kernel(
                 yvel0,
                 yvel1,
                 volume_change);
+        }
+    }
 }
