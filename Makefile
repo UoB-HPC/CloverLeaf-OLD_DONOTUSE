@@ -6,8 +6,9 @@ MPI_CC_ = mpic++
 
 
 FLAGS_GNU = -std=c++11 -Wall -Wpedantic -g -Wno-unknown-pragmas -O3 -march=native -lm
-# FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -fp-model strict
-FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -no-prec-div -fno-alias
+FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -fp-model strict
+# FLAGS_INTEL = -std=c++11 -O3 -g -restrict -xMIC-AVX512 -no-prec-div -fno-alias
+# FLAGS_INTEL = -std=c++11 -O3 -g -restrict -no-prec-div -fno-alias
 FLAGS_CUDA = 
 FLAGS_ = 
 
@@ -29,14 +30,14 @@ OBJECTS = data_c.o \
 	reset_field.o \
 	visit.o \
 	update_halo.o \
-	accelerate.o
+	accelerate.o \
+	field_summary.o
 
 MPIOBJECTS = clover.o \
 	initialise.o \
 	hydro.o \
 	timestep.o \
-	start.o \
-	field_summary.o
+	start.o
 
 
 
@@ -44,9 +45,10 @@ default: build
 
 ifdef USE_KOKKOS
     ifeq ($(USE_KOKKOS),gpu)
-        CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
+        # CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
+        CXX = ./nvcc_wrapper
         MPI_FLAGS += -lcudart
-        FLAGS := --show $(FLAGS) -O3 "-x,c++"
+        FLAGS := $(FLAGS) -O3
 
         KOKKOS_CUDA_OPTIONS = "enable_lambda"
         KOKKOS_DEVICE= "Cuda"
@@ -91,7 +93,7 @@ ifdef USE_CUDA
     MPI_FLAGS += -DUSE_CUDA \
         -L/nfs/modules/cuda/7.5.18/lib64 -lcudart
 
-    FLAGS += -x cu -std=c++11 -DUSE_CUDA \
+    FLAGS += -x cu -O3 -std=c++11 -DUSE_CUDA \
         -I/nfs/modules/openmpi/1.10.3/include
 endif
 
