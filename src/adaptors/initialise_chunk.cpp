@@ -128,17 +128,6 @@ void initialise_chunk(int tile)
 {
     double xmin, ymin, dx, dy;
 
-    field_2d_t vertexx  = chunk.tiles[tile].field.vertexx ;
-    field_2d_t vertexdx = chunk.tiles[tile].field.vertexdx;
-    field_2d_t vertexy  = chunk.tiles[tile].field.vertexy ;
-    field_2d_t vertexdy = chunk.tiles[tile].field.vertexdy;
-    field_2d_t cellx    = chunk.tiles[tile].field.cellx   ;
-    field_2d_t celldx   = chunk.tiles[tile].field.celldx  ;
-    field_2d_t celly    = chunk.tiles[tile].field.celly   ;
-    field_2d_t celldy   = chunk.tiles[tile].field.celldy  ;
-    field_2d_t volume   = chunk.tiles[tile].field.volume  ;
-    field_2d_t xarea    = chunk.tiles[tile].field.xarea   ;
-    field_2d_t yarea    = chunk.tiles[tile].field.yarea   ;
 
     mapoclmem(chunk.tiles[tile].field.d_vertexx,
               chunk.tiles[tile].field.vertexx,
@@ -185,6 +174,17 @@ void initialise_chunk(int tile)
               chunk.tiles[tile].field.yarea_size,
               CL_MAP_WRITE);
 
+    field_2d_t vertexx  = chunk.tiles[tile].field.vertexx ;
+    field_2d_t vertexdx = chunk.tiles[tile].field.vertexdx;
+    field_2d_t vertexy  = chunk.tiles[tile].field.vertexy ;
+    field_2d_t vertexdy = chunk.tiles[tile].field.vertexdy;
+    field_2d_t cellx    = chunk.tiles[tile].field.cellx   ;
+    field_2d_t celldx   = chunk.tiles[tile].field.celldx  ;
+    field_2d_t celly    = chunk.tiles[tile].field.celly   ;
+    field_2d_t celldy   = chunk.tiles[tile].field.celldy  ;
+    field_2d_t volume   = chunk.tiles[tile].field.volume  ;
+    field_2d_t xarea    = chunk.tiles[tile].field.xarea   ;
+    field_2d_t yarea    = chunk.tiles[tile].field.yarea   ;
 
     dx = (grid.xmax - grid.xmin) / (float)grid.x_cells;
     dy = (grid.ymax - grid.ymin) / (float)grid.y_cells;

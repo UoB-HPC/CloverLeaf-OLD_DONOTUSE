@@ -66,11 +66,12 @@ __constant double dtc_safe = 0.7,
 
 #else // Inside opencl code
 
-#define const_field_2d_t     const global double* __restrict__
-#define field_2d_t           global double* __restrict__
 
-#define const_field_1d_t     const global double* __restrict__
-#define field_1d_t           global double* __restrict__
+#define const_field_2d_t     const global double* __restrict__ const
+#define field_2d_t           global double* __restrict__ const
+
+#define const_field_1d_t     const global double* __restrict__ const
+#define field_1d_t           global double* __restrict__ const
 
 #define flag_t               constant int*
 

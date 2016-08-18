@@ -12,7 +12,7 @@
 #endif
 
 #ifdef USE_OPENCL
-#include "openclinit.cpp"
+// #include "openclinit.cpp"
 #endif
 
 #ifdef USE_CUDA
@@ -31,8 +31,6 @@ int main(int argc, char** argv)
 #endif
 #ifdef USE_OPENCL
     printf("Using OpenCL\n");
-
-    initOpenCL();
 #endif
 
 #ifdef USE_KOKKOS

@@ -331,8 +331,10 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
     checkOclErr(openclQueue.enqueueNDRangeKernel(
                     update_halo_1,
                     cl::NullRange,
-                    calcGlobalSize(cl::NDRange((x_max + depth) - (x_min - depth) + 1, depth - 1 + 1),
-                                   update_halo_1_local_size),
+                    calcGlobalSize(
+                        cl::NDRange((x_max + depth) - (x_min - depth) + 1,
+                                    depth - 1 + 1),
+                        update_halo_1_local_size),
                     update_halo_1_local_size));
 
     cl::Kernel update_halo_2(openclProgram, "update_halo_2_kernel");

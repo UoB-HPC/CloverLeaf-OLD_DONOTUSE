@@ -8,6 +8,7 @@
 #include "visit.h"
 #include "clover.h"
 #include "allocate.h"
+#include "openclinit.cpp"
 
 void clover_decompose(int x_cells,
                       int y_cells,
@@ -61,6 +62,9 @@ void start()
 
     clover_tile_decompose(x_cells, y_cells);
 
+#ifdef USE_OPENCL
+    initOpenCL();
+#endif
     allocate();
     clover_allocate_buffers();
 

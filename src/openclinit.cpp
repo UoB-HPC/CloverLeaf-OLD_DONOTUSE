@@ -1,8 +1,10 @@
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #include "cl.hpp"
+
 #include <fstream>
 #include <sstream>
 #include <string>
+#include "definitions_c.h"
 
 void initOpenCL()
 {
@@ -12,8 +14,12 @@ void initOpenCL()
         std::cerr << " No platforms found. Check OpenCL installation!\n";
         exit(1);
     }
+
+    for (int i = 0; i < all_platforms.size(); i++) {
+        std::cout << "Platform available: " << all_platforms[i].getInfo<CL_PLATFORM_NAME>() << "\n";
+    }
     cl::Platform default_platform = all_platforms[0];
-    std::cout << "Using platform: " << default_platform.getInfo<CL_PLATFORM_NAME>() << "\n";
+    std::cout << "\nUsing platform: " << default_platform.getInfo<CL_PLATFORM_NAME>() << "\n";
 
     //get default device of the default platform
     std::vector<cl::Device> all_devices;
@@ -23,9 +29,19 @@ void initOpenCL()
         exit(1);
     }
 
+    for (int i = 0; i < all_devices.size(); i++) {
+        std::cout << "Device available: " << all_devices[i].getInfo<CL_DEVICE_NAME>() << "\n";
+
+    }
     // TODO parameterise
     cl::Device default_device = all_devices[0];
-    std::cout << "Using device: " << default_device.getInfo<CL_DEVICE_NAME>() << "\n";
+    std::cout << "\nUsing device: " << default_device.getInfo<CL_DEVICE_NAME>() << "\n";
+    printf("\tECC: %d\n\tGlobal cache size: %d\n\tMax compute units: %d\n\tMax work group size: %d\n",
+           default_device.getInfo<CL_DEVICE_ERROR_CORRECTION_SUPPORT>(),
+           default_device.getInfo<CL_DEVICE_GLOBAL_MEM_CACHE_SIZE>(),
+           default_device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>(),
+           default_device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>()
+          );
 
     openclContext = cl::Context({default_device});
 
@@ -83,9 +99,9 @@ void initOpenCL()
     // std::cout << kernel_code << std::endl;
 
     sources.push_back({kernel_code.c_str(), kernel_code.length()});
-
+    const char* buildOptions = "";
     openclProgram = cl::Program(openclContext, sources);
-    if (openclProgram.build({default_device}) != CL_SUCCESS) {
+    if (openclProgram.build({default_device}, buildOptions) != CL_SUCCESS) {
         std::cerr << " Error building: " << openclProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device) << "\n";
         exit(1);
     }
