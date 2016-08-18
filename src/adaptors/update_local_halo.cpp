@@ -288,23 +288,25 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
         y_min = tile.t_ymin,
         y_max = tile.t_ymax;
 
+    cl_int err;
+
     cl::Buffer chunk_neighbours_cl(
         openclContext, CL_MEM_COPY_HOST_PTR,
-        sizeof(int) * 4, chunk_neighbours);
+        sizeof(int) * 4, chunk_neighbours, &err); checkOclErr(err);
 
     cl::Buffer tile_neighbours_cl(
         openclContext, CL_MEM_COPY_HOST_PTR,
-        sizeof(int) * 4, tile.tile_neighbours);
+        sizeof(int) * 4, tile.tile_neighbours, &err); checkOclErr(err);
 
     cl::Buffer fields_cl(
         openclContext, CL_MEM_COPY_HOST_PTR,
-        sizeof(int) * NUM_FIELDS, fields);
+        sizeof(int) * NUM_FIELDS, fields, &err); checkOclErr(err);
 
     cl::Kernel update_halo_1(openclProgram, "update_halo_1_kernel");
-    update_halo_1.setArg(0,  x_min);
-    update_halo_1.setArg(1,  x_max);
-    update_halo_1.setArg(2,  y_min);
-    update_halo_1.setArg(3,  y_max);
+    checkOclErr(update_halo_1.setArg(0,  x_min));
+    checkOclErr(update_halo_1.setArg(1,  x_max));
+    checkOclErr(update_halo_1.setArg(2,  y_min));
+    checkOclErr(update_halo_1.setArg(3,  y_max));
 
 
     checkOclErr(update_halo_1.setArg(4, chunk_neighbours_cl));
@@ -338,10 +340,10 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
                     update_halo_1_local_size));
 
     cl::Kernel update_halo_2(openclProgram, "update_halo_2_kernel");
-    update_halo_2.setArg(0,  x_min);
-    update_halo_2.setArg(1,  x_max);
-    update_halo_2.setArg(2,  y_min);
-    update_halo_2.setArg(3,  y_max);
+    checkOclErr(update_halo_2.setArg(0,  x_min));
+    checkOclErr(update_halo_2.setArg(1,  x_max));
+    checkOclErr(update_halo_2.setArg(2,  y_min));
+    checkOclErr(update_halo_2.setArg(3,  y_max));
 
 
     checkOclErr(update_halo_2.setArg(4, chunk_neighbours_cl));

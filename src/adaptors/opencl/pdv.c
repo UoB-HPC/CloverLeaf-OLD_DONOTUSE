@@ -20,6 +20,12 @@ void kernel pdv_kernel(
     field_2d_t       volume_change,
     int predict)
 {
+    // int x_min = x_min_def;
+    // int x_max = x_max_def;
+
+    // int y_min = y_min_def;
+    // int y_max = y_max_def;
+
     int k = get_global_id(1) + y_min;
     int j = get_global_id(0) + x_min;
 

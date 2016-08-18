@@ -128,7 +128,6 @@ void initialise_chunk(int tile)
 {
     double xmin, ymin, dx, dy;
 
-
     mapoclmem(chunk.tiles[tile].field.d_vertexx,
               chunk.tiles[tile].field.vertexx,
               chunk.tiles[tile].field.vertexx_size,

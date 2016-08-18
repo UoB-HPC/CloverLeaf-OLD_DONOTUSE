@@ -1,9 +1,7 @@
-#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
-#include "cl.hpp"
-
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <iostream>
 #include "definitions_c.h"
 
 void initOpenCL()
@@ -99,7 +97,18 @@ void initOpenCL()
     // std::cout << kernel_code << std::endl;
 
     sources.push_back({kernel_code.c_str(), kernel_code.length()});
-    const char* buildOptions = "";
+
+    char buildOptions[200];
+    sprintf(buildOptions,
+            "-D x_min_def=%d "
+            "-D x_max_def=%d "
+            "-D y_min_def=%d "
+            "-D y_max_def=%d ",
+            chunk.tiles[0].t_xmin,
+            chunk.tiles[0].t_xmax,
+            chunk.tiles[0].t_ymin,
+            chunk.tiles[0].t_ymax);
+
     openclProgram = cl::Program(openclContext, sources);
     if (openclProgram.build({default_device}, buildOptions) != CL_SUCCESS) {
         std::cerr << " Error building: " << openclProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device) << "\n";

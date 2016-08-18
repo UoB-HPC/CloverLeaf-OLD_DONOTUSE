@@ -253,7 +253,6 @@ void field_summary(
         checkOclErr(field_summary.setArg(2,  y_min));
         checkOclErr(field_summary.setArg(3,  y_max));
 
-        // checkOclErr(field_summary.setArg(4, *tile.field.d_xarea));
         checkOclErr(field_summary.setArg(4, *tile.field.d_volume));
         checkOclErr(field_summary.setArg(5, *tile.field.d_density0));
         checkOclErr(field_summary.setArg(6, *tile.field.d_energy0));
