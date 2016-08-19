@@ -297,7 +297,7 @@ inline cl::NDRange calcGlobalSize(
 #define revert_local_size          cl::NDRange(256,1)
 
 #define update_halo_1_local_size   cl::NDRange(256,1)
-#define update_halo_2_local_size   cl::NDRange(256,1)
+#define update_halo_2_local_size   cl::NDRange(1,256)
 
 #define viscosity_local_size       cl::NDRange(256,1)
 

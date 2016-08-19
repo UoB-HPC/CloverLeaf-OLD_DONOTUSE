@@ -8,7 +8,9 @@
 #include "visit.h"
 #include "clover.h"
 #include "allocate.h"
+#ifdef USE_OPENCL
 #include "openclinit.cpp"
+#endif
 
 void clover_decompose(int x_cells,
                       int y_cells,
