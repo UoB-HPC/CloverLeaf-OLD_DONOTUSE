@@ -21,13 +21,13 @@
  *@details Invokes the user specified chunk initialisation kernel.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ftocmacros.h"
-#include <math.h>
-#include "../definitions_c.h"
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include "ftocmacros.h"
+// #include <math.h>
+// #include "../definitions_c.h"
 
-void initialise_chunk_kernel_c_(
+kernelqual void initialise_chunk_kernel_c_(
     int x_min, int x_max, int y_min, int y_max,
     double min_x,
     double min_y,
@@ -99,9 +99,12 @@ void initialise_chunk_kernel_c_(
     }
 
 
-    DOUBLEFOR(y_min - 2, y_max + 2, x_min - 2, x_max + 2, {
-        VOLUME(volume, j, k) = d_x* d_y;
-        XAREA(xarea, j, k) = d_x;
-        YAREA(yarea, j, k) = d_y;
-    });
+
+    for (int k = y_min - 2; k <= y_max + 2; k++) {
+        for (int j = x_min - 2; j <= x_max + 2; j++) {
+            VOLUME(volume, j, k) = d_x * d_y;
+            XAREA(xarea, j, k) = d_x;
+            YAREA(yarea, j, k) = d_y;
+        }
+    }
 }

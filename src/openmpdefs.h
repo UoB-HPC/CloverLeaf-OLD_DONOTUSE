@@ -100,10 +100,10 @@ struct field_type {
 
 #define FIELD_1D(d, i, j)      d[FTNREF1D(i, j)]
 
-#define const_field_2d_t     const double* __restrict__
-#define field_2d_t           double* __restrict__
+#define const_field_2d_t     const double* __restrict__ const
+#define field_2d_t           double* __restrict__ const
 
-#define const_field_1d_t     const double* __restrict__
-#define field_1d_t           double* __restrict__
+#define const_field_1d_t     const double* __restrict__ const
+#define field_1d_t           double* __restrict__ const
 
 #define flag_t               int*

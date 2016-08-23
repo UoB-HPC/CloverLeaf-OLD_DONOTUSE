@@ -7,6 +7,7 @@
 #include "kokkos/mom_sweep.cpp"
 #include "kokkos/mom_direction.cpp"
 
+
 void advec_mom(
     int which_vel,
     struct tile_type tile,
@@ -14,7 +15,7 @@ void advec_mom(
     int sweep_number,
     int direction)
 {
-    field_2d_t vel1 = which_vel == 1 ? tile.field.xvel1 : tile.field.yvel1;
+    auto vel1 = which_vel == 1 ? tile.field.d_xvel1 : tile.field.d_yvel1;
     int mom_sweep = direction + 2 * (sweep_number - 1);
 
     mom_sweep_functor f1(

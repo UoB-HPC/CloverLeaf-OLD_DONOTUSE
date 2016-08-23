@@ -13,11 +13,11 @@ struct mom_sweep_functor {
         x_max,
         y_min,
         y_max;
-    Kokkos::View<double**> pre_vol,
-           post_vol,
-           volume,
-           vol_flux_x,
-           vol_flux_y;
+    field_2d_lt pre_vol,
+                post_vol,
+                volume,
+                vol_flux_x,
+                vol_flux_y;
     int mom_sweep;
 
     mom_sweep_functor(
@@ -28,11 +28,11 @@ struct mom_sweep_functor {
         x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
         x_min(tile.t_xmin), x_max(tile.t_xmax),
         y_min(tile.t_ymin), y_max(tile.t_ymax),
-        pre_vol(*(tile.field.work_array5)),
-        post_vol(*(tile.field.work_array6)),
-        volume(*(tile.field.volume)),
-        vol_flux_x(*(tile.field.vol_flux_x)),
-        vol_flux_y(*(tile.field.vol_flux_y)),
+        pre_vol((tile.field.d_work_array5)),
+        post_vol((tile.field.d_work_array6)),
+        volume((tile.field.d_volume)),
+        vol_flux_x((tile.field.d_vol_flux_x)),
+        vol_flux_y((tile.field.d_vol_flux_y)),
         mom_sweep(_mom_sweep)
     {}
 
@@ -51,32 +51,32 @@ struct mom_sweep_functor {
 
             if (mom_sweep == 1) {
                 ms1(j, k, x_min, x_max, y_min, y_max,
-                    &pre_vol,
-                    &post_vol,
-                    &volume,
-                    &vol_flux_x,
-                    &vol_flux_y);
+                    pre_vol,
+                    post_vol,
+                    volume,
+                    vol_flux_x,
+                    vol_flux_y);
             } else if (mom_sweep == 2) {
                 ms2(j, k, x_min, x_max, y_min, y_max,
-                    &pre_vol,
-                    &post_vol,
-                    &volume,
-                    &vol_flux_x,
-                    &vol_flux_y);
+                    pre_vol,
+                    post_vol,
+                    volume,
+                    vol_flux_x,
+                    vol_flux_y);
             } else if (mom_sweep == 3) {
                 ms3(j, k, x_min, x_max, y_min, y_max,
-                    &pre_vol,
-                    &post_vol,
-                    &volume,
-                    &vol_flux_x,
-                    &vol_flux_y);
+                    pre_vol,
+                    post_vol,
+                    volume,
+                    vol_flux_x,
+                    vol_flux_y);
             } else if (mom_sweep == 4) {
                 ms4(j, k, x_min, x_max, y_min, y_max,
-                    &pre_vol,
-                    &post_vol,
-                    &volume,
-                    &vol_flux_x,
-                    &vol_flux_y);
+                    pre_vol,
+                    post_vol,
+                    volume,
+                    vol_flux_x,
+                    vol_flux_y);
             }
         });
     }

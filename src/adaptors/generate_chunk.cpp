@@ -1,6 +1,10 @@
 
 
 #if defined(USE_KOKKOS)
+// #undef field_2d_t
+// #define field_2d_t const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror*
+// #undef field_1d_t
+// #define field_1d_t const Kokkos::View<double*, Kokkos::HostSpace>::HostMirror*
 #include "../kernels/generate_chunk_kernel_c.c"
 void generate_chunk(
     int tile,

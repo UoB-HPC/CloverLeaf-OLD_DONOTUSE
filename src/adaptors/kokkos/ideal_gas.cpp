@@ -4,6 +4,12 @@
 
 using namespace Kokkos;
 
+// template <
+//     typename const_field_2d_t,
+//     typename field_2d_t,
+//     typename const_field_1d_t,
+//     typename field_1d_t
+//     >
 struct ideal_gas_functor {
     int x_from,
         x_to,
@@ -13,19 +19,19 @@ struct ideal_gas_functor {
         x_max,
         y_min,
         y_max;
-    Kokkos::View<double**> energy,
-           density;
-    Kokkos::View<double**> pressure,
-           soundspeed;
+    field_2d_lt energy,
+                density;
+    field_2d_lt pressure,
+                soundspeed;
 
     ideal_gas_functor(
         struct tile_type tile,
         int _x_from, int _x_to, int _y_from, int _y_to,
-        field_2d_t _density, field_2d_t _energy):
+        field_2d_lt _density, field_2d_lt _energy):
         x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
         x_min(tile.t_xmin), x_max(tile.t_xmax), y_min(tile.t_ymin), y_max(tile.t_ymax),
-        energy(*_energy), density(*_density),
-        pressure(*(tile.field.pressure)), soundspeed(*(tile.field.soundspeed))
+        energy(_energy), density(_density),
+        pressure((tile.field.d_pressure)), soundspeed((tile.field.d_soundspeed))
     {}
 
     void compute()
@@ -45,8 +51,8 @@ struct ideal_gas_functor {
                 j, k,
                 x_min, x_max,
                 y_min, y_max,
-                &density, &energy,
-                &pressure, &soundspeed
+                density, energy,
+                pressure, soundspeed
             );
         });
     }

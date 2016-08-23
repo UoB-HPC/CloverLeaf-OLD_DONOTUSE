@@ -1,6 +1,6 @@
 #include "../definitions_c.h"
 
-#if defined(USE_OPENMP) || defined(USE_OMPSS) || defined(USE_KOKKOS)
+#if defined(USE_OPENMP) || defined(USE_OMPSS)
 #include "../kernels/field_summary_kernel_c.c"
 void field_summary(
     double* vol,
@@ -46,6 +46,68 @@ void field_summary(
                     density0, energy0,
                     pressure,
                     xvel0, yvel0,
+                    &_vol, &_mass, &_ie, &_ke, &_press);
+            }
+        }
+
+        *vol   += _vol;
+        *mass  += _mass;
+        *ie    += _ie;
+        *ke    += _ke;
+        *press += _press;
+    }
+}
+#endif
+
+#if defined(USE_KOKKOS)
+// #undef const_field_2d_t
+// #define const_field_2d_t const Kokkos::View<double**, Kokkos::HostSpace>*
+// #define T Kokkos::HostSpace
+
+#include "../kernels/field_summary_kernel_c.c"
+void field_summary(
+    double* vol,
+    double* ie,
+    double* ke,
+    double* mass,
+    double* press)
+{
+    *vol = 0.0;
+    *mass = 0.0;
+    *ie = 0.0;
+    *ke = 0.0;
+    *press = 0.0;
+
+    for (int tilen = 0; tilen < tiles_per_chunk; tilen++) {
+        struct tile_type tile = chunk.tiles[tilen];
+        int x_min = tile.t_xmin,
+            x_max = tile.t_xmax,
+            y_min = tile.t_ymin,
+            y_max = tile.t_ymax;
+        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* volume   = tile.field.volume;
+        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* density0 = tile.field.density0;
+        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* energy0  = tile.field.energy0;
+        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* pressure = tile.field.pressure;
+        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* xvel0    = tile.field.xvel0;
+        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* yvel0    = tile.field.yvel0;
+
+        double _vol   = 0.0,
+               _mass  = 0.0,
+               _ie    = 0.0,
+               _ke    = 0.0,
+               _press = 0.0;
+
+        for (int k = y_min; k <= y_max; k++) {
+            for (int j = x_min; j <= x_max; j++) {
+                field_summary_kernel_(
+                    j, k,
+                    x_min, x_max,
+                    y_min, y_max,
+                    tile.field.volume,
+                    tile.field.density0,
+                    tile.field.energy0,
+                    tile.field.pressure,
+                    tile.field.xvel0, tile.field.yvel0,
                     &_vol, &_mass, &_ie, &_ke, &_press);
             }
         }

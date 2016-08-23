@@ -1,7 +1,7 @@
 
 #include "../kernels/update_halo_kernel_c.c"
 
-#if defined(USE_OPENMP) || defined(USE_OMPSS) || defined(USE_KOKKOS)
+#if defined(USE_OPENMP) || defined(USE_OMPSS)
 
 void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields, int depth)
 {
@@ -66,6 +66,78 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
                 tile.field.mass_flux_x,
                 tile.field.vol_flux_y,
                 tile.field.mass_flux_y,
+                fields,
+                depth);
+        }
+    }
+}
+#endif
+
+#if defined(USE_KOKKOS)
+
+void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields, int depth)
+{
+    int x_min = tile.t_xmin,
+        x_max = tile.t_xmax,
+        y_min = tile.t_ymin,
+        y_max = tile.t_ymax;
+
+    for (int j = x_min - depth; j <= x_max + depth; j++) {
+#pragma ivdep
+        for (int k = 1; k <= depth; k++) {
+            update_halo_kernel_1(
+                j, k,
+                tile.t_xmin,
+                tile.t_xmax,
+                tile.t_ymin,
+                tile.t_ymax,
+                chunk_neighbours,
+                tile.tile_neighbours,
+                tile.field.d_density0,
+                tile.field.d_density1,
+                tile.field.d_energy0,
+                tile.field.d_energy1,
+                tile.field.d_pressure,
+                tile.field.d_viscosity,
+                tile.field.d_soundspeed,
+                tile.field.d_xvel0,
+                tile.field.d_yvel0,
+                tile.field.d_xvel1,
+                tile.field.d_yvel1,
+                tile.field.d_vol_flux_x,
+                tile.field.d_mass_flux_x,
+                tile.field.d_vol_flux_y,
+                tile.field.d_mass_flux_y,
+                fields,
+                depth);
+        }
+    }
+    for (int k = y_min - depth; k <= y_max + depth; k++) {
+#pragma ivdep
+        for (int j = 1; j <= depth; j++) {
+            update_halo_kernel_2(
+                j, k,
+                tile.t_xmin,
+                tile.t_xmax,
+                tile.t_ymin,
+                tile.t_ymax,
+                chunk_neighbours,
+                tile.tile_neighbours,
+                tile.field.d_density0,
+                tile.field.d_density1,
+                tile.field.d_energy0,
+                tile.field.d_energy1,
+                tile.field.d_pressure,
+                tile.field.d_viscosity,
+                tile.field.d_soundspeed,
+                tile.field.d_xvel0,
+                tile.field.d_yvel0,
+                tile.field.d_xvel1,
+                tile.field.d_yvel1,
+                tile.field.d_vol_flux_x,
+                tile.field.d_mass_flux_x,
+                tile.field.d_vol_flux_y,
+                tile.field.d_mass_flux_y,
                 fields,
                 depth);
         }

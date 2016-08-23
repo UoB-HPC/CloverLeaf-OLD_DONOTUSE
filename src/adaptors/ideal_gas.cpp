@@ -11,8 +11,8 @@ void ideal_gas_adaptor(int tile, bool predict)
             chunk.tiles[tile].t_xmax,
             chunk.tiles[tile].t_ymin,
             chunk.tiles[tile].t_ymax,
-            chunk.tiles[tile].field.density1,
-            chunk.tiles[tile].field.energy1);
+            chunk.tiles[tile].field.d_density1,
+            chunk.tiles[tile].field.d_energy1);
         g.compute();
     } else {
         ideal_gas_functor g(
@@ -21,8 +21,8 @@ void ideal_gas_adaptor(int tile, bool predict)
             chunk.tiles[tile].t_xmax,
             chunk.tiles[tile].t_ymin,
             chunk.tiles[tile].t_ymax,
-            chunk.tiles[tile].field.density0,
-            chunk.tiles[tile].field.energy0);
+            chunk.tiles[tile].field.d_density0,
+            chunk.tiles[tile].field.d_energy0);
         g.compute();
     }
 }

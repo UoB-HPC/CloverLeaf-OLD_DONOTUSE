@@ -17,38 +17,38 @@ extern int g_name_len_max ,
 
 // These two need to be kept consistent with update_halo
 enum chunk_enum {
-      CHUNK_LEFT   ,
-      CHUNK_RIGHT  ,
-      CHUNK_BOTTOM ,
-      CHUNK_TOP    ,
-      EXTERNAL_FACE = -1
+    CHUNK_LEFT = 0  ,
+    CHUNK_RIGHT  ,
+    CHUNK_BOTTOM ,
+    CHUNK_TOP    ,
+    EXTERNAL_FACE = -1
 };
 
 enum tile_enum {
-      TILE_LEFT,
-      TILE_RIGHT  ,
-      TILE_BOTTOM ,
-      TILE_TOP    ,
-      EXTERNAL_TILE = -1
+    TILE_LEFT,
+    TILE_RIGHT  ,
+    TILE_BOTTOM ,
+    TILE_TOP    ,
+    EXTERNAL_TILE = -1
 };
 
 enum field_enum {
-      FIELD_DENSITY0   ,
-      FIELD_DENSITY1   ,
-      FIELD_ENERGY0    ,
-      FIELD_ENERGY1    ,
-      FIELD_PRESSURE   ,
-      FIELD_VISCOSITY  ,
-      FIELD_SOUNDSPEED ,
-      FIELD_XVEL0      ,
-      FIELD_XVEL1      ,
-      FIELD_YVEL0      ,
-      FIELD_YVEL1      ,
-      FIELD_VOL_FLUX_X ,
-      FIELD_VOL_FLUX_Y ,
-      FIELD_MASS_FLUX_X ,
-      FIELD_MASS_FLUX_Y ,
-      NUM_FIELDS       ,
+    FIELD_DENSITY0   ,
+    FIELD_DENSITY1   ,
+    FIELD_ENERGY0    ,
+    FIELD_ENERGY1    ,
+    FIELD_PRESSURE   ,
+    FIELD_VISCOSITY  ,
+    FIELD_SOUNDSPEED ,
+    FIELD_XVEL0      ,
+    FIELD_XVEL1      ,
+    FIELD_YVEL0      ,
+    FIELD_YVEL1      ,
+    FIELD_VOL_FLUX_X ,
+    FIELD_VOL_FLUX_Y ,
+    FIELD_MASS_FLUX_X ,
+    FIELD_MASS_FLUX_Y ,
+    NUM_FIELDS       ,
 };
 
 extern int CELL_DATA     ,
@@ -74,15 +74,15 @@ extern int g_rect ,
        g_point ;
 
 
-extern FILE *g_in, // File for input data.
+extern FILE* g_in, // File for input data.
        *g_out;
 
 struct parallel_t {
-      bool parallel,
-           boss;
-      int max_task,
-          task,
-          boss_task;
+    bool parallel,
+         boss;
+    int max_task,
+        task,
+        boss_task;
 };
 
 extern struct parallel_t parallel;

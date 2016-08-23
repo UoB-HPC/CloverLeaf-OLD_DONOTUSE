@@ -32,7 +32,7 @@
 #include "../definitions_c.h"
 
 
-void generate_chunk_1_kernel(
+kernelqual void generate_chunk_1_kernel(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     field_2d_t energy0,
@@ -52,7 +52,7 @@ void generate_chunk_1_kernel(
 
 
 
-void generate_chunk_kernel_c_(
+kernelqual void generate_chunk_kernel_c_(
     int j, int k,
     int x_min, int x_max, int y_min, int y_max,
     double x_cent, double y_cent,
@@ -77,6 +77,11 @@ void generate_chunk_kernel_c_(
     double const* __restrict__ state_radius,
     int* state_geometry)
 {
+
+    int g_rect = 1,
+        g_circ = 2,
+        g_point = 3;
+
     /* Could the velocity setting be thread unsafe? */
     if (state_geometry[FTNREF1D(state, 1)] == g_rect) {
         if (FIELD_1D(vertexx, j + 1,  x_min - 2) >= state_xmin[FTNREF1D(state, 1)] && FIELD_1D(vertexx, j,  x_min - 2) < state_xmax[FTNREF1D(state, 1)]) {

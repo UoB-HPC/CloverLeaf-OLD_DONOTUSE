@@ -7,7 +7,7 @@ using namespace Kokkos;
 
 //     typedef double value_type;
 
-//     typedef View<double**>::size_type size_type;
+//     typedef field_2d_lt::size_type size_type;
 
 //     int x_from,
 //         x_to,
@@ -19,7 +19,7 @@ using namespace Kokkos;
 //         y_max;
 //     int k;
 
-//     Kokkos::View<double**> xarea,
+//     field_2d_lt xarea,
 //            yarea,
 //            volume,
 //            density0,
@@ -30,7 +30,7 @@ using namespace Kokkos;
 //            xvel0,
 //            yvel0,
 //            dtmin;
-//     Kokkos::View<double*> celldx,
+//     field_1d_lt celldx,
 //            celldy;
 
 //     calc_dt_minx_functor(
@@ -42,19 +42,19 @@ using namespace Kokkos;
 //         x_min(tile.t_xmin), x_max(tile.t_xmax),
 //         y_min(tile.t_ymin), y_max(tile.t_ymax),
 
-//         xarea(*(tile.field.xarea)),
-//         yarea(*(tile.field.yarea)),
-//         volume(*(tile.field.volume)),
-//         density0(*(tile.field.density0)),
-//         energy0(*(tile.field.energy0)),
-//         pressure(*(tile.field.pressure)),
-//         viscosity(*(tile.field.viscosity)),
-//         soundspeed(*(tile.field.soundspeed)),
-//         xvel0(*(tile.field.xvel0)),
-//         yvel0(*(tile.field.yvel0)),
-//         dtmin(*(tile.field.work_array1)),
-//         celldx(*(tile.field.celldx)),
-//         celldy(*(tile.field.celldy)),
+//         xarea((tile.field.d_xarea)),
+//         yarea((tile.field.d_yarea)),
+//         volume((tile.field.d_volume)),
+//         density0((tile.field.d_density0)),
+//         energy0((tile.field.d_energy0)),
+//         pressure((tile.field.d_pressure)),
+//         viscosity((tile.field.d_viscosity)),
+//         soundspeed((tile.field.d_soundspeed)),
+//         xvel0((tile.field.d_xvel0)),
+//         yvel0((tile.field.d_yvel0)),
+//         dtmin((tile.field.d_work_array1)),
+//         celldx((tile.field.d_celldx)),
+//         celldy((tile.field.d_celldy)),
 //         k(_k)
 //     {}
 
@@ -66,19 +66,19 @@ using namespace Kokkos;
 //         double val = calc_dt_kernel_c_(
 //                          j, k,
 //                          x_min, x_max, y_min, y_max,
-//                          &xarea,
-//                          &yarea,
-//                          &celldx,
-//                          &celldy,
-//                          &volume,
-//                          &density0,
-//                          &energy0 ,
-//                          &pressure,
-//                          &viscosity,
-//                          &soundspeed,
-//                          &xvel0,
-//                          &yvel0,
-//                          &dtmin);
+//                     xarea,
+//                     yarea,
+//                     celldx,
+//                     celldy,
+//                     volume,
+//                     density0,
+//                     energy0 ,
+//                     pressure,
+//                     viscosity,
+//                     soundspeed,
+//                     xvel0,
+//                     yvel0,
+//                     dtmin);
 //         // printf("\t## %e\n", val);
 //         if (val < update)
 //             update = val;
@@ -105,7 +105,7 @@ struct calc_dt_functor {
 
     typedef double value_type;
 
-    typedef View<double**>::size_type size_type;
+    typedef field_2d_lt::size_type size_type;
 
     int x_from,
         x_to,
@@ -115,19 +115,19 @@ struct calc_dt_functor {
         x_max,
         y_min,
         y_max;
-    Kokkos::View<double**> xarea,
-           yarea,
-           volume,
-           density0,
-           energy0 ,
-           pressure,
-           viscosity,
-           soundspeed,
-           xvel0,
-           yvel0,
-           dtmin;
-    Kokkos::View<double*> celldx,
-           celldy;
+    field_2d_lt xarea,
+                yarea,
+                volume,
+                density0,
+                energy0 ,
+                pressure,
+                viscosity,
+                soundspeed,
+                xvel0,
+                yvel0,
+                dtmin;
+    field_1d_lt celldx,
+                celldy;
     double g_big;
 
     struct tile_type tile;
@@ -143,19 +143,19 @@ struct calc_dt_functor {
         y_min(_tile.t_ymin), y_max(_tile.t_ymax),
         g_big(_g_big),
 
-        xarea(*(_tile.field.xarea)),
-        yarea(*(_tile.field.yarea)),
-        volume(*(_tile.field.volume)),
-        density0(*(_tile.field.density0)),
-        energy0(*(_tile.field.energy0)),
-        pressure(*(_tile.field.pressure)),
-        viscosity(*(_tile.field.viscosity)),
-        soundspeed(*(_tile.field.soundspeed)),
-        xvel0(*(_tile.field.xvel0)),
-        yvel0(*(_tile.field.yvel0)),
-        dtmin(*(_tile.field.work_array1)),
-        celldx(*(_tile.field.celldx)),
-        celldy(*(_tile.field.celldy))
+        xarea((_tile.field.d_xarea)),
+        yarea((_tile.field.d_yarea)),
+        volume((_tile.field.d_volume)),
+        density0((_tile.field.d_density0)),
+        energy0((_tile.field.d_energy0)),
+        pressure((_tile.field.d_pressure)),
+        viscosity((_tile.field.d_viscosity)),
+        soundspeed((_tile.field.d_soundspeed)),
+        xvel0((_tile.field.d_xvel0)),
+        yvel0((_tile.field.d_yvel0)),
+        dtmin((_tile.field.d_work_array1)),
+        celldx((_tile.field.d_celldx)),
+        celldy((_tile.field.d_celldy))
     {}
 
     void compute(double& min)
@@ -174,19 +174,19 @@ struct calc_dt_functor {
             double val = calc_dt_kernel_c_(
                              j, k,
                              x_min, x_max, y_min, y_max,
-                             &xarea,
-                             &yarea,
-                             &celldx,
-                             &celldy,
-                             &volume,
-                             &density0,
-                             &energy0 ,
-                             &pressure,
-                             &viscosity,
-                             &soundspeed,
-                             &xvel0,
-                             &yvel0,
-                             &dtmin);
+                             xarea,
+                             yarea,
+                             celldx,
+                             celldy,
+                             volume,
+                             density0,
+                             energy0 ,
+                             pressure,
+                             viscosity,
+                             soundspeed,
+                             xvel0,
+                             yvel0,
+                             dtmin);
             if (val < result)
                 result = val;
         }

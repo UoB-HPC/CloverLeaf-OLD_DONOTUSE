@@ -14,20 +14,20 @@ struct pdv_predict_functor {
         y_min,
         y_max;
 
-    View<double**> xarea,
-         yarea,
-         volume,
-         density0,
-         density1,
-         energy0,
-         energy1,
-         pressure,
-         viscosity,
-         xvel0,
-         xvel1,
-         yvel0,
-         yvel1,
-         work_array1;
+    field_2d_lt xarea,
+                yarea,
+                volume,
+                density0,
+                density1,
+                energy0,
+                energy1,
+                pressure,
+                viscosity,
+                xvel0,
+                xvel1,
+                yvel0,
+                yvel1,
+                work_array1;
     double dt;
 
     pdv_predict_functor(
@@ -42,20 +42,20 @@ struct pdv_predict_functor {
         y_max(tile.t_ymax),
         dt(_dt),
 
-        xarea(*tile.field.xarea),
-        yarea(*tile.field.yarea),
-        volume(*tile.field.volume),
-        density0(*tile.field.density0),
-        density1(*tile.field.density1),
-        energy0(*tile.field.energy0),
-        energy1(*tile.field.energy1),
-        pressure(*tile.field.pressure),
-        viscosity(*tile.field.viscosity),
-        xvel0(*tile.field.xvel0),
-        xvel1(*tile.field.xvel1),
-        yvel0(*tile.field.yvel0),
-        yvel1(*tile.field.yvel1),
-        work_array1(*tile.field.work_array1)
+        xarea(tile.field.d_xarea),
+        yarea(tile.field.d_yarea),
+        volume(tile.field.d_volume),
+        density0(tile.field.d_density0),
+        density1(tile.field.d_density1),
+        energy0(tile.field.d_energy0),
+        energy1(tile.field.d_energy1),
+        pressure(tile.field.d_pressure),
+        viscosity(tile.field.d_viscosity),
+        xvel0(tile.field.d_xvel0),
+        xvel1(tile.field.d_xvel1),
+        yvel0(tile.field.d_yvel0),
+        yvel1(tile.field.d_yvel1),
+        work_array1(tile.field.d_work_array1)
     {}
 
     void compute()
@@ -75,20 +75,20 @@ struct pdv_predict_functor {
                 j, k,
                 x_min, x_max, y_min, y_max,
                 dt,
-                &xarea,
-                &yarea,
-                &volume,
-                &density0,
-                &density1,
-                &energy0,
-                &energy1,
-                &pressure,
-                &viscosity,
-                &xvel0,
-                &xvel1,
-                &yvel0,
-                &yvel1,
-                &work_array1);
+                xarea,
+                yarea,
+                volume,
+                density0,
+                density1,
+                energy0,
+                energy1,
+                pressure,
+                viscosity,
+                xvel0,
+                xvel1,
+                yvel0,
+                yvel1,
+                work_array1);
         });
     }
 };
@@ -104,20 +104,20 @@ struct pdv_no_predict_functor {
         y_min,
         y_max;
 
-    View<double**> xarea,
-         yarea,
-         volume,
-         density0,
-         density1,
-         energy0,
-         energy1,
-         pressure,
-         viscosity,
-         xvel0,
-         xvel1,
-         yvel0,
-         yvel1,
-         work_array1;
+    field_2d_lt xarea,
+                yarea,
+                volume,
+                density0,
+                density1,
+                energy0,
+                energy1,
+                pressure,
+                viscosity,
+                xvel0,
+                xvel1,
+                yvel0,
+                yvel1,
+                work_array1;
     double dt;
 
     pdv_no_predict_functor(
@@ -132,20 +132,20 @@ struct pdv_no_predict_functor {
         y_max(tile.t_ymax),
         dt(_dt),
 
-        xarea(*tile.field.xarea),
-        yarea(*tile.field.yarea),
-        volume(*tile.field.volume),
-        density0(*tile.field.density0),
-        density1(*tile.field.density1),
-        energy0(*tile.field.energy0),
-        energy1(*tile.field.energy1),
-        pressure(*tile.field.pressure),
-        viscosity(*tile.field.viscosity),
-        xvel0(*tile.field.xvel0),
-        xvel1(*tile.field.xvel1),
-        yvel0(*tile.field.yvel0),
-        yvel1(*tile.field.yvel1),
-        work_array1(*tile.field.work_array1)
+        xarea(tile.field.d_xarea),
+        yarea(tile.field.d_yarea),
+        volume(tile.field.d_volume),
+        density0(tile.field.d_density0),
+        density1(tile.field.d_density1),
+        energy0(tile.field.d_energy0),
+        energy1(tile.field.d_energy1),
+        pressure(tile.field.d_pressure),
+        viscosity(tile.field.d_viscosity),
+        xvel0(tile.field.d_xvel0),
+        xvel1(tile.field.d_xvel1),
+        yvel0(tile.field.d_yvel0),
+        yvel1(tile.field.d_yvel1),
+        work_array1(tile.field.d_work_array1)
     {}
 
     void compute()
@@ -165,20 +165,20 @@ struct pdv_no_predict_functor {
                 j, k,
                 x_min, x_max, y_min, y_max,
                 dt,
-                &xarea,
-                &yarea,
-                &volume,
-                &density0,
-                &density1,
-                &energy0,
-                &energy1,
-                &pressure,
-                &viscosity,
-                &xvel0,
-                &xvel1,
-                &yvel0,
-                &yvel1,
-                &work_array1);
+                xarea,
+                yarea,
+                volume,
+                density0,
+                density1,
+                energy0,
+                energy1,
+                pressure,
+                viscosity,
+                xvel0,
+                xvel1,
+                yvel0,
+                yvel1,
+                work_array1);
         });
     }
 };
