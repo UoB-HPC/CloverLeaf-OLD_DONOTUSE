@@ -2,13 +2,14 @@
 MPI_CC_INTEL = mpiicpc
 MPI_CC_GNU = mpic++
 CC_CUDA = nvcc_wrapper
+CC_CUDA_CLANG = clang++
 MPI_CC_ = mpic++
 
 
 FLAGS_GNU = -std=c++11 -Wall -Wpedantic -g -Wno-unknown-pragmas -O3 -march=native -lm
-FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -fp-model strict
-# FLAGS_INTEL = -std=c++11 -O3 -g -restrict -xMIC-AVX512 -no-prec-div -fno-alias
-# FLAGS_INTEL = -std=c++11 -O3 -g -restrict -no-prec-div -fno-alias
+# FLAGS_INTEL = -std=c++11 -O3 -g -restrict -march=native -fp-model strict
+# FLAGS_INTEL = -std=c++11 -O3 -ipo -restrict -xMIC-AVX512 -no-prec-div -fno-alias
+FLAGS_INTEL = -std=c++11 -O3 -ipo -restrict -no-prec-div -fno-alias
 FLAGS_CUDA = 
 FLAGS_ = 
 
@@ -33,11 +34,12 @@ OBJECTS = data_c.o \
 	accelerate.o \
 	field_summary.o
 
-MPIOBJECTS = clover.o \
-	initialise.o \
+MPIOBJECTS = initialise.o \
 	hydro.o \
 	timestep.o \
 	start.o
+
+	
 
 
 
@@ -49,6 +51,11 @@ ifdef USE_KOKKOS
         CXX = ./nvcc_wrapper
         MPI_FLAGS += -lcudart
         FLAGS := $(FLAGS) -O3
+
+        MPI_FLAGS += $(shell mpic++ --showme:compile)
+        MPI_FLAGS += $(shell mpic++ --showme:link)
+
+        MPI_CC = $(CXX)
 
         KOKKOS_CUDA_OPTIONS = "enable_lambda"
         KOKKOS_DEVICE= "Cuda"
@@ -96,6 +103,15 @@ ifdef USE_CUDA
     FLAGS += -x cu -O3 -std=c++11 -DUSE_CUDA \
         -I/nfs/modules/openmpi/1.10.3/include
 endif
+ifdef USE_CUDA_CLANG
+    CC = clang++
+
+    MPI_FLAGS += -DUSE_CUDA \
+        -L/nfs/modules/cuda/7.5.18/lib64 -lcudart
+
+    FLAGS += -x cuda --cuda-gpu-arch=sm_35 -ffp-contract=fast  -ffast-math -O3 -std=c++11 -DUSE_CUDA \
+        -I/nfs/modules/openmpi/1.10.3/include
+endif
 
 OBJDIR    = obj
 MPIOBJDIR = mpiobj
@@ -126,6 +142,7 @@ $(MPIOBJDIR)/%.o: $(SRCDIR)/%.c $(KOKKOS_CPP_DEPENDS)
 
 fast: $(_SOURCES) $(_MPISOURCES) Makefile $(KOKKOS_LINK_DEPENDS) $(KERNELS)
 	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_SOURCES) $(_MPISOURCES) $(SRCDIR)/clover_leaf.c $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
+	# $(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_SOURCES) $(_MPISOURCES) $(SRCDIR)/clover_leaf.c $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
 
 clean: 
 	rm -f $(OBJDIR)/* $(MPIOBJDIR)/* *.o clover_leaf
