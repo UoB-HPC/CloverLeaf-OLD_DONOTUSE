@@ -29,83 +29,83 @@ void allocate()
         int vertexdxSize = size1d(xmin - 2, xmax + 3);
         int vertexdySize = size1d(ymin - 2, ymax + 3);
 
-        chunk.tiles[tile].field.d_density0   =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("density0",   size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
-        chunk.tiles[tile].field.d_density1   =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("density1",   size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
-        chunk.tiles[tile].field.d_energy0    =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("energy0",    size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
-        chunk.tiles[tile].field.d_energy1    =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("energy1",    size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
-        chunk.tiles[tile].field.d_pressure   =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("pressure",   size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
-        chunk.tiles[tile].field.d_viscosity  =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("viscosity",  size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
-        chunk.tiles[tile].field.d_soundspeed =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("soundspeed", size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_density0)     Kokkos::View<double**>("density0",   size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_density1)     Kokkos::View<double**>("density1",   size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_energy0)      Kokkos::View<double**>("energy0",    size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_energy1)      Kokkos::View<double**>("energy1",    size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_pressure)     Kokkos::View<double**>("pressure",   size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_viscosity)    Kokkos::View<double**>("viscosity",  size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_soundspeed)   Kokkos::View<double**>("soundspeed", size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 2));
 
-        chunk.tiles[tile].field.d_xvel0 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("xvel0", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_xvel1 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("xvel1", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_yvel0 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("yvel0", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_yvel1 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("yvel1", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_xvel0)   Kokkos::View<double**>("xvel0", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_xvel1)   Kokkos::View<double**>("xvel1", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_yvel0)   Kokkos::View<double**>("yvel0", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_yvel1)   Kokkos::View<double**>("yvel1", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
 
-        chunk.tiles[tile].field.d_vol_flux_x  =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("vol_flux_x",  size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_mass_flux_x =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("mass_flux_x", size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_vol_flux_y  =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("vol_flux_y",  size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 2));
-        chunk.tiles[tile].field.d_mass_flux_y =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("mass_flux_y", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_vol_flux_x)    Kokkos::View<double**>("vol_flux_x",  size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_mass_flux_x)   Kokkos::View<double**>("mass_flux_x", size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_vol_flux_y)    Kokkos::View<double**>("vol_flux_y",  size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_mass_flux_y)   Kokkos::View<double**>("mass_flux_y", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 2));
 
-        chunk.tiles[tile].field.d_work_array1 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("work_array1", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_work_array2 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("work_array2", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_work_array3 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("work_array3", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_work_array4 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("work_array4", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_work_array5 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("work_array5", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_work_array6 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("work_array6", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_work_array7 =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("work_array7", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_work_array1)   Kokkos::View<double**>("work_array1", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_work_array2)   Kokkos::View<double**>("work_array2", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_work_array3)   Kokkos::View<double**>("work_array3", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_work_array4)   Kokkos::View<double**>("work_array4", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_work_array5)   Kokkos::View<double**>("work_array5", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_work_array6)   Kokkos::View<double**>("work_array6", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_work_array7)   Kokkos::View<double**>("work_array7", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 3));
 
-        chunk.tiles[tile].field.d_cellx    =  Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>("cellx",    cellxSize);
-        chunk.tiles[tile].field.d_celly    =  Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>("celly",    cellySize);
-        chunk.tiles[tile].field.d_vertexx  =  Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>("vertexx",  vertexxSize);
-        chunk.tiles[tile].field.d_vertexy  =  Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>("vertexy",  vertexySize);
-        chunk.tiles[tile].field.d_celldx   =  Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>("celldx",   celldxSize);
-        chunk.tiles[tile].field.d_celldy   =  Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>("celldy",   celldySize);
-        chunk.tiles[tile].field.d_vertexdx =  Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>("vertexdx", vertexdxSize);
-        chunk.tiles[tile].field.d_vertexdy =  Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>("vertexdy", vertexdySize);
+        new(&chunk.tiles[tile].field.d_cellx)      Kokkos::View<double*>("cellx",    cellxSize);
+        new(&chunk.tiles[tile].field.d_celly)      Kokkos::View<double*>("celly",    cellySize);
+        new(&chunk.tiles[tile].field.d_vertexx)    Kokkos::View<double*>("vertexx",  vertexxSize);
+        new(&chunk.tiles[tile].field.d_vertexy)    Kokkos::View<double*>("vertexy",  vertexySize);
+        new(&chunk.tiles[tile].field.d_celldx)     Kokkos::View<double*>("celldx",   celldxSize);
+        new(&chunk.tiles[tile].field.d_celldy)     Kokkos::View<double*>("celldy",   celldySize);
+        new(&chunk.tiles[tile].field.d_vertexdx)   Kokkos::View<double*>("vertexdx", vertexdxSize);
+        new(&chunk.tiles[tile].field.d_vertexdy)   Kokkos::View<double*>("vertexdy", vertexdySize);
 
-        chunk.tiles[tile].field.d_volume   =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("volume", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 2));
-        chunk.tiles[tile].field.d_xarea    =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("xarea",  size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 3));
-        chunk.tiles[tile].field.d_yarea    =  Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>("yarea",  size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_volume)     Kokkos::View<double**>("volume", size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 2));
+        new(&chunk.tiles[tile].field.d_xarea)      Kokkos::View<double**>("xarea",  size1d(ymin - 2, ymax + 2), size1d(xmin - 2, xmax + 3));
+        new(&chunk.tiles[tile].field.d_yarea)      Kokkos::View<double**>("yarea",  size1d(ymin - 2, ymax + 3), size1d(xmin - 2, xmax + 2));
 
 
-        chunk.tiles[tile].field.density0   = create_mirror_view(chunk.tiles[tile].field.d_density0);
-        chunk.tiles[tile].field.density1   = create_mirror_view(chunk.tiles[tile].field.d_density1);
-        chunk.tiles[tile].field.energy0    = create_mirror_view(chunk.tiles[tile].field.d_energy0);
-        chunk.tiles[tile].field.energy1    = create_mirror_view(chunk.tiles[tile].field.d_energy1);
-        chunk.tiles[tile].field.pressure   = create_mirror_view(chunk.tiles[tile].field.d_pressure);
-        chunk.tiles[tile].field.viscosity  = create_mirror_view(chunk.tiles[tile].field.d_viscosity);
-        chunk.tiles[tile].field.soundspeed = create_mirror_view(chunk.tiles[tile].field.d_soundspeed);
+        new(&chunk.tiles[tile].field.density0)     host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_density0));
+        new(&chunk.tiles[tile].field.density1)     host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_density1));
+        new(&chunk.tiles[tile].field.energy0)      host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_energy0));
+        new(&chunk.tiles[tile].field.energy1)      host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_energy1));
+        new(&chunk.tiles[tile].field.pressure)     host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_pressure));
+        new(&chunk.tiles[tile].field.viscosity)    host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_viscosity));
+        new(&chunk.tiles[tile].field.soundspeed)   host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_soundspeed));
 
-        chunk.tiles[tile].field.xvel0 = create_mirror_view(chunk.tiles[tile].field.d_xvel0);
-        chunk.tiles[tile].field.xvel1 = create_mirror_view(chunk.tiles[tile].field.d_xvel1);
-        chunk.tiles[tile].field.yvel0 = create_mirror_view(chunk.tiles[tile].field.d_yvel0);
-        chunk.tiles[tile].field.yvel1 = create_mirror_view(chunk.tiles[tile].field.d_yvel1);
+        new(&chunk.tiles[tile].field.xvel0)        host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_xvel0));
+        new(&chunk.tiles[tile].field.xvel1)        host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_xvel1));
+        new(&chunk.tiles[tile].field.yvel0)        host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_yvel0));
+        new(&chunk.tiles[tile].field.yvel1)        host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_yvel1));
 
-        chunk.tiles[tile].field.vol_flux_x  = create_mirror_view(chunk.tiles[tile].field.d_vol_flux_x);
-        chunk.tiles[tile].field.mass_flux_x = create_mirror_view(chunk.tiles[tile].field.d_mass_flux_x);
-        chunk.tiles[tile].field.vol_flux_y  = create_mirror_view(chunk.tiles[tile].field.d_vol_flux_y);
-        chunk.tiles[tile].field.mass_flux_y = create_mirror_view(chunk.tiles[tile].field.d_mass_flux_y);
+        new(&chunk.tiles[tile].field.vol_flux_x)   host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_vol_flux_x));
+        new(&chunk.tiles[tile].field.mass_flux_x)  host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_mass_flux_x));
+        new(&chunk.tiles[tile].field.vol_flux_y)   host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_vol_flux_y));
+        new(&chunk.tiles[tile].field.mass_flux_y)  host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_mass_flux_y));
 
-        chunk.tiles[tile].field.work_array1 = create_mirror_view(chunk.tiles[tile].field.d_work_array1);
-        chunk.tiles[tile].field.work_array2 = create_mirror_view(chunk.tiles[tile].field.d_work_array2);
-        chunk.tiles[tile].field.work_array3 = create_mirror_view(chunk.tiles[tile].field.d_work_array3);
-        chunk.tiles[tile].field.work_array4 = create_mirror_view(chunk.tiles[tile].field.d_work_array4);
-        chunk.tiles[tile].field.work_array5 = create_mirror_view(chunk.tiles[tile].field.d_work_array5);
-        chunk.tiles[tile].field.work_array6 = create_mirror_view(chunk.tiles[tile].field.d_work_array6);
-        chunk.tiles[tile].field.work_array7 = create_mirror_view(chunk.tiles[tile].field.d_work_array7);
+        new(&chunk.tiles[tile].field.work_array1)  host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_work_array1));
+        new(&chunk.tiles[tile].field.work_array2)  host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_work_array2));
+        new(&chunk.tiles[tile].field.work_array3)  host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_work_array3));
+        new(&chunk.tiles[tile].field.work_array4)  host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_work_array4));
+        new(&chunk.tiles[tile].field.work_array5)  host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_work_array5));
+        new(&chunk.tiles[tile].field.work_array6)  host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_work_array6));
+        new(&chunk.tiles[tile].field.work_array7)  host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_work_array7));
 
-        chunk.tiles[tile].field.cellx    = create_mirror_view(chunk.tiles[tile].field.d_cellx);
-        chunk.tiles[tile].field.celly    = create_mirror_view(chunk.tiles[tile].field.d_celly);
-        chunk.tiles[tile].field.vertexx  = create_mirror_view(chunk.tiles[tile].field.d_vertexx);
-        chunk.tiles[tile].field.vertexy  = create_mirror_view(chunk.tiles[tile].field.d_vertexy);
-        chunk.tiles[tile].field.celldx   = create_mirror_view(chunk.tiles[tile].field.d_celldx);
-        chunk.tiles[tile].field.celldy   = create_mirror_view(chunk.tiles[tile].field.d_celldy);
-        chunk.tiles[tile].field.vertexdx = create_mirror_view(chunk.tiles[tile].field.d_vertexdx);
-        chunk.tiles[tile].field.vertexdy = create_mirror_view(chunk.tiles[tile].field.d_vertexdy);
+        new(&chunk.tiles[tile].field.cellx)        host_view_1d_t(create_mirror_view(chunk.tiles[tile].field.d_cellx));
+        new(&chunk.tiles[tile].field.celly)        host_view_1d_t(create_mirror_view(chunk.tiles[tile].field.d_celly));
+        new(&chunk.tiles[tile].field.vertexx)      host_view_1d_t(create_mirror_view(chunk.tiles[tile].field.d_vertexx));
+        new(&chunk.tiles[tile].field.vertexy)      host_view_1d_t(create_mirror_view(chunk.tiles[tile].field.d_vertexy));
+        new(&chunk.tiles[tile].field.celldx)       host_view_1d_t(create_mirror_view(chunk.tiles[tile].field.d_celldx));
+        new(&chunk.tiles[tile].field.celldy)       host_view_1d_t(create_mirror_view(chunk.tiles[tile].field.d_celldy));
+        new(&chunk.tiles[tile].field.vertexdx)     host_view_1d_t(create_mirror_view(chunk.tiles[tile].field.d_vertexdx));
+        new(&chunk.tiles[tile].field.vertexdy)     host_view_1d_t(create_mirror_view(chunk.tiles[tile].field.d_vertexdy));
 
-        chunk.tiles[tile].field.volume   = create_mirror_view(chunk.tiles[tile].field.d_volume);
-        chunk.tiles[tile].field.xarea    = create_mirror_view(chunk.tiles[tile].field.d_xarea);
-        chunk.tiles[tile].field.yarea    = create_mirror_view(chunk.tiles[tile].field.d_yarea);
+        new(&chunk.tiles[tile].field.volume)       host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_volume));
+        new(&chunk.tiles[tile].field.xarea)        host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_xarea));
+        new(&chunk.tiles[tile].field.yarea)        host_view_2d_t(create_mirror_view(chunk.tiles[tile].field.d_yarea));
     }
 }

@@ -30,12 +30,14 @@ void field_summary()
     }
 
     field_summary(&vol, &ie, &ke, &mass, &press);
-    // printf("mass=%e\n", mass);
+
+#if defined(ENABLE_MPI)
     clover_sum(&vol);
     clover_sum(&mass);
     clover_sum(&press);
     clover_sum(&ie);
     clover_sum(&ke);
+#endif
 
     if (profiler_on) profiler.summary += timer() - kernel_time;
     BOSSPRINT(g_out, "%6s%7d%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e%16.7e\n\n", " step:", step, vol, mass, mass / vol, press / vol, ie, ke, ie + ke);

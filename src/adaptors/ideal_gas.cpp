@@ -1,5 +1,6 @@
 
 #if defined(USE_KOKKOS)
+#include "../definitions_c.h"
 #include "kokkos/ideal_gas.cpp"
 
 void ideal_gas_adaptor(int tile, bool predict)

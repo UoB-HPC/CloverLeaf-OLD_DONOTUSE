@@ -57,11 +57,11 @@
 // #define const_field_1d_t     const Kokkos::View<double*, T>*
 // #define field_1d_t           const Kokkos::View<double*, T>*
 
-#define const_field_2d_lt    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>
-#define field_2d_lt          const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>
+#define const_field_2d_lt    const Kokkos::View<double**>
+#define field_2d_lt          const Kokkos::View<double**>
 
-#define const_field_1d_lt    const Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>
-#define field_1d_lt          const Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>
+#define const_field_1d_lt    const Kokkos::View<double*>
+#define field_1d_lt          const Kokkos::View<double*>
 
 #define flag_t               int*
 
@@ -72,95 +72,106 @@
     typename const_field_1d_t = Kokkos::View<double*>, \
     typename field_1d_t = Kokkos::View<double*> \
     > __device__ __host__
-#else
-#define kernelqual
-#endif
+#else  //defined(__NVCC__)
+#define kernelqual   template< \
+    typename const_field_2d_t = Kokkos::View<double**>, \
+    typename field_2d_t = Kokkos::View<double**>, \
+    typename const_field_1d_t = Kokkos::View<double*>, \
+    typename field_1d_t = Kokkos::View<double*> \
+    >
+#endif  //defined(__NVCC__)
+
+typedef typename Kokkos::View<double**>::HostMirror host_view_2d_t;
+typedef typename Kokkos::View<double*>::HostMirror  host_view_1d_t;
 
 struct field_type {
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_density0;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_density1;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_energy0;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_energy1;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_pressure;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_viscosity;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_soundspeed;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_xvel0;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_xvel1;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_yvel0;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_yvel1;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_vol_flux_x;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_mass_flux_x;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_vol_flux_y;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_mass_flux_y;
+    Kokkos::View<double**> d_density0;
+    Kokkos::View<double**> d_density1;
+    Kokkos::View<double**> d_energy0;
+    Kokkos::View<double**> d_energy1;
+    Kokkos::View<double**> d_pressure;
+    Kokkos::View<double**> d_viscosity;
+    Kokkos::View<double**> d_soundspeed;
+    Kokkos::View<double**> d_xvel0;
+    Kokkos::View<double**> d_xvel1;
+    Kokkos::View<double**> d_yvel0;
+    Kokkos::View<double**> d_yvel1;
+    Kokkos::View<double**> d_vol_flux_x;
+    Kokkos::View<double**> d_mass_flux_x;
+    Kokkos::View<double**> d_vol_flux_y;
+    Kokkos::View<double**> d_mass_flux_y;
     //node_fluxd_; stepbymass; volume_change; pre_vo
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_work_array1;
+    Kokkos::View<double**> d_work_array1;
     //node_massd__post; post_vol
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_work_array2;
+    Kokkos::View<double**> d_work_array2;
     //node_massd__pre; pre_mass
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_work_array3;
+    Kokkos::View<double**> d_work_array3;
     //advec_veld_; post_mass
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_work_array4;
+    Kokkos::View<double**> d_work_array4;
     //mom_flux;d_ advec_vol
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_work_array5;
+    Kokkos::View<double**> d_work_array5;
     //pre_vol; d_post_ener
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_work_array6;
+    Kokkos::View<double**> d_work_array6;
     //post_vol;d_ ener_flux
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_work_array7;
+    Kokkos::View<double**> d_work_array7;
 
-    const Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space> d_cellx;
-    const Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space> d_celly;
-    const Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space> d_vertexx;
-    const Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space> d_vertexy;
-    const Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space> d_celldx;
-    const Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space> d_celldy;
-    const Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space> d_vertexdx;
-    const Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space> d_vertexdy;
+    Kokkos::View<double*> d_cellx;
+    Kokkos::View<double*> d_celly;
+    Kokkos::View<double*> d_vertexx;
+    Kokkos::View<double*> d_vertexy;
+    Kokkos::View<double*> d_celldx;
+    Kokkos::View<double*> d_celldy;
+    Kokkos::View<double*> d_vertexdx;
+    Kokkos::View<double*> d_vertexdy;
 
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_volume;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_xarea;
-    const Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space> d_yarea;
+    Kokkos::View<double**> d_volume;
+    Kokkos::View<double**> d_xarea;
+    Kokkos::View<double**> d_yarea;
 
 
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror density0;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror density1;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror energy0;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror energy1;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror pressure;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror viscosity;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror soundspeed;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror xvel0;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror xvel1;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror yvel0;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror yvel1;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror vol_flux_x;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror mass_flux_x;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror vol_flux_y;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror mass_flux_y;
+    host_view_2d_t density0;
+    host_view_2d_t density1;
+    host_view_2d_t energy0;
+    host_view_2d_t energy1;
+    host_view_2d_t pressure;
+    host_view_2d_t viscosity;
+    host_view_2d_t soundspeed;
+    host_view_2d_t xvel0;
+    host_view_2d_t xvel1;
+    host_view_2d_t yvel0;
+    host_view_2d_t yvel1;
+    host_view_2d_t vol_flux_x;
+    host_view_2d_t mass_flux_x;
+    host_view_2d_t vol_flux_y;
+    host_view_2d_t mass_flux_y;
     //node_flux; stepbymass; volume_change; pre_vo
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror work_array1;
+    host_view_2d_t work_array1;
     //node_mass_post; post_vol
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror work_array2;
+    host_view_2d_t work_array2;
     //node_mass_pre; pre_mass
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror work_array3;
+    host_view_2d_t work_array3;
     //advec_vel; post_mass
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror work_array4;
+    host_view_2d_t work_array4;
     //mom_flux; advec_vol
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror work_array5;
+    host_view_2d_t work_array5;
     //pre_vol; post_ener
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror work_array6;
+    host_view_2d_t work_array6;
     //post_vol; ener_flux
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror work_array7;
+    host_view_2d_t work_array7;
 
-    typename Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror cellx;
-    typename Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror celly;
-    typename Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror vertexx;
-    typename Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror vertexy;
-    typename Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror celldx;
-    typename Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror celldy;
-    typename Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror vertexdx;
-    typename Kokkos::View<double*, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror vertexdy;
+    host_view_1d_t cellx;
+    host_view_1d_t celly;
+    host_view_1d_t vertexx;
+    host_view_1d_t vertexy;
+    host_view_1d_t celldx;
+    host_view_1d_t celldy;
+    host_view_1d_t vertexdx;
+    host_view_1d_t vertexdy;
 
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror volume;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror xarea;
-    typename Kokkos::View<double**, Kokkos::DefaultExecutionSpace::memory_space>::HostMirror yarea;
+    host_view_2d_t volume;
+    host_view_2d_t xarea;
+    host_view_2d_t yarea;
 };
+
+
+#define ENABLE_TILES

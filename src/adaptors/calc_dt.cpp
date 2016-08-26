@@ -1,6 +1,7 @@
 #include "../definitions_c.h"
 
 #if defined(USE_KOKKOS)
+
 #include "../kernels/ftocmacros.h"
 #include "kokkos/calc_dt.cpp"
 void calc_dt_adaptor(int tile, double* local_dt)
@@ -13,8 +14,12 @@ void calc_dt_adaptor(int tile, double* local_dt)
                       chunk.tiles[tile].t_ymax,
                       g_big);
     f.compute(dt);
+    Kokkos::fence();
+    // printf("# %e\n", dt);
+    // fflush(stdout);
     *local_dt = dt;
 }
+
 #endif
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
@@ -47,8 +52,7 @@ void calc_dt_adaptor(int tile, double* local_dt)
                              chunk.tiles[tile].field.soundspeed,
                              chunk.tiles[tile].field.xvel0,
                              chunk.tiles[tile].field.yvel0,
-                             chunk.tiles[tile].field.work_array1
-                         );
+                             chunk.tiles[tile].field.work_array1);
             if (val < dt)
                 dt = val;
         }

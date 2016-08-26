@@ -27,11 +27,11 @@
 #include <math.h>
 #include "../definitions_c.h"
 
-void clover_pack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax,
-                                 double* __restrict__ field,
-                                 double* __restrict__ left_snd_buffer,
-                                 int dpth, int fld_typ,
-                                 int bffr_ffst)
+kernelqual void clover_pack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax,
+        double* __restrict__ field,
+        double* __restrict__ left_snd_buffer,
+        int dpth, int fld_typ,
+        int bffr_ffst)
 
 {
     int x_min = *xmin;
@@ -75,10 +75,10 @@ void clover_pack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax,
 
 }
 
-void clover_unpack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-                                   double* left_rcv_buffer,
-                                   int dpth, int fld_typ,
-                                   int bffr_ffst)
+kernelqual void clover_unpack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+        double* left_rcv_buffer,
+        int dpth, int fld_typ,
+        int bffr_ffst)
 
 {
     int x_min = *xmin;
@@ -122,10 +122,10 @@ void clover_unpack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax, d
 
 }
 
-void clover_pack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-                                  double* right_snd_buffer,
-                                  int dpth, int fld_typ,
-                                  int bffr_ffst)
+kernelqual void clover_pack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+        double* right_snd_buffer,
+        int dpth, int fld_typ,
+        int bffr_ffst)
 
 {
     int x_min = *xmin;
@@ -169,10 +169,10 @@ void clover_pack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax, do
 
 }
 
-void clover_unpack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-                                    double* right_rcv_buffer,
-                                    int dpth, int fld_typ,
-                                    int bffr_ffst)
+kernelqual void clover_unpack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+        double* right_rcv_buffer,
+        int dpth, int fld_typ,
+        int bffr_ffst)
 
 {
     int x_min = *xmin;
@@ -216,10 +216,10 @@ void clover_unpack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax, 
 
 }
 
-void clover_pack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-                                double* top_snd_buffer,
-                                int dpth, int fld_typ,
-                                int bffr_ffst)
+kernelqual void clover_pack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+        double* top_snd_buffer,
+        int dpth, int fld_typ,
+        int bffr_ffst)
 
 {
     int x_min = *xmin;
@@ -263,10 +263,10 @@ void clover_pack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax, doub
 
 }
 
-void clover_pack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-                                   double* bottom_snd_buffer,
-                                   int dpth, int fld_typ,
-                                   int bffr_ffst)
+kernelqual void clover_pack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+        double* bottom_snd_buffer,
+        int dpth, int fld_typ,
+        int bffr_ffst)
 
 {
     int x_min = *xmin;
@@ -309,10 +309,10 @@ void clover_pack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax, d
 
 }
 
-void clover_unpack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-                                     double* bottom_rcv_buffer,
-                                     int dpth, int fld_typ,
-                                     int bffr_ffst)
+kernelqual void clover_unpack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+        double* bottom_rcv_buffer,
+        int dpth, int fld_typ,
+        int bffr_ffst)
 
 {
     int x_min = *xmin;
@@ -356,10 +356,10 @@ void clover_unpack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax,
 
 }
 
-void clover_unpack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-                                  double* top_rcv_buffer,
-                                  int dpth, int fld_typ,
-                                  int bffr_ffst)
+kernelqual void clover_unpack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
+        double* top_rcv_buffer,
+        int dpth, int fld_typ,
+        int bffr_ffst)
 
 {
     int x_min = *xmin;

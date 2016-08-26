@@ -25,11 +25,11 @@
  *  overwritten by further state definitions.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ftocmacros.h"
-#include <math.h>
-#include "../definitions_c.h"
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include "ftocmacros.h"
+// #include <math.h>
+// #include "../definitions_c.h"
 
 
 kernelqual void generate_chunk_1_kernel(

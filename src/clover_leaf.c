@@ -34,12 +34,16 @@ int main(int argc, char** argv)
 #endif
 
 #ifdef USE_KOKKOS
-    printf("Using Kokkos\n");
+    printf("Using Kokkos ");
+#ifdef KOKKOS_HAVE_CUDA
+    printf("GPU\n");
+#else
+    printf("CPU\n");
+#endif
 
     Kokkos::initialize(argc, argv);
 
     std::ostringstream msg;
-    msg << "{" << std::endl ;
 
     if (Kokkos::hwloc::available()) {
         msg << "hwloc( NUMA[" << Kokkos::hwloc::get_available_numa_count()

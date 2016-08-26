@@ -19,7 +19,7 @@
         }\
     }
 
-void update_tile_halo_l_kernel_c_(
+kernelqual void update_tile_halo_l_kernel_c_(
     int xmin, int xmax, int ymin, int ymax,
     double* __restrict__ density0,
     double* __restrict__ energy0,
@@ -74,7 +74,7 @@ void update_tile_halo_l_kernel_c_(
     leftCopy(FIELD_MASS_FLUX_Y,  mass_flux_y, left_mass_flux_y, MASS_FLUX_Y);
 }
 
-void update_tile_halo_r_kernel_c_(
+kernelqual void update_tile_halo_r_kernel_c_(
     int* xmin, int* xmax, int* ymin, int* ymax,
     double* density0,
     double* energy0,

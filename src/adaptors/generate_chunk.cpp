@@ -5,6 +5,7 @@
 // #define field_2d_t const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror*
 // #undef field_1d_t
 // #define field_1d_t const Kokkos::View<double*, Kokkos::HostSpace>::HostMirror*
+#include "../definitions_c.h"
 #include "../kernels/generate_chunk_kernel_c.c"
 void generate_chunk(
     int tile,
@@ -74,14 +75,26 @@ void generate_chunk(
                     state_ymax,
                     state_radius,
                     state_geometry);
-            };
+            }
         }
     }
+
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_energy0, chunk.tiles[tile].field.energy0);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_density0, chunk.tiles[tile].field.density0);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_xvel0, chunk.tiles[tile].field.xvel0);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_yvel0, chunk.tiles[tile].field.yvel0);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_vertexx, chunk.tiles[tile].field.vertexx);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_vertexy, chunk.tiles[tile].field.vertexy);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_cellx, chunk.tiles[tile].field.cellx);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_celly, chunk.tiles[tile].field.celly);
+    Kokkos::fence();
 }
 #endif
 
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
+#include "../definitions_c.h"
+#include <math.h>
 #include "../kernels/generate_chunk_kernel_c.c"
 void generate_chunk(
     int tile,
@@ -166,6 +179,9 @@ void generate_chunk(
 #endif
 
 #if defined(USE_CUDA)
+
+#include "../definitions_c.h"
+#include <math.h>
 #include "../kernels/generate_chunk_kernel_c.c"
 
 void generate_chunk(
@@ -290,6 +306,8 @@ void generate_chunk(
 #endif
 
 #if defined(USE_OPENCL)
+
+#include <math.h>
 #include "../kernels/generate_chunk_kernel_c.c"
 #include "../definitions_c.h"
 

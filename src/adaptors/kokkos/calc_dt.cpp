@@ -192,6 +192,7 @@ struct calc_dt_functor {
         }
         if (result < update)
             update = result;
+
     }
 
     KOKKOS_INLINE_FUNCTION

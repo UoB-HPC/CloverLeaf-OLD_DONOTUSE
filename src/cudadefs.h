@@ -181,7 +181,7 @@ struct field_type {
 
 #define flag_t               int*
 
-#define kernelqual   __device__ inline
+#define kernelqual   __device__ __host__ inline
 
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 inline void gpuAssert(cudaError_t code, const char* file, int line)

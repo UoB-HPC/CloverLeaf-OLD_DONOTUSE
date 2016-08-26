@@ -103,3 +103,6 @@ struct field_type {
 #define field_1d_t           double* __restrict__
 
 #define flag_t               int*
+
+#define ENABLE_MPI
+#define ENABLE_TILES

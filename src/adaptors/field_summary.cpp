@@ -60,10 +60,6 @@ void field_summary(
 #endif
 
 #if defined(USE_KOKKOS)
-// #undef const_field_2d_t
-// #define const_field_2d_t const Kokkos::View<double**, Kokkos::HostSpace>*
-// #define T Kokkos::HostSpace
-
 #include "../kernels/field_summary_kernel_c.c"
 void field_summary(
     double* vol,
@@ -84,12 +80,13 @@ void field_summary(
             x_max = tile.t_xmax,
             y_min = tile.t_ymin,
             y_max = tile.t_ymax;
-        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* volume   = tile.field.volume;
-        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* density0 = tile.field.density0;
-        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* energy0  = tile.field.energy0;
-        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* pressure = tile.field.pressure;
-        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* xvel0    = tile.field.xvel0;
-        // const Kokkos::View<double**, Kokkos::HostSpace>::HostMirror* yvel0    = tile.field.yvel0;
+
+        Kokkos::deep_copy(tile.field.volume, tile.field.d_volume);
+        Kokkos::deep_copy(tile.field.density0, tile.field.d_density0);
+        Kokkos::deep_copy(tile.field.energy0, tile.field.d_energy0);
+        Kokkos::deep_copy(tile.field.pressure, tile.field.d_pressure);
+        Kokkos::deep_copy(tile.field.xvel0, tile.field.d_xvel0);
+        Kokkos::deep_copy(tile.field.yvel0, tile.field.d_yvel0);
 
         double _vol   = 0.0,
                _mass  = 0.0,
@@ -107,7 +104,8 @@ void field_summary(
                     tile.field.density0,
                     tile.field.energy0,
                     tile.field.pressure,
-                    tile.field.xvel0, tile.field.yvel0,
+                    tile.field.xvel0,
+                    tile.field.yvel0,
                     &_vol, &_mass, &_ie, &_ke, &_press);
             }
         }
@@ -118,6 +116,7 @@ void field_summary(
         *ke    += _ke;
         *press += _press;
     }
+    Kokkos::fence();
 }
 #endif
 

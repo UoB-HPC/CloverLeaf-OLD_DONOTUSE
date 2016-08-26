@@ -74,6 +74,18 @@ void initialise_chunk(int tile)
         chunk.tiles[tile].field.volume,
         chunk.tiles[tile].field.xarea,
         chunk.tiles[tile].field.yarea);
+
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_vertexx, chunk.tiles[tile].field.vertexx);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_vertexdx, chunk.tiles[tile].field.vertexdx);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_vertexy, chunk.tiles[tile].field.vertexy);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_vertexdy, chunk.tiles[tile].field.vertexdy);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_cellx, chunk.tiles[tile].field.cellx);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_celldx, chunk.tiles[tile].field.celldx);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_celly, chunk.tiles[tile].field.celly);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_celldy, chunk.tiles[tile].field.celldy);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_volume, chunk.tiles[tile].field.volume);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_xarea, chunk.tiles[tile].field.xarea);
+    Kokkos::deep_copy(chunk.tiles[tile].field.d_yarea, chunk.tiles[tile].field.yarea);
 }
 
 #endif

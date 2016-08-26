@@ -6,10 +6,6 @@
 
 #ifdef USE_KOKKOS
 #include <Kokkos_Core.hpp>
-#endif
-
-
-#ifdef USE_KOKKOS
 #include "kokkosdefs.h"
 #endif
 
