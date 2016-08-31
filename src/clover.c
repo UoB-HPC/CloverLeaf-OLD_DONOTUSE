@@ -2,9 +2,9 @@
 #include <mpi.h>
 #include "definitions_c.h"
 #include "kernels/pack_kernel_c.c"
-#ifdef USE_KOKKOS
-#include "kernels/pack_kernel_kokkos.cpp"
-#endif
+// #ifdef USE_KOKKOS
+// #include "kernels/pack_kernel_kokkos.cpp"
+// #endif
 
 void checkMPIerror(int err)
 {
@@ -217,10 +217,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
 
     if (fields[FIELD_DENSITY0] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.density0,
                                     chunk.left_snd_buffer,
                                     depth, CELL_DATA,
@@ -228,10 +228,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_DENSITY1] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.density1,
                                     chunk.left_snd_buffer,
                                     depth, CELL_DATA,
@@ -239,10 +239,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_ENERGY0] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.energy0,
                                     chunk.left_snd_buffer,
                                     depth, CELL_DATA,
@@ -250,10 +250,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_ENERGY1] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.energy1,
                                     chunk.left_snd_buffer,
                                     depth, CELL_DATA,
@@ -261,10 +261,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_PRESSURE] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.pressure,
                                     chunk.left_snd_buffer,
                                     depth, CELL_DATA,
@@ -272,10 +272,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_VISCOSITY] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.viscosity,
                                     chunk.left_snd_buffer,
                                     depth, CELL_DATA,
@@ -283,10 +283,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_SOUNDSPEED] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.soundspeed,
                                     chunk.left_snd_buffer,
                                     depth, CELL_DATA,
@@ -294,10 +294,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_XVEL0] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.xvel0,
                                     chunk.left_snd_buffer,
                                     depth, VERTEX_DATA,
@@ -305,10 +305,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_XVEL1] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.xvel1,
                                     chunk.left_snd_buffer,
                                     depth, VERTEX_DATA,
@@ -316,10 +316,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_YVEL0] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.yvel0,
                                     chunk.left_snd_buffer,
                                     depth, VERTEX_DATA,
@@ -327,10 +327,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_YVEL1] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.yvel1,
                                     chunk.left_snd_buffer,
                                     depth, VERTEX_DATA,
@@ -338,10 +338,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_VOL_FLUX_X] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.vol_flux_x,
                                     chunk.left_snd_buffer,
                                     depth, X_FACE_DATA,
@@ -349,10 +349,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_VOL_FLUX_Y] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.vol_flux_y,
                                     chunk.left_snd_buffer,
                                     depth, Y_FACE_DATA,
@@ -360,10 +360,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_MASS_FLUX_X] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.mass_flux_x,
                                     chunk.left_snd_buffer,
                                     depth, X_FACE_DATA,
@@ -371,10 +371,10 @@ void clover_pack_left(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_MASS_FLUX_Y] == 1)  {
-        clover_pack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                    &chunk.tiles[tile].t_xmax,
-                                    &chunk.tiles[tile].t_ymin,
-                                    &chunk.tiles[tile].t_ymax,
+        clover_pack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                    chunk.tiles[tile].t_xmax,
+                                    chunk.tiles[tile].t_ymin,
+                                    chunk.tiles[tile].t_ymax,
                                     chunk.tiles[tile].field.mass_flux_y,
                                     chunk.left_snd_buffer,
                                     depth, Y_FACE_DATA,
@@ -424,10 +424,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
 
     if (fields[FIELD_DENSITY0] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.density0,
                                       chunk.left_rcv_buffer,
                                       depth, CELL_DATA,
@@ -435,10 +435,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_DENSITY1] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.density1,
                                       chunk.left_rcv_buffer,
                                       depth, CELL_DATA,
@@ -446,10 +446,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_ENERGY0] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.energy0,
                                       chunk.left_rcv_buffer,
                                       depth, CELL_DATA,
@@ -457,10 +457,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_ENERGY1] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.energy1,
                                       chunk.left_rcv_buffer,
                                       depth, CELL_DATA,
@@ -468,10 +468,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_PRESSURE] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.pressure,
                                       chunk.left_rcv_buffer,
                                       depth, CELL_DATA,
@@ -479,10 +479,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VISCOSITY] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.viscosity,
                                       chunk.left_rcv_buffer,
                                       depth, CELL_DATA,
@@ -490,10 +490,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_SOUNDSPEED] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.soundspeed,
                                       chunk.left_rcv_buffer,
                                       depth, CELL_DATA,
@@ -501,10 +501,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_XVEL0] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.xvel0,
                                       chunk.left_rcv_buffer,
                                       depth, VERTEX_DATA,
@@ -512,10 +512,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_XVEL1] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.xvel1,
                                       chunk.left_rcv_buffer,
                                       depth, VERTEX_DATA,
@@ -523,10 +523,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_YVEL0] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.yvel0,
                                       chunk.left_rcv_buffer,
                                       depth, VERTEX_DATA,
@@ -534,10 +534,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_YVEL1] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.yvel1,
                                       chunk.left_rcv_buffer,
                                       depth, VERTEX_DATA,
@@ -545,10 +545,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VOL_FLUX_X] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.vol_flux_x,
                                       chunk.left_rcv_buffer,
                                       depth, X_FACE_DATA,
@@ -556,10 +556,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VOL_FLUX_Y] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.vol_flux_y,
                                       chunk.left_rcv_buffer,
                                       depth, Y_FACE_DATA,
@@ -567,10 +567,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_MASS_FLUX_X] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.mass_flux_x,
                                       chunk.left_rcv_buffer,
                                       depth, X_FACE_DATA,
@@ -578,10 +578,10 @@ void clover_unpack_left(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_MASS_FLUX_Y] == 1)  {
-        clover_unpack_message_left_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_left_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.mass_flux_y,
                                       chunk.left_rcv_buffer,
                                       depth, Y_FACE_DATA,
@@ -598,10 +598,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
     int t_offset = (chunk.tiles[tile].t_bottom - chunk.bottom) * depth;
 
     if (fields[FIELD_DENSITY0] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.density0,
                                      chunk.right_snd_buffer,
                                      depth, CELL_DATA,
@@ -609,10 +609,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_DENSITY1] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.density1,
                                      chunk.right_snd_buffer,
                                      depth, CELL_DATA,
@@ -620,10 +620,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_ENERGY0] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.energy0,
                                      chunk.right_snd_buffer,
                                      depth, CELL_DATA,
@@ -631,10 +631,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_ENERGY1] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.energy1,
                                      chunk.right_snd_buffer,
                                      depth, CELL_DATA,
@@ -642,10 +642,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_PRESSURE] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.pressure,
                                      chunk.right_snd_buffer,
                                      depth, CELL_DATA,
@@ -653,10 +653,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_VISCOSITY] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.viscosity,
                                      chunk.right_snd_buffer,
                                      depth, CELL_DATA,
@@ -664,10 +664,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_SOUNDSPEED] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.soundspeed,
                                      chunk.right_snd_buffer,
                                      depth, CELL_DATA,
@@ -675,10 +675,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_XVEL0] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.xvel0,
                                      chunk.right_snd_buffer,
                                      depth, VERTEX_DATA,
@@ -686,10 +686,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_XVEL1] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.xvel1,
                                      chunk.right_snd_buffer,
                                      depth, VERTEX_DATA,
@@ -698,10 +698,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_YVEL0] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.yvel0,
                                      chunk.right_snd_buffer,
                                      depth, VERTEX_DATA,
@@ -710,10 +710,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_YVEL1] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.yvel1,
                                      chunk.right_snd_buffer,
                                      depth, VERTEX_DATA,
@@ -721,10 +721,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_VOL_FLUX_X] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.vol_flux_x,
                                      chunk.right_snd_buffer,
                                      depth, X_FACE_DATA,
@@ -732,10 +732,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_VOL_FLUX_Y] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.vol_flux_y,
                                      chunk.right_snd_buffer,
                                      depth, Y_FACE_DATA,
@@ -743,10 +743,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_MASS_FLUX_X] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.mass_flux_x,
                                      chunk.right_snd_buffer,
                                      depth, X_FACE_DATA,
@@ -754,10 +754,10 @@ void clover_pack_right(int tile, int* fields, int depth, int* left_right_offset)
 
     }
     if (fields[FIELD_MASS_FLUX_Y] == 1)  {
-        clover_pack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_pack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.mass_flux_y,
                                      chunk.right_snd_buffer,
                                      depth, Y_FACE_DATA,
@@ -799,10 +799,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
     int t_offset = (chunk.tiles[tile].t_bottom - chunk.bottom) * depth;
 
     if (fields[FIELD_DENSITY0] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.density0,
                                        chunk.right_rcv_buffer,
                                        depth, CELL_DATA,
@@ -811,10 +811,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
     }
 
     if (fields[FIELD_DENSITY1] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.density1,
                                        chunk.right_rcv_buffer,
                                        depth, CELL_DATA,
@@ -822,10 +822,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_ENERGY0] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.energy0,
                                        chunk.right_rcv_buffer,
                                        depth, CELL_DATA,
@@ -833,10 +833,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_ENERGY1] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.energy1,
                                        chunk.right_rcv_buffer,
                                        depth, CELL_DATA,
@@ -844,10 +844,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_PRESSURE] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.pressure,
                                        chunk.right_rcv_buffer,
                                        depth, CELL_DATA,
@@ -855,10 +855,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VISCOSITY] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.viscosity,
                                        chunk.right_rcv_buffer,
                                        depth, CELL_DATA,
@@ -866,10 +866,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_SOUNDSPEED] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.soundspeed,
                                        chunk.right_rcv_buffer,
                                        depth, CELL_DATA,
@@ -877,10 +877,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_XVEL0] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.xvel0,
                                        chunk.right_rcv_buffer,
                                        depth, VERTEX_DATA,
@@ -888,10 +888,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_XVEL1] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.xvel1,
                                        chunk.right_rcv_buffer,
                                        depth, VERTEX_DATA,
@@ -899,10 +899,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_YVEL0] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.yvel0,
                                        chunk.right_rcv_buffer,
                                        depth, VERTEX_DATA,
@@ -910,10 +910,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_YVEL1] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.yvel1,
                                        chunk.right_rcv_buffer,
                                        depth, VERTEX_DATA,
@@ -921,10 +921,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VOL_FLUX_X] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.vol_flux_x,
                                        chunk.right_rcv_buffer,
                                        depth, X_FACE_DATA,
@@ -932,10 +932,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VOL_FLUX_Y] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.vol_flux_y,
                                        chunk.right_rcv_buffer,
                                        depth, Y_FACE_DATA,
@@ -943,10 +943,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_MASS_FLUX_X] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.mass_flux_x,
                                        chunk.right_rcv_buffer,
                                        depth, X_FACE_DATA,
@@ -954,10 +954,10 @@ void clover_unpack_right(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_MASS_FLUX_Y] == 1)  {
-        clover_unpack_message_right_c_(&chunk.tiles[tile].t_xmin,
-                                       &chunk.tiles[tile].t_xmax,
-                                       &chunk.tiles[tile].t_ymin,
-                                       &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_right_c_(chunk.tiles[tile].t_xmin,
+                                       chunk.tiles[tile].t_xmax,
+                                       chunk.tiles[tile].t_ymin,
+                                       chunk.tiles[tile].t_ymax,
                                        chunk.tiles[tile].field.mass_flux_y,
                                        chunk.right_rcv_buffer,
                                        depth, Y_FACE_DATA,
@@ -974,10 +974,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
     int t_offset = (chunk.tiles[tile].t_left - chunk.left) * depth;
 
     if (fields[FIELD_DENSITY0] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.density0,
                                    chunk.top_snd_buffer,
                                    depth, CELL_DATA,
@@ -985,10 +985,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_DENSITY1] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.density1,
                                    chunk.top_snd_buffer,
                                    depth, CELL_DATA,
@@ -996,10 +996,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_ENERGY0] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.energy0,
                                    chunk.top_snd_buffer,
                                    depth, CELL_DATA,
@@ -1007,10 +1007,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_ENERGY1] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.energy1,
                                    chunk.top_snd_buffer,
                                    depth, CELL_DATA,
@@ -1018,10 +1018,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_PRESSURE] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.pressure,
                                    chunk.top_snd_buffer,
                                    depth, CELL_DATA,
@@ -1029,10 +1029,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_VISCOSITY] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.viscosity,
                                    chunk.top_snd_buffer,
                                    depth, CELL_DATA,
@@ -1040,10 +1040,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_SOUNDSPEED] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.soundspeed,
                                    chunk.top_snd_buffer,
                                    depth, CELL_DATA,
@@ -1051,10 +1051,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_XVEL0] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.xvel0,
                                    chunk.top_snd_buffer,
                                    depth, VERTEX_DATA,
@@ -1062,10 +1062,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_XVEL1] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.xvel1,
                                    chunk.top_snd_buffer,
                                    depth, VERTEX_DATA,
@@ -1073,10 +1073,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_YVEL0] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.yvel0,
                                    chunk.top_snd_buffer,
                                    depth, VERTEX_DATA,
@@ -1084,10 +1084,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_YVEL1] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.yvel1,
                                    chunk.top_snd_buffer,
                                    depth, VERTEX_DATA,
@@ -1095,10 +1095,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_VOL_FLUX_X] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.vol_flux_x,
                                    chunk.top_snd_buffer,
                                    depth, X_FACE_DATA,
@@ -1106,10 +1106,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_VOL_FLUX_Y] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.vol_flux_y,
                                    chunk.top_snd_buffer,
                                    depth, Y_FACE_DATA,
@@ -1117,10 +1117,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_MASS_FLUX_X] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.mass_flux_x,
                                    chunk.top_snd_buffer,
                                    depth, X_FACE_DATA,
@@ -1128,10 +1128,10 @@ void clover_pack_top(int tile, int* fields, int depth, int* bottom_top_offset)
 
     }
     if (fields[FIELD_MASS_FLUX_Y] == 1)  {
-        clover_pack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                   &chunk.tiles[tile].t_xmax,
-                                   &chunk.tiles[tile].t_ymin,
-                                   &chunk.tiles[tile].t_ymax,
+        clover_pack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                   chunk.tiles[tile].t_xmax,
+                                   chunk.tiles[tile].t_ymin,
+                                   chunk.tiles[tile].t_ymax,
                                    chunk.tiles[tile].field.mass_flux_y,
                                    chunk.top_snd_buffer,
                                    depth, Y_FACE_DATA,
@@ -1173,10 +1173,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
     int t_offset = (chunk.tiles[tile].t_left - chunk.left) * depth;
 
     if (fields[FIELD_DENSITY0] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.density0,
                                      chunk.top_rcv_buffer,
                                      depth, CELL_DATA,
@@ -1184,10 +1184,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_DENSITY1] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.density1,
                                      chunk.top_rcv_buffer,
                                      depth, CELL_DATA,
@@ -1195,10 +1195,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_ENERGY0] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.energy0,
                                      chunk.top_rcv_buffer,
                                      depth, CELL_DATA,
@@ -1206,10 +1206,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_ENERGY1] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.energy1,
                                      chunk.top_rcv_buffer,
                                      depth, CELL_DATA,
@@ -1217,10 +1217,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_PRESSURE] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.pressure,
                                      chunk.top_rcv_buffer,
                                      depth, CELL_DATA,
@@ -1228,10 +1228,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VISCOSITY] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.viscosity,
                                      chunk.top_rcv_buffer,
                                      depth, CELL_DATA,
@@ -1239,10 +1239,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_SOUNDSPEED] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.soundspeed,
                                      chunk.top_rcv_buffer,
                                      depth, CELL_DATA,
@@ -1250,10 +1250,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_XVEL0] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.xvel0,
                                      chunk.top_rcv_buffer,
                                      depth, VERTEX_DATA,
@@ -1261,10 +1261,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_XVEL1] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.xvel1,
                                      chunk.top_rcv_buffer,
                                      depth, VERTEX_DATA,
@@ -1272,10 +1272,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_YVEL0] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.yvel0,
                                      chunk.top_rcv_buffer,
                                      depth, VERTEX_DATA,
@@ -1283,10 +1283,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_YVEL1] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.yvel1,
                                      chunk.top_rcv_buffer,
                                      depth, VERTEX_DATA,
@@ -1294,10 +1294,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VOL_FLUX_X] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.vol_flux_x,
                                      chunk.top_rcv_buffer,
                                      depth, X_FACE_DATA,
@@ -1305,10 +1305,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VOL_FLUX_Y] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.vol_flux_y,
                                      chunk.top_rcv_buffer,
                                      depth, Y_FACE_DATA,
@@ -1316,10 +1316,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_MASS_FLUX_X] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.mass_flux_x,
                                      chunk.top_rcv_buffer,
                                      depth, X_FACE_DATA,
@@ -1327,10 +1327,10 @@ void clover_unpack_top(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_MASS_FLUX_Y] == 1)  {
-        clover_unpack_message_top_c_(&chunk.tiles[tile].t_xmin,
-                                     &chunk.tiles[tile].t_xmax,
-                                     &chunk.tiles[tile].t_ymin,
-                                     &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_top_c_(chunk.tiles[tile].t_xmin,
+                                     chunk.tiles[tile].t_xmax,
+                                     chunk.tiles[tile].t_ymin,
+                                     chunk.tiles[tile].t_ymax,
                                      chunk.tiles[tile].field.mass_flux_y,
                                      chunk.top_rcv_buffer,
                                      depth, Y_FACE_DATA,
@@ -1347,10 +1347,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
     int t_offset = (chunk.tiles[tile].t_left - chunk.left) * depth;
 
     if (fields[FIELD_DENSITY0] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.density0,
                                       chunk.bottom_snd_buffer,
                                       depth, CELL_DATA,
@@ -1359,10 +1359,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_DENSITY1] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.density1,
                                       chunk.bottom_snd_buffer,
                                       depth, CELL_DATA,
@@ -1370,10 +1370,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_ENERGY0] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.energy0,
                                       chunk.bottom_snd_buffer,
                                       depth, CELL_DATA,
@@ -1381,10 +1381,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_ENERGY1] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.energy1,
                                       chunk.bottom_snd_buffer,
                                       depth, CELL_DATA,
@@ -1392,10 +1392,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_PRESSURE] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.pressure,
                                       chunk.bottom_snd_buffer,
                                       depth, CELL_DATA,
@@ -1403,10 +1403,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_VISCOSITY] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.viscosity,
                                       chunk.bottom_snd_buffer,
                                       depth, CELL_DATA,
@@ -1414,10 +1414,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_SOUNDSPEED] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.soundspeed,
                                       chunk.bottom_snd_buffer,
                                       depth, CELL_DATA,
@@ -1425,10 +1425,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_XVEL0] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.xvel0,
                                       chunk.bottom_snd_buffer,
                                       depth, VERTEX_DATA,
@@ -1436,10 +1436,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_XVEL1] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.xvel1,
                                       chunk.bottom_snd_buffer,
                                       depth, VERTEX_DATA,
@@ -1447,10 +1447,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_YVEL0] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.yvel0,
                                       chunk.bottom_snd_buffer,
                                       depth, VERTEX_DATA,
@@ -1458,10 +1458,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_YVEL1] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.yvel1,
                                       chunk.bottom_snd_buffer,
                                       depth, VERTEX_DATA,
@@ -1469,10 +1469,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_VOL_FLUX_X] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.vol_flux_x,
                                       chunk.bottom_snd_buffer,
                                       depth, X_FACE_DATA,
@@ -1480,10 +1480,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_VOL_FLUX_Y] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.vol_flux_y,
                                       chunk.bottom_snd_buffer,
                                       depth, Y_FACE_DATA,
@@ -1491,10 +1491,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_MASS_FLUX_X] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.mass_flux_x,
                                       chunk.bottom_snd_buffer,
                                       depth, X_FACE_DATA,
@@ -1502,10 +1502,10 @@ void clover_pack_bottom(int tile, int* fields, int depth, int* bottom_top_offset
 
     }
     if (fields[FIELD_MASS_FLUX_Y] == 1)  {
-        clover_pack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                      &chunk.tiles[tile].t_xmax,
-                                      &chunk.tiles[tile].t_ymin,
-                                      &chunk.tiles[tile].t_ymax,
+        clover_pack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                      chunk.tiles[tile].t_xmax,
+                                      chunk.tiles[tile].t_ymin,
+                                      chunk.tiles[tile].t_ymax,
                                       chunk.tiles[tile].field.mass_flux_y,
                                       chunk.bottom_snd_buffer,
                                       depth, Y_FACE_DATA,
@@ -1545,10 +1545,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
     int t_offset = (chunk.tiles[tile].t_left - chunk.left) * depth;
 
     if (fields[FIELD_DENSITY0] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.density0,
                                         chunk.bottom_rcv_buffer,
                                         depth, CELL_DATA,
@@ -1556,10 +1556,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_DENSITY1] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.density1,
                                         chunk.bottom_rcv_buffer,
                                         depth, CELL_DATA,
@@ -1567,10 +1567,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_ENERGY0] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.energy0,
                                         chunk.bottom_rcv_buffer,
                                         depth, CELL_DATA,
@@ -1578,10 +1578,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_ENERGY1] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.energy1,
                                         chunk.bottom_rcv_buffer,
                                         depth, CELL_DATA,
@@ -1589,10 +1589,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_PRESSURE] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.pressure,
                                         chunk.bottom_rcv_buffer,
                                         depth, CELL_DATA,
@@ -1600,10 +1600,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VISCOSITY] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.viscosity,
                                         chunk.bottom_rcv_buffer,
                                         depth, CELL_DATA,
@@ -1611,10 +1611,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_SOUNDSPEED] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.soundspeed,
                                         chunk.bottom_rcv_buffer,
                                         depth, CELL_DATA,
@@ -1622,10 +1622,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_XVEL0] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.xvel0,
                                         chunk.bottom_rcv_buffer,
                                         depth, VERTEX_DATA,
@@ -1633,10 +1633,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_XVEL1] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.xvel1,
                                         chunk.bottom_rcv_buffer,
                                         depth, VERTEX_DATA,
@@ -1644,10 +1644,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_YVEL0] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.yvel0,
                                         chunk.bottom_rcv_buffer,
                                         depth, VERTEX_DATA,
@@ -1655,10 +1655,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_YVEL1] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.yvel1,
                                         chunk.bottom_rcv_buffer,
                                         depth, VERTEX_DATA,
@@ -1666,10 +1666,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VOL_FLUX_X] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.vol_flux_x,
                                         chunk.bottom_rcv_buffer,
                                         depth, X_FACE_DATA,
@@ -1677,10 +1677,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_VOL_FLUX_Y] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.vol_flux_y,
                                         chunk.bottom_rcv_buffer,
                                         depth, Y_FACE_DATA,
@@ -1688,10 +1688,10 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_MASS_FLUX_X] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.mass_flux_x,
                                         chunk.bottom_rcv_buffer,
                                         depth, X_FACE_DATA,
@@ -1699,19 +1699,16 @@ void clover_unpack_bottom(int* fields, int tile, int depth,
 
     }
     if (fields[FIELD_MASS_FLUX_Y] == 1)  {
-        clover_unpack_message_bottom_c_(&chunk.tiles[tile].t_xmin,
-                                        &chunk.tiles[tile].t_xmax,
-                                        &chunk.tiles[tile].t_ymin,
-                                        &chunk.tiles[tile].t_ymax,
+        clover_unpack_message_bottom_c_(chunk.tiles[tile].t_xmin,
+                                        chunk.tiles[tile].t_xmax,
+                                        chunk.tiles[tile].t_ymin,
+                                        chunk.tiles[tile].t_ymax,
                                         chunk.tiles[tile].field.mass_flux_y,
                                         chunk.bottom_rcv_buffer,
                                         depth, Y_FACE_DATA,
                                         bottom_top_offset[FIELD_MASS_FLUX_Y] + t_offset);
 
     }
-
-
-
 }
 
 void clover_sum(double* value)

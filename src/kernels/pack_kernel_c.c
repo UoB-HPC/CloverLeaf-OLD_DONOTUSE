@@ -27,377 +27,308 @@
 #include <math.h>
 #include "../definitions_c.h"
 
-kernelqual void clover_pack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax,
-        double* __restrict__ field,
-        double* __restrict__ left_snd_buffer,
-        int dpth, int fld_typ,
-        int bffr_ffst)
-
+kernelqual void clover_pack_message_left_c_(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    field_2d_t field,
+    double* __restrict__ left_snd_buffer,
+    int depth, int field_type,
+    int buffer_offset)
 {
-    int x_min = *xmin;
-    int x_max = *xmax;
-    int y_min = *ymin;
-    int y_max = *ymax;
-    int field_type = fld_typ;
-    int depth = dpth;
-    int buffer_offset = bffr_ffst;
-
-    int j, k, index, x_inc, y_inc;
+    int index, x_inc, y_inc;
 
 //Pack
-
-// These array modifications still need to be added on, plus the donor data location changes as in update_halo
-    if (field_type == CELL_DATA) {
-        x_inc = 0;
-        y_inc = 0;
-    }
-    if (field_type == VERTEX_DATA) {
-        x_inc = 1;
-        y_inc = 1;
-    }
-    if (field_type == X_FACE_DATA) {
-        x_inc = 1;
-        y_inc = 0;
-    }
-    if (field_type == Y_FACE_DATA) {
-        x_inc = 0;
-        y_inc = 1;
-    }
-
-
-    for (k = y_min - depth; k <= y_max + y_inc + depth; k++) {
+    for (int k = y_min - depth; k <= y_max + y_inc + depth; k++) {
 #pragma ivdep
-        for (j = 1; j <= depth; j++) {
+        for (int j = 1; j <= depth; j++) {
             index = buffer_offset + j + (k + depth - 1) * depth;
-            left_snd_buffer[FTNREF1D(index, 1)] = field[FTNREF2D(x_min + x_inc - 1 + j, k, x_max + 4 + x_inc, x_min - 2, y_min - 2)];
+            if (field_type == CELL_DATA) {
+                left_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, x_min - 1 + j, k);
+            }
+            if (field_type == VERTEX_DATA) {
+                left_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, x_min + 1 - 1 + j, k);
+            }
+            if (field_type == X_FACE_DATA) {
+                left_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, x_min + 1 - 1 + j, k);
+            }
+            if (field_type == Y_FACE_DATA) {
+                left_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, x_min - 1 + j, k);
+            }
         }
     }
-
 }
 
-kernelqual void clover_unpack_message_left_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-        double* left_rcv_buffer,
-        int dpth, int fld_typ,
-        int bffr_ffst)
-
+kernelqual void clover_unpack_message_left_c_(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* field,
+    double* left_rcv_buffer,
+    int depth, int field_type,
+    int buffer_offset)
 {
-    int x_min = *xmin;
-    int x_max = *xmax;
-    int y_min = *ymin;
-    int y_max = *ymax;
-    int field_type = fld_typ;
-    int depth = dpth;
-    int buffer_offset = bffr_ffst;
+    // int x_min = *xmin;
+    // int x_max = *xmax;
+    // int y_min = *ymin;
+    // int y_max = *ymax;
+    // int field_type = fld_typ;
+    // int depth = dpth;
+    // int buffer_offset = bffr_ffst;
 
-    int j, k, index, x_inc, y_inc;
+    int index, x_inc, y_inc;
 
-//Unpack
-
-// These array modifications still need to be added on, plus the donor data location changes as in update_halo
-    if (field_type == CELL_DATA) {
-        x_inc = 0;
-        y_inc = 0;
-    }
-    if (field_type == VERTEX_DATA) {
-        x_inc = 1;
-        y_inc = 1;
-    }
-    if (field_type == X_FACE_DATA) {
-        x_inc = 1;
-        y_inc = 0;
-    }
-    if (field_type == Y_FACE_DATA) {
-        x_inc = 0;
-        y_inc = 1;
-    }
-
-
-    for (k = y_min - depth; k <= y_max + y_inc + depth; k++) {
+    //Unpack
+    for (int k = y_min - depth; k <= y_max + y_inc + depth; k++) {
 #pragma ivdep
-        for (j = 1; j <= depth; j++) {
+        for (int j = 1; j <= depth; j++) {
             index = buffer_offset + j + (k + depth - 1) * depth;
-            field[FTNREF2D(x_min - j, k, x_max + 4 + x_inc, x_min - 2, y_min - 2)] = left_rcv_buffer[FTNREF1D(index, 1)];
+            if (field_type == CELL_DATA) {
+                T1ACCESS(field, x_min - j, k) = left_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == VERTEX_DATA) {
+                T2ACCESS(field, x_min - j, k) = left_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == X_FACE_DATA) {
+                T2ACCESS(field, x_min - j, k) = left_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == Y_FACE_DATA) {
+                T1ACCESS(field, x_min - j, k) = left_rcv_buffer[FTNREF1D(index, 1)];
+            }
         }
     }
-
 }
 
-kernelqual void clover_pack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-        double* right_snd_buffer,
-        int dpth, int fld_typ,
-        int bffr_ffst)
-
+kernelqual void clover_pack_message_right_c_(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* field,
+    double* right_snd_buffer,
+    int depth, int field_type,
+    int buffer_offset)
 {
-    int x_min = *xmin;
-    int x_max = *xmax;
-    int y_min = *ymin;
-    int y_max = *ymax;
-    int field_type = fld_typ;
-    int depth = dpth;
-    int buffer_offset = bffr_ffst;
+    // int x_min = *xmin;
+    // int x_max = *xmax;
+    // int y_min = *ymin;
+    // int y_max = *ymax;
+    // int field_type = fld_typ;
+    // int depth = dpth;
+    // int buffer_offset = bffr_ffst;
 
-    int j, k, index, x_inc, y_inc;
+    int index, x_inc, y_inc;
+
+    //Pack
+    for (int k = y_min - depth; k <= y_max + y_inc + depth; k++) {
+#pragma ivdep
+        for (int j = 1; j <= depth; j++) {
+            index = buffer_offset + j + (k + depth - 1) * depth;
+            if (field_type == CELL_DATA) {
+                right_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, x_max + 1 - j, k);
+            }
+            if (field_type == VERTEX_DATA) {
+                right_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, x_max + 1 - j, k);
+            }
+            if (field_type == X_FACE_DATA) {
+                right_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, x_max + 1 - j, k);
+            }
+            if (field_type == Y_FACE_DATA) {
+                right_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, x_max + 1 - j, k);
+            }
+        }
+    }
+}
+
+kernelqual void clover_unpack_message_right_c_(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* field,
+    double* right_rcv_buffer,
+    int depth, int field_type,
+    int buffer_offset)
+{
+    // int x_min = *xmin;
+    // int x_max = *xmax;
+    // int y_min = *ymin;
+    // int y_max = *ymax;
+    // int field_type = fld_typ;
+    // int depth = dpth;
+    // int buffer_offset = bffr_ffst;
+
+    int index, x_inc, y_inc;
 
 //Pack
-
-// These array modifications still need to be added on, plus the donor data location changes as in update_halo
-    if (field_type == CELL_DATA) {
-        x_inc = 0;
-        y_inc = 0;
-    }
-    if (field_type == VERTEX_DATA) {
-        x_inc = 1;
-        y_inc = 1;
-    }
-    if (field_type == X_FACE_DATA) {
-        x_inc = 1;
-        y_inc = 0;
-    }
-    if (field_type == Y_FACE_DATA) {
-        x_inc = 0;
-        y_inc = 1;
-    }
-
-
-    for (k = y_min - depth; k <= y_max + y_inc + depth; k++) {
+    for (int k = y_min - depth; k <= y_max + y_inc + depth; k++) {
 #pragma ivdep
-        for (j = 1; j <= depth; j++) {
+        for (int j = 1; j <= depth; j++) {
             index = buffer_offset + j + (k + depth - 1) * depth;
-            right_snd_buffer[FTNREF1D(index, 1)] = field[FTNREF2D(x_max + 1 - j, k, x_max + 4 + x_inc, x_min - 2, y_min - 2)];
+            if (field_type == CELL_DATA) {
+                T1ACCESS(field, x_max + j, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == VERTEX_DATA) {
+                T2ACCESS(field, x_max + j + 1, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == X_FACE_DATA) {
+                T2ACCESS(field, x_max + j + 1, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == Y_FACE_DATA) {
+                T1ACCESS(field, x_max + j, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+            }
         }
     }
-
 }
 
-kernelqual void clover_unpack_message_right_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-        double* right_rcv_buffer,
-        int dpth, int fld_typ,
-        int bffr_ffst)
-
+kernelqual void clover_pack_message_top_c_(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* field,
+    double* top_snd_buffer,
+    int depth, int field_type,
+    int buffer_offset)
 {
-    int x_min = *xmin;
-    int x_max = *xmax;
-    int y_min = *ymin;
-    int y_max = *ymax;
-    int field_type = fld_typ;
-    int depth = dpth;
-    int buffer_offset = bffr_ffst;
+    // int x_min = *xmin;
+    // int x_max = *xmax;
+    // int y_min = *ymin;
+    // int y_max = *ymax;
+    // int field_type = fld_typ;
+    // int depth = dpth;
+    // int buffer_offset = bffr_ffst;
 
-    int j, k, index, x_inc, y_inc;
-
-//Pack
-
-// These array modifications still need to be added on, plus the donor data location changes as in update_halo
-    if (field_type == CELL_DATA) {
-        x_inc = 0;
-        y_inc = 0;
-    }
-    if (field_type == VERTEX_DATA) {
-        x_inc = 1;
-        y_inc = 1;
-    }
-    if (field_type == X_FACE_DATA) {
-        x_inc = 1;
-        y_inc = 0;
-    }
-    if (field_type == Y_FACE_DATA) {
-        x_inc = 0;
-        y_inc = 1;
-    }
-
-
-    for (k = y_min - depth; k <= y_max + y_inc + depth; k++) {
-#pragma ivdep
-        for (j = 1; j <= depth; j++) {
-            index = buffer_offset + j + (k + depth - 1) * depth;
-            field[FTNREF2D(x_max + x_inc + j, k, x_max + 4 + x_inc, x_min - 2, y_min - 2)] = right_rcv_buffer[FTNREF1D(index, 1)];
-        }
-    }
-
-}
-
-kernelqual void clover_pack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-        double* top_snd_buffer,
-        int dpth, int fld_typ,
-        int bffr_ffst)
-
-{
-    int x_min = *xmin;
-    int x_max = *xmax;
-    int y_min = *ymin;
-    int y_max = *ymax;
-    int field_type = fld_typ;
-    int depth = dpth;
-    int buffer_offset = bffr_ffst;
-
-    int j, k, index, x_inc;
+    int index, x_inc;
 // y_inc;
 
 //Pack
-
-// These array modifications still need to be added on, plus the donor data location changes as in update_halo
-    if (field_type == CELL_DATA) {
-        x_inc = 0;
-// y_inc = 0;
-    }
-    if (field_type == VERTEX_DATA) {
-        x_inc = 1;
-// y_inc = 1;
-    }
-    if (field_type == X_FACE_DATA) {
-        x_inc = 1;
-// y_inc = 0;
-    }
-    if (field_type == Y_FACE_DATA) {
-        x_inc = 0;
-// y_inc = 1;
-    }
-
-    for (k = 1; k <= depth; k++) {
-
-        for (j = x_min - depth; j <= x_max + x_inc + depth; j++) {
-            index = buffer_offset + k + (j + depth - 1) * depth;
-            top_snd_buffer[FTNREF1D(index, 1)] = field[FTNREF2D(j, y_max + 1 - k, x_max + 4 + x_inc, x_min - 2, y_min - 2)];
+    for (int k = 1; k <= depth; k++) {
+#pragma ivdep
+        for (int j = x_min - depth; j <= x_max + x_inc + depth; j++) {
+            index = buffer_offset + j + (k + depth - 1) * depth;
+            if (field_type == CELL_DATA) {
+                // T1ACCESS(field, x_max + j, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+                top_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, j, y_max + 1 - k);
+            }
+            if (field_type == VERTEX_DATA) {
+                // T2ACCESS(field, x_max + j + 1, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+                top_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, j, y_max + 1 - k);
+            }
+            if (field_type == X_FACE_DATA) {
+                // T2ACCESS(field, x_max + j + 1, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+                top_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, j, y_max + 1 - k);
+            }
+            if (field_type == Y_FACE_DATA) {
+                // T1ACCESS(field, x_max + j, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+                top_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, j, y_max + 1 - k);
+            }
         }
     }
 
 }
 
-kernelqual void clover_pack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-        double* bottom_snd_buffer,
-        int dpth, int fld_typ,
-        int bffr_ffst)
-
+kernelqual void clover_pack_message_bottom_c_(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* field,
+    double* bottom_snd_buffer,
+    int depth, int field_type,
+    int buffer_offset)
 {
-    int x_min = *xmin;
-    int x_max = *xmax;
-    int y_min = *ymin;
-// int y_max = *ymax;
-    int field_type = fld_typ;
-    int depth = dpth;
-    int buffer_offset = bffr_ffst;
+//     int x_min = *xmin;
+//     int x_max = *xmax;
+//     int y_min = *ymin;
+// // int y_max = *ymax;
+//     int field_type = fld_typ;
+//     int depth = dpth;
+//     int buffer_offset = bffr_ffst;
 
     int j, k, index, x_inc, y_inc;
 
 //Pack
-
-// These array modifications still need to be added on, plus the donor data location changes as in update_halo
-    if (field_type == CELL_DATA) {
-        x_inc = 0;
-        y_inc = 0;
-    }
-    if (field_type == VERTEX_DATA) {
-        x_inc = 1;
-        y_inc = 1;
-    }
-    if (field_type == X_FACE_DATA) {
-        x_inc = 1;
-        y_inc = 0;
-    }
-    if (field_type == Y_FACE_DATA) {
-        x_inc = 0;
-        y_inc = 1;
-    }
-
-    for (k = 1; k <= depth; k++) {
-
-        for (j = x_min - depth; j <= x_max + x_inc + depth; j++) {
-            index = buffer_offset + k + (j + depth - 1) * depth;
-            bottom_snd_buffer[FTNREF1D(index, 1)] = field[FTNREF2D(j, y_min + y_inc - 1 + k, x_max + 4 + x_inc, x_min - 2, y_min - 2)];
+    for (int k = 1; k <= depth; k++) {
+#pragma ivdep
+        for (int j = x_min - depth; j <= x_max + x_inc + depth; j++) {
+            index = buffer_offset + j + (k + depth - 1) * depth;
+            if (field_type == CELL_DATA) {
+                // T1ACCESS(field, x_max + j, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+                bottom_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, j, y_min - 1 + k);
+            }
+            if (field_type == VERTEX_DATA) {
+                // T2ACCESS(field, x_max + j + 1, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+                bottom_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, j, y_min + 1 - 1 + k);
+            }
+            if (field_type == X_FACE_DATA) {
+                // T2ACCESS(field, x_max + j + 1, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+                bottom_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, j, y_min - 1 + k);
+            }
+            if (field_type == Y_FACE_DATA) {
+                // T1ACCESS(field, x_max + j, k) = right_rcv_buffer[FTNREF1D(index, 1)];
+                bottom_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, j, y_min + 1 - 1 + k);
+            }
         }
     }
-
 }
 
-kernelqual void clover_unpack_message_bottom_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-        double* bottom_rcv_buffer,
-        int dpth, int fld_typ,
-        int bffr_ffst)
-
+kernelqual void clover_unpack_message_bottom_c_(
+    int x_min, int x_max,
+    int y_min, int y_max,
+    double* field,
+    double* bottom_rcv_buffer,
+    int depth, int field_type,
+    int buffer_offset)
 {
-    int x_min = *xmin;
-    int x_max = *xmax;
-    int y_min = *ymin;
-// int y_max = *ymax;
-    int field_type = fld_typ;
-    int depth = dpth;
-    int buffer_offset = bffr_ffst;
+//     int x_min = *xmin;
+//     int x_max = *xmax;
+//     int y_min = *ymin;
+// // int y_max = *ymax;
+//     int field_type = fld_typ;
+//     int depth = dpth;
+//     int buffer_offset = bffr_ffst;
 
-    int j, k, index, x_inc;
-// y_inc;
+    int index, x_inc;
 
 //Unpack
-
-// These array modifications still need to be added on, plus the donor data location changes as in update_halo
-    if (field_type == CELL_DATA) {
-        x_inc = 0;
-// y_inc = 0;
-    }
-    if (field_type == VERTEX_DATA) {
-        x_inc = 1;
-// y_inc = 1;
-    }
-    if (field_type == X_FACE_DATA) {
-        x_inc = 1;
-// y_inc = 0;
-    }
-    if (field_type == Y_FACE_DATA) {
-        x_inc = 0;
-// y_inc = 1;
-    }
-
-    for (k = 1; k <= depth; k++) {
-
-        for (j = x_min - depth; j <= x_max + x_inc + depth; j++) {
-            index = buffer_offset + k + (j + depth - 1) * depth;
-            field[FTNREF2D(j, y_min - k, x_max + 4 + x_inc, x_min - 2, y_min - 2)] = bottom_rcv_buffer[FTNREF1D(index, 1)];
+    for (int k = 1; k <= depth; k++) {
+#pragma ivdep
+        for (int j = x_min - depth; j <= x_max + x_inc + depth; j++) {
+            index = buffer_offset + j + (k + depth - 1) * depth;
+            if (field_type == CELL_DATA) {
+                T1ACCESS(field, j, y_min - k) = bottom_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == VERTEX_DATA) {
+                T2ACCESS(field, j, y_min - k) = bottom_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == X_FACE_DATA) {
+                T2ACCESS(field, j, y_min - k) = bottom_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == Y_FACE_DATA) {
+                T1ACCESS(field, j, y_min - k) = bottom_rcv_buffer[FTNREF1D(index, 1)];
+            }
         }
     }
-
 }
 
-kernelqual void clover_unpack_message_top_c_(int* xmin, int* xmax, int* ymin, int* ymax, double* field,
-        double* top_rcv_buffer,
-        int dpth, int fld_typ,
-        int bffr_ffst)
+kernelqual void clover_unpack_message_top_c_(
+    int x_min, int x_max, int y_min, int y_max,
+    double* field,
+    double* top_rcv_buffer,
+    int depth, int field_type,
+    int buffer_offset)
 
 {
-    int x_min = *xmin;
-    int x_max = *xmax;
-    int y_min = *ymin;
-    int y_max = *ymax;
-    int field_type = fld_typ;
-    int depth = dpth;
-    int buffer_offset = bffr_ffst;
-
-    int j, k, index, x_inc, y_inc;
+    int index, x_inc, y_inc;
 
 //Unpack
-
-// These array modifications still need to be added on, plus the donor data location changes as in update_halo
-    if (field_type == CELL_DATA) {
-        x_inc = 0;
-        y_inc = 0;
-    }
-    if (field_type == VERTEX_DATA) {
-        x_inc = 1;
-        y_inc = 1;
-    }
-    if (field_type == X_FACE_DATA) {
-        x_inc = 1;
-        y_inc = 0;
-    }
-    if (field_type == Y_FACE_DATA) {
-        x_inc = 0;
-        y_inc = 1;
-    }
-
-    for (k = 1; k <= depth; k++) {
-
-        for (j = x_min - depth; j <= x_max + x_inc + depth; j++) {
-            index = buffer_offset + k + (j + depth - 1) * depth;
-            field[FTNREF2D(j, y_max + y_inc + k, x_max + 4 + x_inc, x_min - 2, y_min - 2)] = top_rcv_buffer[FTNREF1D(index, 1)];
+    for (int k = 1; k <= depth; k++) {
+#pragma ivdep
+        for (int j = x_min - depth; j <= x_max + x_inc + depth; j++) {
+            index = buffer_offset + j + (k + depth - 1) * depth;
+            if (field_type == CELL_DATA) {
+                T1ACCESS(field, j, y_max + 0 + k) = top_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == VERTEX_DATA) {
+                T2ACCESS(field, j, y_max + 1 + k) = top_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == X_FACE_DATA) {
+                T2ACCESS(field, j, y_max + 0 + k) = top_rcv_buffer[FTNREF1D(index, 1)];
+            }
+            if (field_type == Y_FACE_DATA) {
+                T1ACCESS(field, j, y_max + 1 + k) = top_rcv_buffer[FTNREF1D(index, 1)];
+            }
         }
     }
-
 }
