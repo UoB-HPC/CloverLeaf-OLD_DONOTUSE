@@ -26,8 +26,8 @@ This is activated through the two input deck parameters:
 
 ## Performance
 
-![CloverLeaf scaling on 2x ThunderX ARM chips.](https://github.com/jamuus/CloverLeaf/blob/master/img/thunderxscaling.png)
 ![Overall Performance](https://github.com/jamuus/CloverLeaf/blob/master/img/overallPerf.png)
+![CloverLeaf scaling on 2x ThunderX ARM chips.](https://github.com/jamuus/CloverLeaf/blob/master/img/thunderxscaling.png)
 
 ## Code Structure
 
