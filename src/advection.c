@@ -1,10 +1,7 @@
-// #include "advection.h"
 #include "definitions_c.h"
-// #include "kernels/advec_cell_kernel_c.c"
 #include "adaptors/advec_cell.cpp"
 #include "adaptors/advec_mom.cpp"
 #include "update_halo.h"
-// #include "kernels/advec_mom_kernel_c.c"
 #include "timer_c.h"
 
 

@@ -2,9 +2,6 @@
 #include <mpi.h>
 #include "definitions_c.h"
 #include "kernels/pack_kernel_c.c"
-// #ifdef USE_KOKKOS
-// #include "kernels/pack_kernel_kokkos.cpp"
-// #endif
 
 void checkMPIerror(int err)
 {

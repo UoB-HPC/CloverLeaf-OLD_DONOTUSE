@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "data_c.h"
 
-double g_version = 1.3;
+double g_version = 1.4;
 
 int g_ibig = 640000;
 
@@ -28,8 +28,8 @@ int g_rect = 1,
     g_point = 3;
 
 
-FILE *g_in, // File for input data.
-     *g_out;
+FILE* g_in, // File for input data.
+      *g_out;
 
 int CELL_DATA   = 1,
     VERTEX_DATA = 2,

@@ -35,9 +35,14 @@ kernelqual void clover_pack_message_left_c_(
     int depth, int field_type,
     int buffer_offset)
 {
-    int index, x_inc, y_inc;
+    int index, y_inc;
+    if (field_type == CELL_DATA || field_type == X_FACE_DATA) {
+        y_inc = 0;
+    }
+    if (field_type == Y_FACE_DATA || field_type == VERTEX_DATA) {
+        y_inc = 1;
+    }
 
-//Pack
     for (int k = y_min - depth; k <= y_max + y_inc + depth; k++) {
 #pragma ivdep
         for (int j = 1; j <= depth; j++) {
@@ -66,17 +71,14 @@ kernelqual void clover_unpack_message_left_c_(
     int depth, int field_type,
     int buffer_offset)
 {
-    // int x_min = *xmin;
-    // int x_max = *xmax;
-    // int y_min = *ymin;
-    // int y_max = *ymax;
-    // int field_type = fld_typ;
-    // int depth = dpth;
-    // int buffer_offset = bffr_ffst;
+    int index, y_inc;
+    if (field_type == X_FACE_DATA || field_type == CELL_DATA) {
+        y_inc = 0;
+    }
+    if (field_type == Y_FACE_DATA || field_type == VERTEX_DATA) {
+        y_inc = 1;
+    }
 
-    int index, x_inc, y_inc;
-
-    //Unpack
     for (int k = y_min - depth; k <= y_max + y_inc + depth; k++) {
 #pragma ivdep
         for (int j = 1; j <= depth; j++) {
@@ -105,17 +107,14 @@ kernelqual void clover_pack_message_right_c_(
     int depth, int field_type,
     int buffer_offset)
 {
-    // int x_min = *xmin;
-    // int x_max = *xmax;
-    // int y_min = *ymin;
-    // int y_max = *ymax;
-    // int field_type = fld_typ;
-    // int depth = dpth;
-    // int buffer_offset = bffr_ffst;
+    int index, y_inc;
+    if (field_type == X_FACE_DATA || field_type == CELL_DATA) {
+        y_inc = 0;
+    }
+    if (field_type == Y_FACE_DATA || field_type == VERTEX_DATA) {
+        y_inc = 1;
+    }
 
-    int index, x_inc, y_inc;
-
-    //Pack
     for (int k = y_min - depth; k <= y_max + y_inc + depth; k++) {
 #pragma ivdep
         for (int j = 1; j <= depth; j++) {
@@ -144,17 +143,14 @@ kernelqual void clover_unpack_message_right_c_(
     int depth, int field_type,
     int buffer_offset)
 {
-    // int x_min = *xmin;
-    // int x_max = *xmax;
-    // int y_min = *ymin;
-    // int y_max = *ymax;
-    // int field_type = fld_typ;
-    // int depth = dpth;
-    // int buffer_offset = bffr_ffst;
+    int index, y_inc;
+    if (field_type == X_FACE_DATA || field_type == CELL_DATA) {
+        y_inc = 0;
+    }
+    if (field_type == Y_FACE_DATA || field_type == VERTEX_DATA) {
+        y_inc = 1;
+    }
 
-    int index, x_inc, y_inc;
-
-//Pack
     for (int k = y_min - depth; k <= y_max + y_inc + depth; k++) {
 #pragma ivdep
         for (int j = 1; j <= depth; j++) {
@@ -183,36 +179,28 @@ kernelqual void clover_pack_message_top_c_(
     int depth, int field_type,
     int buffer_offset)
 {
-    // int x_min = *xmin;
-    // int x_max = *xmax;
-    // int y_min = *ymin;
-    // int y_max = *ymax;
-    // int field_type = fld_typ;
-    // int depth = dpth;
-    // int buffer_offset = bffr_ffst;
-
     int index, x_inc;
-// y_inc;
+    if (field_type == X_FACE_DATA || field_type == VERTEX_DATA) {
+        x_inc = 1;
+    }
+    if (field_type == Y_FACE_DATA || field_type == CELL_DATA) {
+        x_inc = 0;
+    }
 
-//Pack
     for (int k = 1; k <= depth; k++) {
 #pragma ivdep
         for (int j = x_min - depth; j <= x_max + x_inc + depth; j++) {
             index = buffer_offset + j + (k + depth - 1) * depth;
             if (field_type == CELL_DATA) {
-                // T1ACCESS(field, x_max + j, k) = right_rcv_buffer[FTNREF1D(index, 1)];
                 top_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, j, y_max + 1 - k);
             }
             if (field_type == VERTEX_DATA) {
-                // T2ACCESS(field, x_max + j + 1, k) = right_rcv_buffer[FTNREF1D(index, 1)];
                 top_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, j, y_max + 1 - k);
             }
             if (field_type == X_FACE_DATA) {
-                // T2ACCESS(field, x_max + j + 1, k) = right_rcv_buffer[FTNREF1D(index, 1)];
                 top_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, j, y_max + 1 - k);
             }
             if (field_type == Y_FACE_DATA) {
-                // T1ACCESS(field, x_max + j, k) = right_rcv_buffer[FTNREF1D(index, 1)];
                 top_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, j, y_max + 1 - k);
             }
         }
@@ -228,35 +216,28 @@ kernelqual void clover_pack_message_bottom_c_(
     int depth, int field_type,
     int buffer_offset)
 {
-//     int x_min = *xmin;
-//     int x_max = *xmax;
-//     int y_min = *ymin;
-// // int y_max = *ymax;
-//     int field_type = fld_typ;
-//     int depth = dpth;
-//     int buffer_offset = bffr_ffst;
+    int index, x_inc;
+    if (field_type == X_FACE_DATA || field_type == VERTEX_DATA) {
+        x_inc = 1;
+    }
+    if (field_type == Y_FACE_DATA || field_type == CELL_DATA) {
+        x_inc = 0;
+    }
 
-    int j, k, index, x_inc, y_inc;
-
-//Pack
     for (int k = 1; k <= depth; k++) {
 #pragma ivdep
         for (int j = x_min - depth; j <= x_max + x_inc + depth; j++) {
             index = buffer_offset + j + (k + depth - 1) * depth;
             if (field_type == CELL_DATA) {
-                // T1ACCESS(field, x_max + j, k) = right_rcv_buffer[FTNREF1D(index, 1)];
                 bottom_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, j, y_min - 1 + k);
             }
             if (field_type == VERTEX_DATA) {
-                // T2ACCESS(field, x_max + j + 1, k) = right_rcv_buffer[FTNREF1D(index, 1)];
                 bottom_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, j, y_min + 1 - 1 + k);
             }
             if (field_type == X_FACE_DATA) {
-                // T2ACCESS(field, x_max + j + 1, k) = right_rcv_buffer[FTNREF1D(index, 1)];
                 bottom_snd_buffer[FTNREF1D(index, 1)] = T2ACCESS(field, j, y_min - 1 + k);
             }
             if (field_type == Y_FACE_DATA) {
-                // T1ACCESS(field, x_max + j, k) = right_rcv_buffer[FTNREF1D(index, 1)];
                 bottom_snd_buffer[FTNREF1D(index, 1)] = T1ACCESS(field, j, y_min + 1 - 1 + k);
             }
         }
@@ -271,17 +252,14 @@ kernelqual void clover_unpack_message_bottom_c_(
     int depth, int field_type,
     int buffer_offset)
 {
-//     int x_min = *xmin;
-//     int x_max = *xmax;
-//     int y_min = *ymin;
-// // int y_max = *ymax;
-//     int field_type = fld_typ;
-//     int depth = dpth;
-//     int buffer_offset = bffr_ffst;
-
     int index, x_inc;
+    if (field_type == X_FACE_DATA || field_type == VERTEX_DATA) {
+        x_inc = 1;
+    }
+    if (field_type == Y_FACE_DATA || field_type == CELL_DATA) {
+        x_inc = 0;
+    }
 
-//Unpack
     for (int k = 1; k <= depth; k++) {
 #pragma ivdep
         for (int j = x_min - depth; j <= x_max + x_inc + depth; j++) {
@@ -310,9 +288,14 @@ kernelqual void clover_unpack_message_top_c_(
     int buffer_offset)
 
 {
-    int index, x_inc, y_inc;
+    int index, x_inc;
+    if (field_type == X_FACE_DATA || field_type == VERTEX_DATA) {
+        x_inc = 1;
+    }
+    if (field_type == Y_FACE_DATA || field_type == CELL_DATA) {
+        x_inc = 0;
+    }
 
-//Unpack
     for (int k = 1; k <= depth; k++) {
 #pragma ivdep
         for (int j = x_min - depth; j <= x_max + x_inc + depth; j++) {

@@ -71,6 +71,7 @@ struct field_type {
 
 #define T1ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 4, x_min - 2, y_min - 2)]
 #define T2ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 5, x_min - 2, y_min - 2)]
+#define T3ACCESS(d, i, j)         d[FTNREF2D(i, j, x_max + 4, x_min - 2, y_min - 2)]
 
 #define DENSITY0(d, i, j)      T1ACCESS(d, i, j)
 #define DENSITY1(d, i, j)      T1ACCESS(d, i, j)

@@ -115,7 +115,6 @@ kernelqual void xcomp1(
     double sigma3 = (1.0 + sigmat) * (FIELD_1D(vertexdx, j,  x_min - 2) / FIELD_1D(vertexdx, dif,  x_min - 2));
     double sigma4 = 2.0 - sigmat;
 
-    double sigma = sigmat;
     double sigmav = sigmat;
 
     double diffuw = DENSITY1(density1, donor, k) - DENSITY1(density1, upwind, k);
@@ -175,7 +174,6 @@ kernelqual void ycomp1(
     double sigma3 = (1.0 + sigmat) * (FIELD_1D(vertexdy, k,  y_min - 2) / FIELD_1D(vertexdy, dif,  y_min - 2));
     double sigma4 = 2.0 - sigmat;
 
-    double sigma = sigmat;
     double sigmav = sigmat;
 
     double diffuw = DENSITY1(density1, j, donor) - DENSITY1(density1, j, upwind);

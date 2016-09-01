@@ -25,7 +25,7 @@ enum chunk_enum {
 };
 
 enum tile_enum {
-    TILE_LEFT,
+    TILE_LEFT = 0,
     TILE_RIGHT  ,
     TILE_BOTTOM ,
     TILE_TOP    ,
@@ -33,7 +33,7 @@ enum tile_enum {
 };
 
 enum field_enum {
-    FIELD_DENSITY0   ,
+    FIELD_DENSITY0 = 0,
     FIELD_DENSITY1   ,
     FIELD_ENERGY0    ,
     FIELD_ENERGY1    ,

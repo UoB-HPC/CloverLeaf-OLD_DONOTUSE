@@ -67,7 +67,7 @@ void parse_line(char* line, ssize_t n);
 char* trimwhitespace(char* str);
 // int max(int a, int b);
 
-bool strIsEqual(char* a, char* b)
+bool strIsEqual(char const* a, char const* b)
 {
     return strncmp(a, b, strlen(b) - 1) == 0;
 }

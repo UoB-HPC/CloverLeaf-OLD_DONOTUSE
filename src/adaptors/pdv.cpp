@@ -133,7 +133,7 @@ __global__ void pdv_kernel(
     int j = threadIdx.x + blockIdx.x * blockDim.x + x_min;
     int k = threadIdx.y + blockIdx.y * blockDim.y + y_min;
 
-    if (j <= x_max && k <= y_max)
+    if (j <= x_max && k <= y_max) {
         if (predict == 0) {
             pdv_kernel_predict_c_(
                 j, k,
@@ -173,6 +173,7 @@ __global__ void pdv_kernel(
                 yvel1,
                 volume_change);
         }
+    }
 }
 
 void pdv(struct chunk_type chunk, bool predict, double dt)

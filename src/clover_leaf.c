@@ -50,7 +50,7 @@ int main(int argc, char** argv)
             << "] x CORE["    << Kokkos::hwloc::get_available_cores_per_numa()
             << "] x HT["      << Kokkos::hwloc::get_available_threads_per_core()
             << "] )"
-            << std::endl ;
+            << std::endl;
     }
 #if defined( KOKKOS_HAVE_CUDA )
     Kokkos::Cuda::print_configuration(msg);

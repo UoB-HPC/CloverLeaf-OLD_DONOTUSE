@@ -45,18 +45,6 @@
 
 #define FIELD_1D(d, i, j) (d)((i) - (j))
 
-// #define const_field_2d_t     cf2t
-// #define field_2d_t           f2t
-
-// #define const_field_1d_t     cf1t
-// #define field_1d_t           f1t
-
-// #define const_field_2d_t     const Kokkos::View<double**, T>*
-// #define field_2d_t           const Kokkos::View<double**, T>*
-
-// #define const_field_1d_t     const Kokkos::View<double*, T>*
-// #define field_1d_t           const Kokkos::View<double*, T>*
-
 #define const_field_2d_lt    const Kokkos::View<double**>
 #define field_2d_lt          const Kokkos::View<double**>
 
@@ -64,6 +52,9 @@
 #define field_1d_lt          const Kokkos::View<double*>
 
 #define flag_t               int*
+
+typedef typename Kokkos::View<double**>::HostMirror host_view_2d_t;
+typedef typename Kokkos::View<double*>::HostMirror  host_view_1d_t;
 
 #if defined(__NVCC__)
 #define kernelqual   template< \
@@ -80,9 +71,6 @@
     typename field_1d_t = Kokkos::View<double*> \
     >
 #endif  //defined(__NVCC__)
-
-typedef typename Kokkos::View<double**>::HostMirror host_view_2d_t;
-typedef typename Kokkos::View<double*>::HostMirror  host_view_1d_t;
 
 struct field_type {
     Kokkos::View<double**> d_density0;
