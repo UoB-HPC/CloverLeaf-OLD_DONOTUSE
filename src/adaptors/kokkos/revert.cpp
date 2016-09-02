@@ -11,10 +11,16 @@ struct revert_functor {
         struct tile_type tile,
         int _x_from, int _x_to, int _y_from, int _y_to
     ):
-        x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
-        x_min(tile.t_xmin), x_max(tile.t_xmax), y_min(tile.t_ymin), y_max(tile.t_ymax),
-        density0((tile.field.d_density0)), density1((tile.field.d_density1)),
-        energy0((tile.field.d_energy0)), energy1((tile.field.d_energy1))
+        x_from(_x_from), x_to(_x_to),
+        y_from(_y_from), y_to(_y_to),
+
+        x_min(tile.t_xmin), x_max(tile.t_xmax),
+        y_min(tile.t_ymin), y_max(tile.t_ymax),
+
+        density0((tile.field.d_density0)),
+        density1((tile.field.d_density1)),
+        energy0((tile.field.d_energy0)),
+        energy1((tile.field.d_energy1))
     {}
 
     void compute()

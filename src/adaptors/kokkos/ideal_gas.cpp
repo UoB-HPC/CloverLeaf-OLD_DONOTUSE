@@ -28,10 +28,15 @@ struct ideal_gas_functor {
         struct tile_type tile,
         int _x_from, int _x_to, int _y_from, int _y_to,
         field_2d_lt _density, field_2d_lt _energy):
-        x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
-        x_min(tile.t_xmin), x_max(tile.t_xmax), y_min(tile.t_ymin), y_max(tile.t_ymax),
+
+        x_from(_x_from), x_to(_x_to),
+        y_from(_y_from), y_to(_y_to),
+        x_min(tile.t_xmin), x_max(tile.t_xmax),
+        y_min(tile.t_ymin), y_max(tile.t_ymax),
+
         energy(_energy), density(_density),
-        pressure((tile.field.d_pressure)), soundspeed((tile.field.d_soundspeed))
+        pressure((tile.field.d_pressure)),
+        soundspeed((tile.field.d_soundspeed))
     {}
 
     void compute()

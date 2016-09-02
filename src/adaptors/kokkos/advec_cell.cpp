@@ -19,11 +19,15 @@ struct xsweep_functor {
         int _x_from, int _x_to, int _y_from, int _y_to,
         int _sweep_number
     ):
-        x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
-        x_min(tile.t_xmin), x_max(tile.t_xmax), y_min(tile.t_ymin), y_max(tile.t_ymax),
+        x_from(_x_from), x_to(_x_to),
+        y_from(_y_from), y_to(_y_to),
+        x_min(tile.t_xmin), x_max(tile.t_xmax),
+        y_min(tile.t_ymin), y_max(tile.t_ymax),
+
         pre_vol((tile.field.d_work_array1)), post_vol((tile.field.d_work_array2)),
         vol_flux_x((tile.field.d_vol_flux_x)), vol_flux_y((tile.field.d_vol_flux_y)),
         volume((tile.field.d_volume)),
+
         sweep_number(_sweep_number)
     {}
 
@@ -67,11 +71,17 @@ struct ysweep_functor {
         int _x_from, int _x_to, int _y_from, int _y_to,
         int _sweep_number
     ):
-        x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
-        x_min(tile.t_xmin), x_max(tile.t_xmax), y_min(tile.t_ymin), y_max(tile.t_ymax),
-        pre_vol((tile.field.d_work_array1)), post_vol((tile.field.d_work_array2)),
-        vol_flux_x((tile.field.d_vol_flux_x)), vol_flux_y((tile.field.d_vol_flux_y)),
+        x_from(_x_from), x_to(_x_to),
+        y_from(_y_from), y_to(_y_to),
+        x_min(tile.t_xmin), x_max(tile.t_xmax),
+        y_min(tile.t_ymin), y_max(tile.t_ymax),
+
+        pre_vol((tile.field.d_work_array1)),
+        post_vol((tile.field.d_work_array2)),
+        vol_flux_x((tile.field.d_vol_flux_x)),
+        vol_flux_y((tile.field.d_vol_flux_y)),
         volume((tile.field.d_volume)),
+
         sweep_number(_sweep_number)
     {}
 
@@ -114,11 +124,17 @@ struct xcomp1_functor {
         struct tile_type tile,
         int _x_from, int _x_to, int _y_from, int _y_to
     ):
-        x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
-        x_min(tile.t_xmin), x_max(tile.t_xmax), y_min(tile.t_ymin), y_max(tile.t_ymax),
-        pre_vol((tile.field.d_work_array1)), mass_flux_x((tile.field.d_mass_flux_x)),
-        ener_flux((tile.field.d_work_array7)), vol_flux_x((tile.field.d_vol_flux_x)),
-        density1((tile.field.d_density1)), energy1((tile.field.d_energy1)),
+        x_from(_x_from), x_to(_x_to),
+        y_from(_y_from), y_to(_y_to),
+        x_min(tile.t_xmin), x_max(tile.t_xmax),
+        y_min(tile.t_ymin), y_max(tile.t_ymax),
+
+        mass_flux_x((tile.field.d_mass_flux_x)),
+        ener_flux((tile.field.d_work_array7)),
+        vol_flux_x((tile.field.d_vol_flux_x)),
+        pre_vol((tile.field.d_work_array1)),
+        density1((tile.field.d_density1)),
+        energy1((tile.field.d_energy1)),
         vertexdx((tile.field.d_vertexdx))
     {}
 
@@ -163,11 +179,16 @@ struct ycomp1_functor {
         struct tile_type tile,
         int _x_from, int _x_to, int _y_from, int _y_to
     ):
-        x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
-        x_min(tile.t_xmin), x_max(tile.t_xmax), y_min(tile.t_ymin), y_max(tile.t_ymax),
-        pre_vol((tile.field.d_work_array1)), mass_flux_y((tile.field.d_mass_flux_y)),
-        ener_flux((tile.field.d_work_array7)), vol_flux_y((tile.field.d_vol_flux_y)),
-        density1((tile.field.d_density1)), energy1((tile.field.d_energy1)),
+        x_from(_x_from), x_to(_x_to),
+        y_from(_y_from), y_to(_y_to),
+        x_min(tile.t_xmin), x_max(tile.t_xmax),
+        y_min(tile.t_ymin), y_max(tile.t_ymax),
+        mass_flux_y((tile.field.d_mass_flux_y)),
+        ener_flux((tile.field.d_work_array7)),
+        vol_flux_y((tile.field.d_vol_flux_y)),
+        pre_vol((tile.field.d_work_array1)),
+        density1((tile.field.d_density1)),
+        energy1((tile.field.d_energy1)),
         vertexdx((tile.field.d_vertexdx))
     {}
 
@@ -211,13 +232,21 @@ struct xcomp2_functor {
         struct tile_type tile,
         int _x_from, int _x_to, int _y_from, int _y_to
     ):
-        x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
-        x_min(tile.t_xmin), x_max(tile.t_xmax), y_min(tile.t_ymin), y_max(tile.t_ymax),
-        pre_vol((tile.field.d_work_array1)), mass_flux_x((tile.field.d_mass_flux_x)),
-        ener_flux((tile.field.d_work_array7)), vol_flux_x((tile.field.d_vol_flux_x)),
-        density1((tile.field.d_density1)), energy1((tile.field.d_energy1)),
-        pre_mass((tile.field.d_work_array3)), post_mass((tile.field.d_work_array4)),
-        post_ener((tile.field.d_work_array6)), advec_vol((tile.field.d_work_array5))
+        x_from(_x_from), x_to(_x_to),
+        y_from(_y_from), y_to(_y_to),
+        x_min(tile.t_xmin), x_max(tile.t_xmax),
+        y_min(tile.t_ymin), y_max(tile.t_ymax),
+
+        pre_mass((tile.field.d_work_array3)),
+        post_mass((tile.field.d_work_array4)),
+        post_ener((tile.field.d_work_array6)),
+        advec_vol((tile.field.d_work_array5)),
+        density1((tile.field.d_density1)),
+        energy1((tile.field.d_energy1)),
+        pre_vol((tile.field.d_work_array1)),
+        mass_flux_x((tile.field.d_mass_flux_x)),
+        ener_flux((tile.field.d_work_array7)),
+        vol_flux_x((tile.field.d_vol_flux_x))
     {}
 
     void compute()
@@ -263,13 +292,21 @@ struct ycomp2_functor {
         struct tile_type tile,
         int _x_from, int _x_to, int _y_from, int _y_to
     ):
-        x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
-        x_min(tile.t_xmin), x_max(tile.t_xmax), y_min(tile.t_ymin), y_max(tile.t_ymax),
-        pre_vol((tile.field.d_work_array1)), mass_flux_y((tile.field.d_mass_flux_y)),
-        ener_flux((tile.field.d_work_array7)), vol_flux_y((tile.field.d_vol_flux_y)),
-        density1((tile.field.d_density1)), energy1((tile.field.d_energy1)),
-        pre_mass((tile.field.d_work_array3)), post_mass((tile.field.d_work_array4)),
-        post_ener((tile.field.d_work_array6)), advec_vol((tile.field.d_work_array5))
+        x_from(_x_from), x_to(_x_to),
+        y_from(_y_from), y_to(_y_to),
+        x_min(tile.t_xmin), x_max(tile.t_xmax),
+        y_min(tile.t_ymin), y_max(tile.t_ymax),
+
+        pre_mass((tile.field.d_work_array3)),
+        post_mass((tile.field.d_work_array4)),
+        post_ener((tile.field.d_work_array6)),
+        advec_vol((tile.field.d_work_array5)),
+        density1((tile.field.d_density1)),
+        energy1((tile.field.d_energy1)),
+        pre_vol((tile.field.d_work_array1)),
+        mass_flux_y((tile.field.d_mass_flux_y)),
+        ener_flux((tile.field.d_work_array7)),
+        vol_flux_y((tile.field.d_vol_flux_y))
     {}
 
     void compute()

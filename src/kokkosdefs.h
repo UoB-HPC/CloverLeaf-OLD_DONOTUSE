@@ -14,8 +14,10 @@
         } \
     });
 
-#define T3ACCESS(d, x, y) (d)((y) - (y_min-2), (x) - (x_min-2))
-#define KOKKOS_ACCESS(d, y, x) T3ACCESS(d, y, x)
+#define T3ACCESS(d, x, y)       (d)((y) - (y_min-2), (x) - (x_min-2))
+#define T2ACCESS(d, x, y)       (d)((y) - (y_min-2), (x) - (x_min-2))
+#define T1ACCESS(d, x, y)       (d)((y) - (y_min-2), (x) - (x_min-2))
+#define KOKKOS_ACCESS(d, y, x)  T3ACCESS(d, y, x)
 
 #define DENSITY0(d, x, y) KOKKOS_ACCESS(d, x, y)
 #define DENSITY1(d, x, y) KOKKOS_ACCESS(d, x, y)
@@ -57,19 +59,23 @@ typedef typename Kokkos::View<double**>::HostMirror host_view_2d_t;
 typedef typename Kokkos::View<double*>::HostMirror  host_view_1d_t;
 
 #if defined(__NVCC__)
+
 #define kernelqual   template< \
     typename const_field_2d_t = Kokkos::View<double**>, \
     typename field_2d_t = Kokkos::View<double**>, \
     typename const_field_1d_t = Kokkos::View<double*>, \
     typename field_1d_t = Kokkos::View<double*> \
     > __device__ __host__
+
 #else  //defined(__NVCC__)
+
 #define kernelqual   template< \
     typename const_field_2d_t = Kokkos::View<double**>, \
     typename field_2d_t = Kokkos::View<double**>, \
     typename const_field_1d_t = Kokkos::View<double*>, \
     typename field_1d_t = Kokkos::View<double*> \
     >
+
 #endif  //defined(__NVCC__)
 
 struct field_type {

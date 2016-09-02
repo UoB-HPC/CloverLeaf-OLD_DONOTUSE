@@ -25,14 +25,17 @@ struct mom_sweep_functor {
         int _x_from, int _x_to, int _y_from, int _y_to,
         int _mom_sweep):
 
-        x_from(_x_from), x_to(_x_to), y_from(_y_from), y_to(_y_to),
+        x_from(_x_from), x_to(_x_to),
+        y_from(_y_from), y_to(_y_to),
         x_min(tile.t_xmin), x_max(tile.t_xmax),
         y_min(tile.t_ymin), y_max(tile.t_ymax),
+
         pre_vol((tile.field.d_work_array5)),
         post_vol((tile.field.d_work_array6)),
         volume((tile.field.d_volume)),
         vol_flux_x((tile.field.d_vol_flux_x)),
         vol_flux_y((tile.field.d_vol_flux_y)),
+
         mom_sweep(_mom_sweep)
     {}
 

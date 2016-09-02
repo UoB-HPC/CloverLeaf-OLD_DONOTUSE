@@ -66,7 +66,7 @@ kernelqual void clover_pack_message_left_c_(
 kernelqual void clover_unpack_message_left_c_(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* field,
+    field_2d_t field,
     double* left_rcv_buffer,
     int depth, int field_type,
     int buffer_offset)
@@ -102,7 +102,7 @@ kernelqual void clover_unpack_message_left_c_(
 kernelqual void clover_pack_message_right_c_(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* field,
+    field_2d_t field,
     double* right_snd_buffer,
     int depth, int field_type,
     int buffer_offset)
@@ -138,7 +138,7 @@ kernelqual void clover_pack_message_right_c_(
 kernelqual void clover_unpack_message_right_c_(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* field,
+    field_2d_t field,
     double* right_rcv_buffer,
     int depth, int field_type,
     int buffer_offset)
@@ -174,7 +174,7 @@ kernelqual void clover_unpack_message_right_c_(
 kernelqual void clover_pack_message_top_c_(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* field,
+    field_2d_t field,
     double* top_snd_buffer,
     int depth, int field_type,
     int buffer_offset)
@@ -211,7 +211,7 @@ kernelqual void clover_pack_message_top_c_(
 kernelqual void clover_pack_message_bottom_c_(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* field,
+    field_2d_t field,
     double* bottom_snd_buffer,
     int depth, int field_type,
     int buffer_offset)
@@ -247,7 +247,7 @@ kernelqual void clover_pack_message_bottom_c_(
 kernelqual void clover_unpack_message_bottom_c_(
     int x_min, int x_max,
     int y_min, int y_max,
-    double* field,
+    field_2d_t field,
     double* bottom_rcv_buffer,
     int depth, int field_type,
     int buffer_offset)
@@ -282,7 +282,7 @@ kernelqual void clover_unpack_message_bottom_c_(
 
 kernelqual void clover_unpack_message_top_c_(
     int x_min, int x_max, int y_min, int y_max,
-    double* field,
+    field_2d_t field,
     double* top_rcv_buffer,
     int depth, int field_type,
     int buffer_offset)
