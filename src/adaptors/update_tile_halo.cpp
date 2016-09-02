@@ -3,7 +3,6 @@
 #include "../definitions_c.h"
 #include "../kernels/update_tile_halo_kernel.c"
 
-// void __update_tile_halo_kernel_module_MOD_update_tile_halo_t_kernel();
 
 void update_tile_halo(int* fields, int depth)
 {
@@ -194,7 +193,7 @@ void update_tile_halo(int* fields, int depth)
 
 #endif
 
-#if defined(USE_KOKKOS) || defined(USE_OPENCL)
+#if defined(USE_KOKKOS) || defined(USE_OPENCL) || defined(USE_CUDA)
 
 void update_tile_halo(int* fields, int depth)
 {

@@ -452,23 +452,6 @@ void advec_cell(
     int dir,
     int sweep_number)
 {
-    const_field_1d_t vertexdx = tile.field.vertexdx;
-    const_field_1d_t vertexdy = tile.field.vertexdy;
-    const_field_2d_t volume = tile.field.volume;
-    field_2d_t       density1 = tile.field.density1;
-    field_2d_t       energy1 = tile.field.energy1;
-    field_2d_t       mass_flux_x = tile.field.mass_flux_x;
-    const_field_2d_t vol_flux_x = tile.field.vol_flux_x;
-    field_2d_t       mass_flux_y = tile.field.mass_flux_y;
-    const_field_2d_t vol_flux_y = tile.field.vol_flux_y;
-    field_2d_t       pre_vol = tile.field.work_array1;
-    field_2d_t       post_vol = tile.field.work_array2;
-    field_2d_t       pre_mass = tile.field.work_array3;
-    field_2d_t       post_mass = tile.field.work_array4;
-    field_2d_t       advec_vol = tile.field.work_array5;
-    field_2d_t       post_ener = tile.field.work_array6;
-    field_2d_t       ener_flux = tile.field.work_array7;
-
     int g_xdir = 1,
         g_ydir = 2;
 

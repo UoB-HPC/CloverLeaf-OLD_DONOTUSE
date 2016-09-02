@@ -300,12 +300,6 @@ void field_summary(
             x_max = tile.t_xmax,
             y_min = tile.t_ymin,
             y_max = tile.t_ymax;
-        field_2d_t volume   = tile.field.volume;
-        field_2d_t density1 = tile.field.density1;
-        field_2d_t energy1  = tile.field.energy1;
-        field_2d_t pressure = tile.field.pressure;
-        field_2d_t xvel1    = tile.field.xvel1;
-        field_2d_t yvel1    = tile.field.yvel1;
 
         cl::Kernel field_summary(openclProgram, "field_summary_kernel");
 

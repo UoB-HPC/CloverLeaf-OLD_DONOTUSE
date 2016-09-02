@@ -41,7 +41,7 @@ void initOpenCL()
            default_device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>()
           );
 
-    openclContext = cl::Context({default_device});
+    openclContext = cl::Context(default_device);
 
     cl::Program::Sources sources;
     std::vector<std::string> files;

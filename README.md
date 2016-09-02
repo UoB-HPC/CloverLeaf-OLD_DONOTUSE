@@ -4,8 +4,6 @@
 This is a C/C++ version of Cloverleaf ported to OpenMP, Kokkos, Ompss, OpenCL, and CUDA.
 
 
-
-
 ## Release Notes
 
 ### Version 1.4
@@ -51,7 +49,7 @@ There is configuration in the Makefile for GCC, Intel's compiler, and Clang. Cho
 
     make COMPILER=GNU USE_OPENMP=1
 
-The following table shows known working combinations.
+The following table shows tested combinations.
 
 |        | GNU | Intel | Clang | Mercurium |
 |--------|:---:|:-----:|:-----:|:---------:|
@@ -59,7 +57,9 @@ The following table shows known working combinations.
 | Kokkos |  ✓  |   ✓   |       |           |
 | OmpSs  |     |       |       |     ✓     |
 | OpenCL |     |   ✓   |       |           |
-| CUDA   |     |   ✓   |   ✓   |           |
+| CUDA   |  ✓  |       |   ✓*  |           |
+
+\* Clang as a drop in replacement for NVCC, not clang as the host code compiler
 
 ### Kokkos
 
