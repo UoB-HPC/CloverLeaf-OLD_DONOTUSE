@@ -1,3 +1,4 @@
+![Logo](https://github.com/jamuus/CloverLeaf/blob/master/img/Clover_alpha_small.png)
 # CloverLeaf 1.4
 
 This is a C/C++ version of Cloverleaf ported to OpenMP, Kokkos, Ompss, OpenCL, and CUDA.
