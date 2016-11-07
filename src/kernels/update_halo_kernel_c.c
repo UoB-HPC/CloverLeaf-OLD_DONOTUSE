@@ -31,32 +31,32 @@
 
 
 /* These need to be kept consistent with the data module to avoid use statement */
-#define CHUNK_LEFT     0
-#define CHUNK_RIGHT    1
-#define CHUNK_BOTTOM   2
-#define CHUNK_TOP      3
+#define CHUNK_LEFT     1
+#define CHUNK_RIGHT    2
+#define CHUNK_BOTTOM   3
+#define CHUNK_TOP      4
 #define EXTERNAL_FACE  -1
-#define TILE_LEFT      0
-#define TILE_RIGHT     1
-#define TILE_BOTTOM    2
-#define TILE_TOP       3
+#define TILE_LEFT      1
+#define TILE_RIGHT     2
+#define TILE_BOTTOM    3
+#define TILE_TOP       4
 #define EXTERNAL_TILE  -1
 
-#define FIELD_DENSITY0     0
-#define FIELD_DENSITY1     1
-#define FIELD_ENERGY0      2
-#define FIELD_ENERGY1      3
-#define FIELD_PRESSURE     4
-#define FIELD_VISCOSITY    5
-#define FIELD_SOUNDSPEED   6
-#define FIELD_XVEL0        7
-#define FIELD_XVEL1        8
-#define FIELD_YVEL0        9
-#define FIELD_YVEL1        10
-#define FIELD_VOL_FLUX_X   11
-#define FIELD_VOL_FLUX_Y   12
-#define FIELD_MASS_FLUX_X  13
-#define FIELD_MASS_FLUX_Y  14
+#define FIELD_DENSITY0     1
+#define FIELD_DENSITY1     2
+#define FIELD_ENERGY0      3
+#define FIELD_ENERGY1      4
+#define FIELD_PRESSURE     5
+#define FIELD_VISCOSITY    6
+#define FIELD_SOUNDSPEED   7
+#define FIELD_XVEL0        8
+#define FIELD_XVEL1        9
+#define FIELD_YVEL0        10
+#define FIELD_YVEL1        11
+#define FIELD_VOL_FLUX_X   12
+#define FIELD_VOL_FLUX_Y   13
+#define FIELD_MASS_FLUX_X  14
+#define FIELD_MASS_FLUX_Y  15
 
 
 // requires fields, chunk_neighbours, tile_neighbours, x_min,x_max,y_min,y_max
