@@ -67,6 +67,9 @@ ifdef USE_KOKKOS
     CC = $(CXX)
     include $(KOKKOS_PATH)/Makefile.kokkos
 
+    ifeq ($(COMPILER),GNU)
+      MPI_FLAGS += -fopenmp
+    endif
 endif
 
 ifdef USE_OMPSS
