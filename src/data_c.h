@@ -51,10 +51,10 @@ enum field_enum {
     NUM_FIELDS       ,
 };
 
-extern int CELL_DATA     ,
-       VERTEX_DATA   ,
-       X_FACE_DATA   ,
-       Y_FACE_DATA   ;
+#define CELL_DATA   1
+#define VERTEX_DATA 2
+#define X_FACE_DATA 3
+#define Y_FACE_DATA 4
 
 // enum some_enum {
 //       CELL_DATA     ,
