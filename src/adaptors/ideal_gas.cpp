@@ -31,7 +31,7 @@ void ideal_gas_adaptor(int tile, bool predict)
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
 #include <math.h>
-#include "../kernels/ideal_gas_kernel_c.c"
+#include "../kernels/ideal_gas_kernel_c.cc"
 
 void ideal_gas_adaptor(int tile, bool predict)
 {

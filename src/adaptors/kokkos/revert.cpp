@@ -1,4 +1,4 @@
-#include "../../kernels/revert_kernel_c.c"
+#include "../../kernels/revert_kernel_c.cc"
 #include <Kokkos_Core.hpp>
 using namespace Kokkos;
 

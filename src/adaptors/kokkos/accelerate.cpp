@@ -1,5 +1,5 @@
 
-#include "../../kernels/accelerate_kernel.c"
+#include "../../kernels/accelerate_kernel.cc"
 
 
 #include <Kokkos_Core.hpp>

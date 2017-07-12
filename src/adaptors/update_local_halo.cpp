@@ -1,5 +1,5 @@
 
-#include "../kernels/update_halo_kernel_c.c"
+#include "../kernels/update_halo_kernel_c.cc"
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
 

@@ -1,6 +1,6 @@
 
 #include <Kokkos_Core.hpp>
-#include "../../kernels/flux_calc_kernel_c.c"
+#include "../../kernels/flux_calc_kernel_c.cc"
 
 using namespace Kokkos;
 

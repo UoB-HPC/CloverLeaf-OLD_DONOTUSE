@@ -1,6 +1,6 @@
 
 #include <Kokkos_Core.hpp>
-#include "../../kernels/viscosity_kernel_c.c"
+#include "../../kernels/viscosity_kernel_c.cc"
 
 using namespace Kokkos;
 

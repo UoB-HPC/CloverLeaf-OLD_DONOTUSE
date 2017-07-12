@@ -1,7 +1,7 @@
 
 #include <Kokkos_Core.hpp>
 using namespace Kokkos;
-#include "../../kernels/calc_dt_kernel_c.c"
+#include "../../kernels/calc_dt_kernel_c.cc"
 
 struct calc_dt_functor {
 

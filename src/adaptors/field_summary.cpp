@@ -60,7 +60,7 @@ void field_summary(
 #endif
 
 #if defined(USE_KOKKOS)
-#include "../kernels/field_summary_kernel_c.c"
+#include "../kernels/field_summary_kernel_c.cc"
 void field_summary(
     double* vol,
     double* ie,

@@ -45,7 +45,7 @@ void initialise_chunk(int tile)
 // #define field_2d_t   const Kokkos::View<double**, Kokkos::HostSpace::memory_space>*
 // #define field_1d_t   const Kokkos::View<double*, Kokkos::HostSpace::memory_space>*
 
-#include "../kernels/initialise_chunk_kernel_c.c"
+#include "../kernels/initialise_chunk_kernel_c.cc"
 
 void initialise_chunk(int tile)
 {

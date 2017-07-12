@@ -1,5 +1,5 @@
 
-#include "../../kernels/reset_field_kernel_c.c"
+#include "../../kernels/reset_field_kernel_c.cc"
 
 
 #include <Kokkos_Core.hpp>

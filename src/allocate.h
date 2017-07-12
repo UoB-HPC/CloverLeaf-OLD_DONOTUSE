@@ -4,19 +4,19 @@
 void allocate();
 
 #ifdef USE_KOKKOS
-#include "allocate_kokkos.c"
+#include "allocate_kokkos.cc"
 #endif
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
-#include "allocate.c"
+#include "allocate.cc"
 #endif
 
 #if defined(USE_OPENCL)
-#include "allocate_opencl.c"
+#include "allocate_opencl.cc"
 #endif
 
 #if defined(USE_CUDA)
-#include "allocate_cuda.c"
+#include "allocate_cuda.cc"
 #endif
 
 #endif

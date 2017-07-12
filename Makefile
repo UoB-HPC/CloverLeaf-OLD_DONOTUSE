@@ -46,8 +46,7 @@ default: build
 
 ifdef USE_KOKKOS
     ifeq ($(USE_KOKKOS),gpu)
-        # CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
-        CXX = ./nvcc_wrapper
+        CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
         MPI_FLAGS += -lcudart
         FLAGS := $(FLAGS) -O3
 
@@ -120,9 +119,9 @@ MPIOBJDIR = mpiobj
 SRCDIR    = src
 
 _OBJECTS = $(addprefix $(OBJDIR)/, $(OBJECTS))
-_SOURCES = $(addprefix $(SRCDIR)/, $(OBJECTS:.o=.c))
+_SOURCES = $(addprefix $(SRCDIR)/, $(OBJECTS:.o=.cc))
 _MPIOBJECTS = $(addprefix $(MPIOBJDIR)/, $(MPIOBJECTS))
-_MPISOURCES = $(addprefix $(SRCDIR)/, $(MPIOBJECTS:.o=.c))
+_MPISOURCES = $(addprefix $(SRCDIR)/, $(MPIOBJECTS:.o=.cc))
 
 # -include $(_OBJECTS:.o=.d)
 # -include $(_MPIOBJECTS:.o=.d)
@@ -131,20 +130,20 @@ depend:
 	makedepend -- $(FLAGS) -- $(_SOURCES) $(_MPISOURCES)
 
 build: $(_OBJECTS) $(_MPIOBJECTS) Makefile $(KOKKOS_LINK_DEPENDS) $(KERNELS)
-	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_OBJECTS) $(_MPIOBJECTS) $(SRCDIR)/clover_leaf.c $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
+	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_OBJECTS) $(_MPIOBJECTS) $(SRCDIR)/clover_leaf.cc $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(KOKKOS_CPP_DEPENDS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.cc $(KOKKOS_CPP_DEPENDS)
 	$(CC) $(FLAGS) $(MPIINCLUDE) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(EXTRA_INC) -c $< -o $@
 	# $(CC) $(FLAGS) $(MPIINCLUDE) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(EXTRA_INC) -MM $< > $(OBJDIR)/$*.d
 
-$(MPIOBJDIR)/%.o: $(SRCDIR)/%.c $(KOKKOS_CPP_DEPENDS)
+$(MPIOBJDIR)/%.o: $(SRCDIR)/%.cc $(KOKKOS_CPP_DEPENDS)
 	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_INC) -c $< -o $@
 	# $(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_INC) -MM $< > $(MPIOBJDIR)/$*.d
 
 
 fast: $(_SOURCES) $(_MPISOURCES) Makefile $(KOKKOS_LINK_DEPENDS) $(KERNELS)
-	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_SOURCES) $(_MPISOURCES) $(SRCDIR)/clover_leaf.c $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
-	# $(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_SOURCES) $(_MPISOURCES) $(SRCDIR)/clover_leaf.c $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
+	$(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_SOURCES) $(_MPISOURCES) $(SRCDIR)/clover_leaf.cc $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
+	# $(MPI_CC) $(MPI_FLAGS) $(KOKKOS_CPPFLAGS) $(EXTRA_PATH) $(_SOURCES) $(_MPISOURCES) $(SRCDIR)/clover_leaf.cc $(KOKKOS_LIBS) $(KOKKOS_LDFLAGS) -o clover_leaf
 
 clean: 
 	rm -f $(OBJDIR)/* $(MPIOBJDIR)/* *.o clover_leaf
