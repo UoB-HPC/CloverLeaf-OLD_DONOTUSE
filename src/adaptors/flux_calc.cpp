@@ -81,7 +81,7 @@ void flux_calc(struct chunk_type chunk, double dt)
 
 #if defined(USE_CUDA)
 #include "../definitions_c.h"
-#include "../kernels/flux_calc_kernel_c.c"
+#include "../kernels/flux_calc_kernel_c.cc"
 
 __global__ void flux_calc_x_kernel(
     int x_min, int x_max,

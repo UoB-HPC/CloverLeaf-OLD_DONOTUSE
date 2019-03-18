@@ -58,7 +58,7 @@ void accelerate_adaptor()
 
 #if defined(USE_CUDA)
 
-#include "../kernels/accelerate_kernel.c"
+#include "../kernels/accelerate_kernel.cc"
 
 __global__ void accelerate_kernel(
     int x_min, int x_max,

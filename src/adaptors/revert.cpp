@@ -51,7 +51,7 @@ void revert(struct chunk_type chunk)
 #if defined(USE_CUDA)
 
 #include "../definitions_c.h"
-#include "../kernels/revert_kernel_c.c"
+#include "../kernels/revert_kernel_c.cc"
 
 __global__ void revert_kernel(
     int x_min, int x_max,

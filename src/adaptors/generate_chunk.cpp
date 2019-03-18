@@ -182,7 +182,7 @@ void generate_chunk(
 
 #include "../definitions_c.h"
 #include <math.h>
-#include "../kernels/generate_chunk_kernel_c.c"
+#include "../kernels/generate_chunk_kernel_c.cc"
 
 void generate_chunk(
     int tile,

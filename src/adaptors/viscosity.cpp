@@ -55,7 +55,7 @@ void viscosity(struct chunk_type chunk)
 #include "../definitions_c.h"
 #include "../kernels/ftocmacros.h"
 #include <math.h>
-#include "../kernels/viscosity_kernel_c.c"
+#include "../kernels/viscosity_kernel_c.cc"
 
 __global__ void viscosity_kernel(
     int x_min, int x_max,

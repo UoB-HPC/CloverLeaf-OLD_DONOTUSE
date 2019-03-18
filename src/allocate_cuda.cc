@@ -1,5 +1,6 @@
 #include "definitions_c.h"
 #include <stdlib.h>
+#include <stdint.h>
 #include <cuda_runtime.h>
 
 int size2d(int xmin, int xmax, int ymin, int ymax)

@@ -220,7 +220,7 @@ void advec_mom(
 #if defined(USE_CUDA)
 #include <math.h>
 #include "../kernels/ftocmacros.h"
-#include "../kernels/advec_mom_kernel_c.c"
+#include "../kernels/advec_mom_kernel_c.cc"
 
 __global__ void ms1_kernel(
     int x_min, int x_max,

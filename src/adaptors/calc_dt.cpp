@@ -64,7 +64,7 @@ void calc_dt_adaptor(int tile, double* local_dt)
 #if defined(USE_CUDA)
 #include <math.h>
 #include "../kernels/ftocmacros.h"
-#include "../kernels/calc_dt_kernel_c.c"
+#include "../kernels/calc_dt_kernel_c.cc"
 #include "../definitions_c.h"
 
 __device__ unsigned long next_power_of_2(unsigned long v)

@@ -92,7 +92,7 @@ void initialise_chunk(int tile)
 
 #if defined(USE_CUDA)
 
-#include "../kernels/initialise_chunk_kernel_c.c"
+#include "../kernels/initialise_chunk_kernel_c.cc"
 #include "../definitions_c.h"
 
 void initialise_chunk(int tile)

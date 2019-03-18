@@ -122,7 +122,7 @@ void field_summary(
 
 #if defined(USE_CUDA)
 
-#include "../kernels/field_summary_kernel_c.c"
+#include "../kernels/field_summary_kernel_c.cc"
 
 __global__ void field_summary_kernel(
     int x_min, int x_max,

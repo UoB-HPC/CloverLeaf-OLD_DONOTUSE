@@ -51,7 +51,7 @@ void reset_field(struct chunk_type chunk)
 #endif
 
 #if defined(USE_CUDA)
-#include "../kernels/reset_field_kernel_c.c"
+#include "../kernels/reset_field_kernel_c.cc"
 #include "../definitions_c.h"
 
 

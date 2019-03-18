@@ -75,7 +75,7 @@ void ideal_gas_adaptor(int tile, bool predict)
 
 #if defined(USE_CUDA)
 #include <math.h>
-#include "../kernels/ideal_gas_kernel_c.c"
+#include "../kernels/ideal_gas_kernel_c.cc"
 
 __global__ void ideal_gas_kernel(
     int x_min, int x_max,

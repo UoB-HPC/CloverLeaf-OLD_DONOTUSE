@@ -319,7 +319,7 @@ void read_config(FILE* in)
         } else if (strIsEqual(trimmedline, "*endclover")) {
 
         } else {
-            printf("Uknown command %s\n", trimmedline);
+            printf("Unknown command %s\n", trimmedline);
         }
     }
 

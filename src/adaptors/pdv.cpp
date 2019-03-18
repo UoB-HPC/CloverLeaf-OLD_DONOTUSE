@@ -108,7 +108,7 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
 
 #if defined(USE_CUDA)
 
-#include "../kernels/PdV_kernel_c.c"
+#include "../kernels/PdV_kernel_c.cc"
 
 __global__ void pdv_kernel(
     int x_min, int x_max,
