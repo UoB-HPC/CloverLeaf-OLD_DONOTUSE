@@ -64,17 +64,12 @@ struct calc_dt_functor {
 
     void compute(double& min)
     {
-        parallel_reduce(TeamPolicy<>(y_to - y_from + 1, Kokkos::AUTO), *this, min);
+        parallel_reduce("calc_dt", MDRangePolicy<Rank<2>>({tile.t_xmin, y_from}, {tile.t_xmax+1, y_to}), *this, min);
     }
 
     KOKKOS_INLINE_FUNCTION
-    void operator()(TeamPolicy<>::member_type const& member, value_type& update) const
+    void operator()(const int j, const int k, value_type& update) const
     {
-        const int y = member.league_rank();
-        int k = y + y_from;
-
-        double result = update;
-        for (int j = tile.t_xmin; j <= tile.t_xmax; j++) {
             double val = calc_dt_kernel_c_(
                              j, k,
                              x_min, x_max, y_min, y_max,
@@ -91,11 +86,8 @@ struct calc_dt_functor {
                              xvel0,
                              yvel0,
                              dtmin);
-            if (val < result)
-                result = val;
-        }
-        if (result < update)
-            update = result;
+        if (val < update)
+            update = val;
 
     }
 
