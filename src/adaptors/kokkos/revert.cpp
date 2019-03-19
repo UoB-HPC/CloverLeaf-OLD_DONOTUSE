@@ -25,16 +25,12 @@ struct revert_functor {
 
     void compute()
     {
-        parallel_for(TeamPolicy<>(y_to - y_from + 1, Kokkos::AUTO), *this);
+        parallel_for("revert", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to+1, x_to+1}), *this);
     }
 
     KOKKOS_INLINE_FUNCTION
-    void operator()(TeamPolicy<>::member_type const& member) const
+    void operator()(const int k, const int j) const
     {
-        const int y = member.league_rank();
-        int k = y + y_from;
-        parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int j = x + x_from;
 
             revert_kernel_c_(
                 j, k,
@@ -43,6 +39,5 @@ struct revert_functor {
                 density1,
                 energy0,
                 energy1);
-        });
     }
 };
