@@ -33,7 +33,7 @@ struct xsweep_functor {
 
     void compute()
     {
-        parallel_for("xsweep", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to, x_to}), *this);
+        parallel_for("xsweep", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to+1, x_to+1}), *this);
     }
 
     KOKKOS_INLINE_FUNCTION
@@ -82,7 +82,7 @@ struct ysweep_functor {
 
     void compute()
     {
-        parallel_for("ysweep", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to, x_to}), *this);
+        parallel_for("ysweep", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to+1, x_to+1}), *this);
     }
 
     KOKKOS_INLINE_FUNCTION
@@ -131,6 +131,7 @@ struct xcomp1_functor {
     void compute()
     {
         parallel_for(TeamPolicy<>(y_to - y_from + 1, Kokkos::AUTO), *this);
+//        parallel_for("xcomp1", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to+1, x_to+1}}), *this);
     }
 
     KOKKOS_INLINE_FUNCTION

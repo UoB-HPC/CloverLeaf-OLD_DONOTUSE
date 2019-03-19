@@ -34,7 +34,7 @@ struct accelerate_functor {
 
     void compute()
     {
-        parallel_for("accelerate", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to, x_to}), *this);
+        parallel_for("accelerate", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to+1, x_to+1}), *this);
     }
 
     KOKKOS_INLINE_FUNCTION
