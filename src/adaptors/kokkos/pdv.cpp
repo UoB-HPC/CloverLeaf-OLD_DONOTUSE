@@ -62,16 +62,12 @@ struct pdv_predict_functor {
 
     void compute()
     {
-        parallel_for(TeamPolicy<>(y_to - y_from + 1, Kokkos::AUTO), *this);
+        parallel_for(MDRangePolicy<Rank<2>>({x_from, y_from}, {x_to, y_to}), *this);
     }
 
     KOKKOS_INLINE_FUNCTION
-    void operator()(TeamPolicy<>::member_type const& member) const
+    void operator()(const int j, const int k) const
     {
-        const int y = member.league_rank();
-        int k = y + y_from;
-        parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int j = x + x_from;
 
             pdv_kernel_predict_c_(
                 j, k,
@@ -91,7 +87,6 @@ struct pdv_predict_functor {
                 yvel0,
                 yvel1,
                 work_array1);
-        });
     }
 };
 
