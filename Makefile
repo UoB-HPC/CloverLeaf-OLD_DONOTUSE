@@ -118,6 +118,8 @@ OBJDIR    = obj
 MPIOBJDIR = mpiobj
 SRCDIR    = src
 
+$(shell mkdir -p $(OBJDIR) $(MPIOBJDIR))
+
 _OBJECTS = $(addprefix $(OBJDIR)/, $(OBJECTS))
 _SOURCES = $(addprefix $(SRCDIR)/, $(OBJECTS:.o=.cc))
 _MPIOBJECTS = $(addprefix $(MPIOBJDIR)/, $(MPIOBJECTS))
