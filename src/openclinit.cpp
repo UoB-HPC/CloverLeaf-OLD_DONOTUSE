@@ -54,7 +54,7 @@ void initOpenCL()
         prefix = ".";
     }
 
-    std::cout << "Loading kernels from " << prefix;
+    std::cout << "Loading kernels from " << prefix << std::endl;
 
     files.push_back(prefix + "/src/openclaccessdefs.h");
     files.push_back(prefix + "/src/kernels/ftocmacros.h");
