@@ -47,9 +47,14 @@ void initOpenCL()
     std::vector<std::string> files;
 
     std::string prefix;
-    if ((prefix = std::getenv("OCL_SRC_PREFIX") == nullptr) {
+    const char * ocl_src_prefix = std::getenv("OCL_SRC_PREFIX");
+    if (ocl_src_prefix != NULL) {
+        prefix = std::string(ocl_src_prefix);
+    } else {
         prefix = ".";
     }
+
+    std::cout << "Loading kernels from " << prefix;
 
     files.push_back(prefix + "/src/openclaccessdefs.h");
     files.push_back(prefix + "/src/kernels/ftocmacros.h");
