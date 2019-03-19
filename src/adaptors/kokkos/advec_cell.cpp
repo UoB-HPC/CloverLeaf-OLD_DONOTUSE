@@ -33,16 +33,12 @@ struct xsweep_functor {
 
     void compute()
     {
-        parallel_for(TeamPolicy<>(y_to - y_from + 1, Kokkos::AUTO), *this);
+        parallel_for("xsweep", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to, x_to}), *this);
     }
 
     KOKKOS_INLINE_FUNCTION
-    void operator()(TeamPolicy<>::member_type const& member) const
+    void operator()(const int k, const int j) const
     {
-        const int y = member.league_rank();
-        int k = y + y_from;
-        parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int j = x + x_from;
 
             xsweep(
                 j,  k,
@@ -54,7 +50,6 @@ struct xsweep_functor {
                 vol_flux_x,
                 vol_flux_y,
                 sweep_number);
-        });
     }
 };
 
@@ -87,16 +82,12 @@ struct ysweep_functor {
 
     void compute()
     {
-        parallel_for(TeamPolicy<>(y_to - y_from + 1, Kokkos::AUTO), *this);
+        parallel_for("ysweep", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to, x_to}), *this);
     }
 
     KOKKOS_INLINE_FUNCTION
-    void operator()(TeamPolicy<>::member_type const& member) const
+    void operator()(const int k, const int j) const
     {
-        const int y = member.league_rank();
-        int k = y + y_from;
-        parallel_for(TeamThreadRange(member, 0, x_to - x_from + 1), [&](const int& x) {
-            int j = x + x_from;
 
             ysweep(
                 j,  k,
@@ -108,7 +99,6 @@ struct ysweep_functor {
                 vol_flux_x,
                 vol_flux_y,
                 sweep_number);
-        });
     }
 };
 
