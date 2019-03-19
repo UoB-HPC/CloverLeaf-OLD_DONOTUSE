@@ -64,11 +64,11 @@ struct calc_dt_functor {
 
     void compute(double& min)
     {
-        parallel_reduce("calc_dt", MDRangePolicy<Rank<2>>({tile.t_xmin, y_from}, {tile.t_xmax+1, y_to}), *this, min);
+        parallel_reduce("calc_dt", MDRangePolicy<Rank<2>>({y_from, tile.t_xmin}, {y_to, tile.t_xmax+1}), *this, min);
     }
 
     KOKKOS_INLINE_FUNCTION
-    void operator()(const int j, const int k, value_type& update) const
+    void operator()(const int k, const int j, value_type& update) const
     {
             double val = calc_dt_kernel_c_(
                              j, k,

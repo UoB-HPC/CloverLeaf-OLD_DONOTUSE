@@ -62,11 +62,11 @@ struct pdv_predict_functor {
 
     void compute()
     {
-        parallel_for("pdv", MDRangePolicy<Rank<2>>({x_from, y_from}, {x_to, y_to}), *this);
+        parallel_for("pdv", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to, x_to}), *this);
     }
 
     KOKKOS_INLINE_FUNCTION
-    void operator()(const int j, const int k) const
+    void operator()(const int k, const int j) const
     {
 
             pdv_kernel_predict_c_(
