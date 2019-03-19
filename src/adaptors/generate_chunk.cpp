@@ -95,7 +95,7 @@ void generate_chunk(
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
 #include "../definitions_c.h"
 #include <math.h>
-#include "../kernels/generate_chunk_kernel_c.c"
+#include "../kernels/generate_chunk_kernel_c.cc"
 void generate_chunk(
     int tile,
     struct chunk_type chunk,
@@ -308,7 +308,7 @@ void generate_chunk(
 #if defined(USE_OPENCL)
 
 #include <math.h>
-#include "../kernels/generate_chunk_kernel_c.c"
+#include "../kernels/generate_chunk_kernel_c.cc"
 #include "../definitions_c.h"
 
 void generate_chunk(

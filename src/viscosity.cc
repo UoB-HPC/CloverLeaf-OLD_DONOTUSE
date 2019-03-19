@@ -1,5 +1,5 @@
 #include "viscosity.h"
-// #include "kernels/viscosity_kernel_c.c"
+// #include "kernels/viscosity_kernel_c.cc"
 #include "adaptors/viscosity.cpp"
 #include "definitions_c.h"
 

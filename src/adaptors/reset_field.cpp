@@ -19,7 +19,7 @@ void reset_field(struct chunk_type chunk)
 
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
-#include "../kernels/reset_field_kernel_c.c"
+#include "../kernels/reset_field_kernel_c.cc"
 
 void reset_field(struct chunk_type chunk)
 {
@@ -118,7 +118,7 @@ void reset_field(struct chunk_type chunk)
 #endif
 
 #if defined(USE_OPENCL)
-#include "../kernels/reset_field_kernel_c.c"
+#include "../kernels/reset_field_kernel_c.cc"
 #include "../definitions_c.h"
 
 void reset_field(struct chunk_type chunk)

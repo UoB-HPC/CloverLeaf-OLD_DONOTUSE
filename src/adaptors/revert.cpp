@@ -18,7 +18,7 @@ void revert(struct chunk_type chunk)
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
 
-#include "../kernels/revert_kernel_c.c"
+#include "../kernels/revert_kernel_c.cc"
 
 void revert(struct chunk_type chunk)
 {
@@ -105,7 +105,7 @@ void revert(struct chunk_type chunk)
 
 
 #if defined(USE_OPENCL)
-#include "../kernels/revert_kernel_c.c"
+#include "../kernels/revert_kernel_c.cc"
 #include "../definitions_c.h"
 
 void revert(struct chunk_type chunk)

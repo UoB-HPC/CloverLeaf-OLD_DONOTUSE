@@ -31,7 +31,7 @@ void flux_calc(struct chunk_type chunk, double dt)
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
 #include "../definitions_c.h"
-#include "../kernels/flux_calc_kernel_c.c"
+#include "../kernels/flux_calc_kernel_c.cc"
 
 void flux_calc(struct chunk_type chunk, double dt)
 {
@@ -175,7 +175,7 @@ void flux_calc(struct chunk_type chunk, double dt)
 #include "../definitions_c.h"
 #include <math.h>
 #include "../kernels/ftocmacros.h"
-#include "../kernels/flux_calc_kernel_c.c"
+#include "../kernels/flux_calc_kernel_c.cc"
 
 void flux_calc(struct chunk_type chunk, double dt)
 {

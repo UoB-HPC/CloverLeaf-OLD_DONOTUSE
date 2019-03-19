@@ -33,7 +33,7 @@ void pdv(struct chunk_type chunk, bool predict, double dt)
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
 
-#include "../kernels/PdV_kernel_c.c"
+#include "../kernels/PdV_kernel_c.cc"
 
 void pdv(struct chunk_type chunk, bool predict, double dt)
 {

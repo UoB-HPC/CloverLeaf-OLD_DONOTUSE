@@ -1,7 +1,7 @@
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
 
-#include "../kernels/initialise_chunk_kernel_c.c"
+#include "../kernels/initialise_chunk_kernel_c.cc"
 #include "../definitions_c.h"
 
 void initialise_chunk(int tile)
@@ -176,7 +176,7 @@ void initialise_chunk(int tile)
 
 #if defined(USE_OPENCL)
 
-#include "../kernels/initialise_chunk_kernel_c.c"
+#include "../kernels/initialise_chunk_kernel_c.cc"
 #include "../definitions_c.h"
 
 void initialise_chunk(int tile)

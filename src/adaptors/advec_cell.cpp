@@ -56,7 +56,7 @@ void advec_cell(
 
 #include <math.h>
 #include "../kernels/ftocmacros.h"
-#include "../kernels/advec_cell_kernel_c.c"
+#include "../kernels/advec_cell_kernel_c.cc"
 
 void advec_cell(
     int x_min, int x_max,
@@ -442,7 +442,7 @@ void advec_cell(
 #if defined(USE_OPENCL)
 #include <math.h>
 #include "../kernels/ftocmacros.h"
-#include "../kernels/advec_cell_kernel_c.c"
+#include "../kernels/advec_cell_kernel_c.cc"
 #include "../definitions_c.h"
 
 void advec_cell(

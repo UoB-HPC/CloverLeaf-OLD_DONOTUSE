@@ -1,7 +1,7 @@
 #include "../definitions_c.h"
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
-#include "../kernels/field_summary_kernel_c.c"
+#include "../kernels/field_summary_kernel_c.cc"
 void field_summary(
     double* vol,
     double* ie,

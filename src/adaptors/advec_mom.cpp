@@ -84,7 +84,7 @@ void advec_mom(
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
 #include <math.h>
 #include "../kernels/ftocmacros.h"
-#include "../kernels/advec_mom_kernel_c.c"
+#include "../kernels/advec_mom_kernel_c.cc"
 
 void advec_mom(
     int which_vel,
@@ -655,8 +655,8 @@ void advec_mom(
 
 #if defined(USE_OPENCL)
 
-#include "../kernels/advec_mom_kernel_c.c"
-#include "../cl.hpp"
+#include "../kernels/advec_mom_kernel_c.cc"
+// #include "../cl.hpp"
 #include "../definitions_c.h"
 
 void advec_mom(

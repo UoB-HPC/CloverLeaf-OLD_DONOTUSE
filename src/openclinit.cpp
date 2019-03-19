@@ -51,42 +51,42 @@ void initOpenCL()
     files.push_back("./src/kernels/accelerate_kernel.c");
     files.push_back("./src/adaptors/opencl/accelerate.c");
 
-    files.push_back("./src/kernels/PdV_kernel_c.c");
+    files.push_back("./src/kernels/PdV_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/pdv.c");
 
-    files.push_back("./src/kernels/ideal_gas_kernel_c.c");
+    files.push_back("./src/kernels/ideal_gas_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/ideal_gas.c");
 
-    files.push_back("./src/kernels/calc_dt_kernel_c.c");
+    files.push_back("./src/kernels/calc_dt_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/calc_dt.c");
 
-    files.push_back("./src/kernels/advec_mom_kernel_c.c");
+    files.push_back("./src/kernels/advec_mom_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/advec_mom.c");
 
-    files.push_back("./src/kernels/advec_cell_kernel_c.c");
+    files.push_back("./src/kernels/advec_cell_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/advec_cell.c");
 
-    files.push_back("./src/kernels/flux_calc_kernel_c.c");
+    files.push_back("./src/kernels/flux_calc_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/flux_calc.c");
 
-    files.push_back("./src/kernels/viscosity_kernel_c.c");
+    files.push_back("./src/kernels/viscosity_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/viscosity.c");
 
-    files.push_back("./src/kernels/revert_kernel_c.c");
+    files.push_back("./src/kernels/revert_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/revert.c");
 
-    files.push_back("./src/kernels/reset_field_kernel_c.c");
+    files.push_back("./src/kernels/reset_field_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/reset_field.c");
 
-    files.push_back("./src/kernels/update_halo_kernel_c.c");
+    files.push_back("./src/kernels/update_halo_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/update_halo.c");
 
-    files.push_back("./src/kernels/field_summary_kernel_c.c");
+    files.push_back("./src/kernels/field_summary_kernel_c.cc");
     files.push_back("./src/adaptors/opencl/field_summary.c");
 
     std::stringstream buffer;
     for (int i = 0; i < files.size(); i++) {
-        std::ifstream t(files[i]);
+        std::ifstream t(files[i].c_str());
         if (!t.is_open()) {
             std::cerr << "opencl file read error, file " << i << std::endl;
             exit(1);

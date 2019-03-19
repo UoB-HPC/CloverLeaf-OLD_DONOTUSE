@@ -1,5 +1,5 @@
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS
-#include "cl.hpp"
+#include <cl.hpp>
 
 extern cl::Context        openclContext;
 extern cl::CommandQueue   openclQueue;
