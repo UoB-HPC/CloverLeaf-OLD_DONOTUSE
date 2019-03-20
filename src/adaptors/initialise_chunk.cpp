@@ -12,7 +12,7 @@ void initialise_chunk(int tile)
     dy = (grid.ymax - grid.ymin) / (float)grid.y_cells;
 
     xmin = grid.xmin + dx * (float)(chunk.tiles[tile].t_left - 1);
-    ymin = grid.ymin + dx * (float)(chunk.tiles[tile].t_bottom - 1);
+    ymin = grid.ymin + dy * (float)(chunk.tiles[tile].t_bottom - 1);
 
     initialise_chunk_kernel_c_(
         chunk.tiles[tile].t_xmin,
