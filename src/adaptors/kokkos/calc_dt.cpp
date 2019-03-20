@@ -64,7 +64,7 @@ struct calc_dt_functor {
 
     void compute(double& min)
     {
-        parallel_reduce("calc_dt", MDRangePolicy<Rank<2>>({y_from, tile.t_xmin}, {y_to+1, tile.t_xmax+1}), *this, min);
+        parallel_reduce("calc_dt", MDRangePolicy<Rank<2>>({y_from, tile.t_xmin}, {y_to+1, tile.t_xmax+1}), *this, Min<double>(min));
     }
 
     KOKKOS_INLINE_FUNCTION
@@ -91,20 +91,20 @@ struct calc_dt_functor {
 
     }
 
-    KOKKOS_INLINE_FUNCTION
-    void join(volatile value_type& dst,
-              const volatile value_type& src) const
-    {
-        if (src < dst) {
-            dst = src;
-        }
-    }
+    //KOKKOS_INLINE_FUNCTION
+    //void join(volatile value_type& dst,
+    //          const volatile value_type& src) const
+    //{
+    //    if (src < dst) {
+    //        dst = src;
+    //    }
+    //}
 
-    KOKKOS_INLINE_FUNCTION
-    void init(value_type& dst) const
-    {
-        dst = g_big;
-    }
+    //KOKKOS_INLINE_FUNCTION
+    //void init(value_type& dst) const
+    //{
+    //    dst = g_big;
+    //}
 };
 
 /*
