@@ -21,7 +21,7 @@ void timestep()
     double dtlp;
 
     char dt_control[8], dtl_control[8];
-    double xl_pos, yl_pos,
+    double xl_pos = 0.0, yl_pos = 0.0,
            x_pos = 0.0, y_pos = 0.0;
 
     if (profiler_on) kernel_time = timer();

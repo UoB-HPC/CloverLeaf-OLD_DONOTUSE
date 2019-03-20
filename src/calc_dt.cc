@@ -18,21 +18,23 @@ void calc_dt(int tile,
     // *local_dt = mindt;
 
 
-    double jk_control = 1.1;
-    // Extract the mimimum timestep information
-    // dtl_control = 10.01 * (jk_control - (int)(jk_control));
-    jk_control = jk_control - (jk_control - (int)(jk_control));
-    *jldt = 1; //MOD(INT(jk_control),x_max)
-    *kldt = 1; //1+(jk_control/x_max)
-    //xl_pos=cellx[FTNREF1D(jldt,xmin-2)];
-    //yl_pos=celly[FTNREF1D(jldt,ymin-2)];
 
 
     l_control = 1;
     int x_min = chunk.tiles[tile].t_xmin,
         x_max = chunk.tiles[tile].t_xmax,
-        y_min = chunk.tiles[tile].t_ymin;
-    // y_max = chunk.tiles[tile].t_ymax;
+        y_min = chunk.tiles[tile].t_ymin,
+        y_max = chunk.tiles[tile].t_ymax;
+
+    double jk_control = 1.1;
+    // Extract the mimimum timestep information
+    double dtl_control = 10.01 * (jk_control - (int)(jk_control));
+    jk_control = jk_control - (jk_control - (int)(jk_control));
+    *jldt = ((int)jk_control) % x_max;
+    *kldt = jk_control/x_max;
+    *xl_pos = FIELD_1D(chunk.tiles[tile].field.cellx, *jldt,  x_min - 2); //cellx[FTNREF1D(jldt,xmin-2)];
+    *yl_pos = FIELD_1D(chunk.tiles[tile].field.celly, *jldt,  y_min - 2); //celly[FTNREF1D(jldt,ymin-2)];
+
 
     if (*local_dt < dtmin) {
         printf("Timestep information:\n");
