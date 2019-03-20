@@ -168,4 +168,5 @@ struct field_type {
 };
 
 
-#define ENABLE_TILES
+// Can't enable tiles because tile exchange is not implemented for Kokkos
+//#define ENABLE_TILES
