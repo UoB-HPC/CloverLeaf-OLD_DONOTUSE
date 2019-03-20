@@ -64,7 +64,7 @@ struct calc_dt_functor {
 
     void compute(double& min)
     {
-        parallel_reduce("calc_dt", MDRangePolicy<Rank<2>>({y_from, tile.t_xmin}, {y_to+1, tile.t_xmax+1}), *this, Min<double>(min));
+        parallel_reduce("calc_dt", MDRangePolicy<Rank<2>>({y_from, x_from}, {y_to+1, x_to+1}), *this, Min<double>(min));
     }
 
     KOKKOS_INLINE_FUNCTION
