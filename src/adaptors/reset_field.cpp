@@ -8,9 +8,9 @@ void reset_field(struct chunk_type chunk)
         reset_field_functor f1(
             chunk.tiles[tile],
             chunk.tiles[tile].t_xmin,
-            chunk.tiles[tile].t_xmax + 1,
+            chunk.tiles[tile].t_xmax,
             chunk.tiles[tile].t_ymin,
-            chunk.tiles[tile].t_ymax + 1);
+            chunk.tiles[tile].t_ymax);
         f1.compute();
     }
 }
