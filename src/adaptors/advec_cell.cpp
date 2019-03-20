@@ -16,13 +16,13 @@ void advec_cell(
     if (dir == g_xdir) {
         xsweep_functor f1(
             tile,
-            x_min - 2, x_max + 2, y_min - 2, y_max + 2,
+            x_min, x_max, y_min, y_max,
             sweep_number);
         f1.compute();
 
         xcomp1_functor f2(
             tile,
-            x_min, x_max + 2, y_min, y_max);
+            x_min, x_max, y_min, y_max);
         f2.compute();
 
         xcomp2_functor f3(
@@ -34,13 +34,13 @@ void advec_cell(
     if (dir == g_ydir) {
         ysweep_functor f1(
             tile,
-            x_min - 2, x_max + 2, y_min - 2, y_max + 2,
+            x_min, x_max, y_min, y_max,
             sweep_number);
         f1.compute();
 
         ycomp1_functor f2(
             tile,
-            x_min, x_max, y_min, y_max + 2);
+            x_min, x_max, y_min, y_max);
         f2.compute();
 
         ycomp2_functor f3(
