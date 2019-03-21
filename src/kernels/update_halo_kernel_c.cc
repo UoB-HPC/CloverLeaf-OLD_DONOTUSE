@@ -31,59 +31,59 @@
 
 
 /* These need to be kept consistent with the data module to avoid use statement */
-#define CHUNK_LEFT     1
-#define CHUNK_RIGHT    2
-#define CHUNK_BOTTOM   3
-#define CHUNK_TOP      4
+#define CHUNK_LEFT     0
+#define CHUNK_RIGHT    1
+#define CHUNK_BOTTOM   2
+#define CHUNK_TOP      3
 #define EXTERNAL_FACE  -1
-#define TILE_LEFT      1
-#define TILE_RIGHT     2
-#define TILE_BOTTOM    3
-#define TILE_TOP       4
+#define TILE_LEFT      0
+#define TILE_RIGHT     1
+#define TILE_BOTTOM    2
+#define TILE_TOP       3
 #define EXTERNAL_TILE  -1
 
-#define FIELD_DENSITY0     1
-#define FIELD_DENSITY1     2
-#define FIELD_ENERGY0      3
-#define FIELD_ENERGY1      4
-#define FIELD_PRESSURE     5
-#define FIELD_VISCOSITY    6
-#define FIELD_SOUNDSPEED   7
-#define FIELD_XVEL0        8
-#define FIELD_XVEL1        9
-#define FIELD_YVEL0        10
-#define FIELD_YVEL1        11
-#define FIELD_VOL_FLUX_X   12
-#define FIELD_VOL_FLUX_Y   13
-#define FIELD_MASS_FLUX_X  14
-#define FIELD_MASS_FLUX_Y  15
+#define FIELD_DENSITY0     0
+#define FIELD_DENSITY1     1
+#define FIELD_ENERGY0      2
+#define FIELD_ENERGY1      3
+#define FIELD_PRESSURE     4
+#define FIELD_VISCOSITY    5
+#define FIELD_SOUNDSPEED   6
+#define FIELD_XVEL0        7
+#define FIELD_XVEL1        8
+#define FIELD_YVEL0        9
+#define FIELD_YVEL1        10
+#define FIELD_VOL_FLUX_X   11
+#define FIELD_VOL_FLUX_Y   12
+#define FIELD_MASS_FLUX_X  13
+#define FIELD_MASS_FLUX_Y  14
 
 
 // requires fields, chunk_neighbours, tile_neighbours, x_min,x_max,y_min,y_max
 // depth to be defined
 #define update1(j, k, field_t, field, access) \
-    if (fields(FTNREF1D(field_t, 1)) == 1) { \
-        if (chunk_neighbours(FTNREF1D(CHUNK_BOTTOM, 1)) == EXTERNAL_FACE && \
-            tile_neighbours(FTNREF1D(TILE_BOTTOM, 1)) == EXTERNAL_TILE) { \
+    if (fields(FTNREF1D(field_t, 0)) == 1) { \
+        if (chunk_neighbours(FTNREF1D(CHUNK_BOTTOM, 0)) == EXTERNAL_FACE && \
+            tile_neighbours(FTNREF1D(TILE_BOTTOM, 0)) == EXTERNAL_TILE) { \
             access(field, j, 1 - k) = \
                 access(field, j, 0 + k); \
         } \
-        if (chunk_neighbours(FTNREF1D(CHUNK_TOP, 1)) == EXTERNAL_FACE && \
-            tile_neighbours(FTNREF1D(TILE_TOP, 1)) == EXTERNAL_TILE) { \
+        if (chunk_neighbours(FTNREF1D(CHUNK_TOP, 0)) == EXTERNAL_FACE && \
+            tile_neighbours(FTNREF1D(TILE_TOP, 0)) == EXTERNAL_TILE) { \
             access(field, j, y_max + k) = \
                 access(field, j, y_max + 1 - k); \
         } \
     }
 
 #define update2(j, k, field_t, field, access) \
-    if (fields(FTNREF1D(field_t, 1)) == 1) { \
-        if (chunk_neighbours(FTNREF1D(CHUNK_LEFT, 1)) == EXTERNAL_FACE && \
-            tile_neighbours(FTNREF1D(TILE_LEFT, 1)) == EXTERNAL_TILE) { \
+    if (fields(FTNREF1D(field_t, 0)) == 1) { \
+        if (chunk_neighbours(FTNREF1D(CHUNK_LEFT, 0)) == EXTERNAL_FACE && \
+            tile_neighbours(FTNREF1D(TILE_LEFT, 0)) == EXTERNAL_TILE) { \
             access(field, 1 - j, k) = \
                 access(field, 0 + j, k); \
         } \
-        if (chunk_neighbours(FTNREF1D(CHUNK_RIGHT, 1)) == EXTERNAL_FACE && \
-            tile_neighbours(FTNREF1D(TILE_RIGHT, 1)) == EXTERNAL_TILE) { \
+        if (chunk_neighbours(FTNREF1D(CHUNK_RIGHT, 0)) == EXTERNAL_FACE && \
+            tile_neighbours(FTNREF1D(TILE_RIGHT, 0)) == EXTERNAL_TILE) { \
             access(field, x_max + j, k) = \
                 access(field, x_max + 1 - j, k); \
         } \
@@ -120,8 +120,8 @@ kernelqual void update_halo_kernel_1(
     update1(j, k, FIELD_VISCOSITY,   viscosity,   VISCOSITY);
     update1(j, k, FIELD_SOUNDSPEED,  soundspeed,  SOUNDSPEED);
     update1(j, k, FIELD_XVEL0,       xvel0,       XVEL0);
-    update1(j, k, FIELD_XVEL1,       yvel0,       XVEL1);
-    update1(j, k, FIELD_YVEL0,       xvel1,       YVEL0);
+    update1(j, k, FIELD_XVEL1,       xvel1,       XVEL1);
+    update1(j, k, FIELD_YVEL0,       yvel0,       YVEL0);
     update1(j, k, FIELD_YVEL1,       yvel1,       YVEL1);
     update1(j, k, FIELD_VOL_FLUX_X,  vol_flux_x,  VOL_FLUX_X);
     update1(j, k, FIELD_MASS_FLUX_X, mass_flux_x, MASS_FLUX_X);
@@ -160,8 +160,8 @@ kernelqual void update_halo_kernel_2(
     update2(j, k, FIELD_VISCOSITY,   viscosity,   VISCOSITY);
     update2(j, k, FIELD_SOUNDSPEED,  soundspeed,  SOUNDSPEED);
     update2(j, k, FIELD_XVEL0,       xvel0,       XVEL0);
-    update2(j, k, FIELD_XVEL1,       yvel0,       XVEL1);
-    update2(j, k, FIELD_YVEL0,       xvel1,       YVEL0);
+    update2(j, k, FIELD_XVEL1,       xvel1,       XVEL1);
+    update2(j, k, FIELD_YVEL0,       yvel0,       YVEL0);
     update2(j, k, FIELD_YVEL1,       yvel1,       YVEL1);
     update2(j, k, FIELD_VOL_FLUX_X,  vol_flux_x,  VOL_FLUX_X);
     update2(j, k, FIELD_MASS_FLUX_X, mass_flux_x, MASS_FLUX_X);
