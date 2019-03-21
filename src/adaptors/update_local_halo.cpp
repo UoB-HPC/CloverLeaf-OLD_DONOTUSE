@@ -76,7 +76,7 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
 #if defined(USE_KOKKOS)
 #include "kokkos/update_local_halo.cpp"
 
-void update_local_halo(struct tile_type tile, flag_t chunk_neighbours, int* fields, int depth)
+void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields, int depth)
 {
     int x_min = tile.t_xmin,
         x_max = tile.t_xmax,
@@ -85,10 +85,35 @@ void update_local_halo(struct tile_type tile, flag_t chunk_neighbours, int* fiel
 
     // This routine assumes that the kernel unpack routines have taken the
     // neighbour data and put it in the halo regions on the device arrays.
+    // This may not be true in an MPI run of the Kokkos version...
     // This routine just does some copying of the data from the halo regions on the device.
 
-    update_halo_functor_1 f1(tile, x_min-depth, x_max+depth, depth, chunk_neighbours, fields);
-    update_halo_functor_2 f2(tile, y_min-depth, y_max+depth, depth, chunk_neighbours, fields);
+    // First, we need to copy over 3 integer arrays to the device.
+    Kokkos::View<int*> d_chunk_neighbours("chunk_neighbours", 4);
+    Kokkos::View<int*> d_tile_neighbours("tile_neighbours", 4);
+    Kokkos::View<int*> d_fields("fields", NUM_FIELDS);
+
+    Kokkos::View<int*>::HostMirror h_chunk_neighbours = Kokkos::create_mirror_view(d_chunk_neighbours);
+    Kokkos::View<int*>::HostMirror h_tile_neighbours = Kokkos::create_mirror_view(d_tile_neighbours);
+    Kokkos::View<int*>::HostMirror h_fields = Kokkos::create_mirror_view(d_fields);
+
+    for (int i = 0; i < 4; ++i)
+    {
+      h_chunk_neighbours(i) = chunk_neighbours[i];
+      h_tile_neighbours(i) = tile.tile_neighbours[i];
+    }
+
+    for (int i = 0; i < NUM_FIELDS; ++i)
+    {
+      h_fields(i) = fields[i];
+    }
+
+    Kokkos::deep_copy(d_chunk_neighbours, h_chunk_neighbours);
+    Kokkos::deep_copy(d_tile_neighbours, h_tile_neighbours);
+    Kokkos::deep_copy(d_fields, h_fields);
+
+    update_halo_functor_1 f1(tile, x_min-depth, x_max+depth, depth, d_chunk_neighbours, d_tile_neighbours, d_fields);
+    update_halo_functor_2 f2(tile, y_min-depth, y_max+depth, depth, d_chunk_neighbours, d_tile_neighbours, d_fields);
     f1.compute();
     f2.compute();
     Kokkos::fence();
