@@ -14,6 +14,7 @@ using namespace Kokkos;
 
 void allocate()
 {
+
     for (int tile = 0; tile < tiles_per_chunk; tile++) {
         int xmin = chunk.tiles[tile].t_xmin,
             xmax = chunk.tiles[tile].t_xmax,

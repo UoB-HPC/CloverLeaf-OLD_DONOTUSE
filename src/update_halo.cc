@@ -35,7 +35,11 @@ void update_halo(int* fields, int depth)
         chunk.chunk_neighbours[CHUNK_TOP] == EXTERNAL_FACE
     ) {
         for (int tile = 0; tile < tiles_per_chunk; tile++) {
+            #ifdef USE_KOKKOS
+            update_local_halo(chunk.tiles[tile], chunk.d_chunk_neighbours, fields, depth);
+            #else
             update_local_halo(chunk.tiles[tile], chunk.chunk_neighbours, fields, depth);
+            #endif
         }
     }
     if (profiler_on) {

@@ -1,7 +1,7 @@
 
-#include "../kernels/update_halo_kernel_c.cc"
 
 #if defined(USE_OPENMP) || defined(USE_OMPSS)
+#include "../kernels/update_halo_kernel_c.cc"
 
 void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields, int depth)
 {
@@ -21,21 +21,21 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
                 tile.t_ymax,
                 chunk_neighbours,
                 tile.tile_neighbours,
-                tile.field.density0,
-                tile.field.density1,
-                tile.field.energy0,
-                tile.field.energy1,
-                tile.field.pressure,
-                tile.field.viscosity,
-                tile.field.soundspeed,
-                tile.field.xvel0,
-                tile.field.yvel0,
-                tile.field.xvel1,
-                tile.field.yvel1,
-                tile.field.vol_flux_x,
-                tile.field.mass_flux_x,
-                tile.field.vol_flux_y,
-                tile.field.mass_flux_y,
+                tile.field.d_density0,
+                tile.field.d_density1,
+                tile.field.d_energy0,
+                tile.field.d_energy1,
+                tile.field.d_pressure,
+                tile.field.d_viscosity,
+                tile.field.d_soundspeed,
+                tile.field.d_xvel0,
+                tile.field.d_yvel0,
+                tile.field.d_xvel1,
+                tile.field.d_yvel1,
+                tile.field.d_vol_flux_x,
+                tile.field.d_mass_flux_x,
+                tile.field.d_vol_flux_y,
+                tile.field.d_mass_flux_y,
                 fields,
                 depth);
         }
@@ -51,21 +51,21 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
                 tile.t_ymax,
                 chunk_neighbours,
                 tile.tile_neighbours,
-                tile.field.density0,
-                tile.field.density1,
-                tile.field.energy0,
-                tile.field.energy1,
-                tile.field.pressure,
-                tile.field.viscosity,
-                tile.field.soundspeed,
-                tile.field.xvel0,
-                tile.field.yvel0,
-                tile.field.xvel1,
-                tile.field.yvel1,
-                tile.field.vol_flux_x,
-                tile.field.mass_flux_x,
-                tile.field.vol_flux_y,
-                tile.field.mass_flux_y,
+                tile.field.d_density0,
+                tile.field.d_density1,
+                tile.field.d_energy0,
+                tile.field.d_energy1,
+                tile.field.d_pressure,
+                tile.field.d_viscosity,
+                tile.field.d_soundspeed,
+                tile.field.d_xvel0,
+                tile.field.d_yvel0,
+                tile.field.d_xvel1,
+                tile.field.d_yvel1,
+                tile.field.d_vol_flux_x,
+                tile.field.d_mass_flux_x,
+                tile.field.d_vol_flux_y,
+                tile.field.d_mass_flux_y,
                 fields,
                 depth);
         }
@@ -74,74 +74,120 @@ void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields
 #endif
 
 #if defined(USE_KOKKOS)
+#include "kokkos/update_local_halo.cpp"
 
-void update_local_halo(struct tile_type tile, int* chunk_neighbours, int* fields, int depth)
+void update_local_halo(struct tile_type tile, flag_t chunk_neighbours, int* fields, int depth)
 {
     int x_min = tile.t_xmin,
         x_max = tile.t_xmax,
         y_min = tile.t_ymin,
         y_max = tile.t_ymax;
 
-    for (int j = x_min - depth; j <= x_max + depth; j++) {
-#pragma ivdep
-        for (int k = 1; k <= depth; k++) {
-            update_halo_kernel_1(
-                j, k,
-                tile.t_xmin,
-                tile.t_xmax,
-                tile.t_ymin,
-                tile.t_ymax,
-                chunk_neighbours,
-                tile.tile_neighbours,
-                tile.field.density0,
-                tile.field.density1,
-                tile.field.energy0,
-                tile.field.energy1,
-                tile.field.pressure,
-                tile.field.viscosity,
-                tile.field.soundspeed,
-                tile.field.xvel0,
-                tile.field.yvel0,
-                tile.field.xvel1,
-                tile.field.yvel1,
-                tile.field.vol_flux_x,
-                tile.field.mass_flux_x,
-                tile.field.vol_flux_y,
-                tile.field.mass_flux_y,
-                fields,
-                depth);
-        }
-    }
-    for (int k = y_min - depth; k <= y_max + depth; k++) {
-#pragma ivdep
-        for (int j = 1; j <= depth; j++) {
-            update_halo_kernel_2(
-                j, k,
-                tile.t_xmin,
-                tile.t_xmax,
-                tile.t_ymin,
-                tile.t_ymax,
-                chunk_neighbours,
-                tile.tile_neighbours,
-                tile.field.density0,
-                tile.field.density1,
-                tile.field.energy0,
-                tile.field.energy1,
-                tile.field.pressure,
-                tile.field.viscosity,
-                tile.field.soundspeed,
-                tile.field.xvel0,
-                tile.field.yvel0,
-                tile.field.xvel1,
-                tile.field.yvel1,
-                tile.field.vol_flux_x,
-                tile.field.mass_flux_x,
-                tile.field.vol_flux_y,
-                tile.field.mass_flux_y,
-                fields,
-                depth);
-        }
-    }
+    // This routine assumes that the kernel unpack routines have taken the
+    // neighbour data and put it in the halo regions on the device arrays.
+    // This routine just does some copying of the data from the halo regions on the device.
+
+    update_halo_functor_1 f1(tile, x_min-depth, x_max+depth, depth, chunk_neighbours, fields);
+    update_halo_functor_2 f2(tile, y_min-depth, y_max+depth, depth, chunk_neighbours, fields);
+    f1.compute();
+    f2.compute();
+    Kokkos::fence();
+
+// HACK! Do a deep copy so host can update
+//                Kokkos::deep_copy(tile.field.density0,   tile.field.d_density0);
+//                Kokkos::deep_copy(tile.field.density1,   tile.field.d_density1);
+//                Kokkos::deep_copy(tile.field.energy0,    tile.field.d_energy0);
+//                Kokkos::deep_copy(tile.field.energy1,    tile.field.d_energy1);
+//                Kokkos::deep_copy(tile.field.pressure,   tile.field.d_pressure);
+//                Kokkos::deep_copy(tile.field.viscosity,  tile.field.d_viscosity);
+//                Kokkos::deep_copy(tile.field.soundspeed, tile.field.d_soundspeed);
+//                Kokkos::deep_copy(tile.field.xvel0,      tile.field.d_xvel0);
+//                Kokkos::deep_copy(tile.field.yvel0,      tile.field.d_yvel0);
+//                Kokkos::deep_copy(tile.field.xvel1,      tile.field.d_xvel1);
+//                Kokkos::deep_copy(tile.field.yvel1,      tile.field.d_yvel1);
+//                Kokkos::deep_copy(tile.field.vol_flux_x, tile.field.d_vol_flux_x);
+//                Kokkos::deep_copy(tile.field.mass_flux_x,tile.field.d_mass_flux_x);
+//                Kokkos::deep_copy(tile.field.vol_flux_y, tile.field.d_vol_flux_y);
+//                Kokkos::deep_copy(tile.field.mass_flux_y,tile.field.d_mass_flux_y);
+//
+//
+//    for (int j = x_min - depth; j <= x_max + depth; j++) {
+//#pragma ivdep
+//        for (int k = 1; k <= depth; k++) {
+//            update_halo_kernel_1(
+//                j, k,
+//                tile.t_xmin,
+//                tile.t_xmax,
+//                tile.t_ymin,
+//                tile.t_ymax,
+//                chunk_neighbours,
+//                tile.tile_neighbours,
+//                tile.field.density0,
+//                tile.field.density1,
+//                tile.field.energy0,
+//                tile.field.energy1,
+//                tile.field.pressure,
+//                tile.field.viscosity,
+//                tile.field.soundspeed,
+//                tile.field.xvel0,
+//                tile.field.yvel0,
+//                tile.field.xvel1,
+//                tile.field.yvel1,
+//                tile.field.vol_flux_x,
+//                tile.field.mass_flux_x,
+//                tile.field.vol_flux_y,
+//                tile.field.mass_flux_y,
+//                fields,
+//                depth);
+//        }
+//    }
+//    for (int k = y_min - depth; k <= y_max + depth; k++) {
+//#pragma ivdep
+//        for (int j = 1; j <= depth; j++) {
+//            update_halo_kernel_2(
+//                j, k,
+//                tile.t_xmin,
+//                tile.t_xmax,
+//                tile.t_ymin,
+//                tile.t_ymax,
+//                chunk_neighbours,
+//                tile.tile_neighbours,
+//                tile.field.density0,
+//                tile.field.density1,
+//                tile.field.energy0,
+//                tile.field.energy1,
+//                tile.field.pressure,
+//                tile.field.viscosity,
+//                tile.field.soundspeed,
+//                tile.field.xvel0,
+//                tile.field.yvel0,
+//                tile.field.xvel1,
+//                tile.field.yvel1,
+//                tile.field.vol_flux_x,
+//                tile.field.mass_flux_x,
+//                tile.field.vol_flux_y,
+//                tile.field.mass_flux_y,
+//                fields,
+//                depth);
+//        }
+//    }
+//// HACK! Do a deep copy so host can update
+//                Kokkos::deep_copy(tile.field.d_density0,   tile.field.density0);
+//                Kokkos::deep_copy(tile.field.d_density1,   tile.field.density1);
+//                Kokkos::deep_copy(tile.field.d_energy0,    tile.field.energy0);
+//                Kokkos::deep_copy(tile.field.d_energy1,    tile.field.energy1);
+//                Kokkos::deep_copy(tile.field.d_pressure,   tile.field.pressure);
+//                Kokkos::deep_copy(tile.field.d_viscosity,  tile.field.viscosity);
+//                Kokkos::deep_copy(tile.field.d_soundspeed, tile.field.soundspeed);
+//                Kokkos::deep_copy(tile.field.d_xvel0,      tile.field.xvel0);
+//                Kokkos::deep_copy(tile.field.d_yvel0,      tile.field.yvel0);
+//                Kokkos::deep_copy(tile.field.d_xvel1,      tile.field.xvel1);
+//                Kokkos::deep_copy(tile.field.d_yvel1,      tile.field.yvel1);
+//                Kokkos::deep_copy(tile.field.d_vol_flux_x, tile.field.vol_flux_x);
+//                Kokkos::deep_copy(tile.field.d_mass_flux_x,tile.field.mass_flux_x);
+//                Kokkos::deep_copy(tile.field.d_vol_flux_y, tile.field.vol_flux_y);
+//                Kokkos::deep_copy(tile.field.d_mass_flux_y,tile.field.mass_flux_y);
+
 }
 #endif
 

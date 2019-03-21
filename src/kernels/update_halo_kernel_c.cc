@@ -62,28 +62,28 @@
 // requires fields, chunk_neighbours, tile_neighbours, x_min,x_max,y_min,y_max
 // depth to be defined
 #define update1(j, k, field_t, field, access) \
-    if (fields[FTNREF1D(field_t, 1)] == 1) { \
-        if (chunk_neighbours[FTNREF1D(CHUNK_BOTTOM, 1)] == EXTERNAL_FACE && \
-            tile_neighbours[FTNREF1D(TILE_BOTTOM, 1)] == EXTERNAL_TILE) { \
+    if (fields(FTNREF1D(field_t, 1)) == 1) { \
+        if (chunk_neighbours(FTNREF1D(CHUNK_BOTTOM, 1)) == EXTERNAL_FACE && \
+            tile_neighbours(FTNREF1D(TILE_BOTTOM, 1)) == EXTERNAL_TILE) { \
             access(field, j, 1 - k) = \
                 access(field, j, 0 + k); \
         } \
-        if (chunk_neighbours[FTNREF1D(CHUNK_TOP, 1)] == EXTERNAL_FACE && \
-            tile_neighbours[FTNREF1D(TILE_TOP, 1)] == EXTERNAL_TILE) { \
+        if (chunk_neighbours(FTNREF1D(CHUNK_TOP, 1)) == EXTERNAL_FACE && \
+            tile_neighbours(FTNREF1D(TILE_TOP, 1)) == EXTERNAL_TILE) { \
             access(field, j, y_max + k) = \
                 access(field, j, y_max + 1 - k); \
         } \
     }
 
 #define update2(j, k, field_t, field, access) \
-    if (fields[FTNREF1D(field_t, 1)] == 1) { \
-        if (chunk_neighbours[FTNREF1D(CHUNK_LEFT, 1)] == EXTERNAL_FACE && \
-            tile_neighbours[FTNREF1D(TILE_LEFT, 1)] == EXTERNAL_TILE) { \
+    if (fields(FTNREF1D(field_t, 1)) == 1) { \
+        if (chunk_neighbours(FTNREF1D(CHUNK_LEFT, 1)) == EXTERNAL_FACE && \
+            tile_neighbours(FTNREF1D(TILE_LEFT, 1)) == EXTERNAL_TILE) { \
             access(field, 1 - j, k) = \
                 access(field, 0 + j, k); \
         } \
-        if (chunk_neighbours[FTNREF1D(CHUNK_RIGHT, 1)] == EXTERNAL_FACE && \
-            tile_neighbours[FTNREF1D(TILE_RIGHT, 1)] == EXTERNAL_TILE) { \
+        if (chunk_neighbours(FTNREF1D(CHUNK_RIGHT, 1)) == EXTERNAL_FACE && \
+            tile_neighbours(FTNREF1D(TILE_RIGHT, 1)) == EXTERNAL_TILE) { \
             access(field, x_max + j, k) = \
                 access(field, x_max + 1 - j, k); \
         } \

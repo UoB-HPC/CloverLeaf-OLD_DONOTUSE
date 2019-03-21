@@ -72,6 +72,11 @@ struct tile_type {
     int external_tile_mask[4];
     int t_xmin, t_xmax, t_ymin, t_ymax;
     int t_left, t_right, t_bottom, t_top;
+
+#ifdef USE_KOKKOS
+    flag_t d_tile_neighbours;
+#endif
+
 };
 
 
@@ -94,6 +99,11 @@ struct chunk_type {
         right_boundary,
         bottom_boundary,
         top_boundary;
+
+#ifdef USE_KOKKOS
+   flag_t d_chunk_neighbours;
+#endif
+
 };
 
 

@@ -247,6 +247,18 @@ void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells)
             chunk.tiles[tile].t_top = top;
             chunk.tiles[tile].t_bottom = bottom;
 
+            #ifdef USE_KOKKOS
+            // First, allocate device copy
+            new(&chunk.tiles[tile].d_tile_neighbours)  Kokkos::View<int*>("tile_neighbours", 4);
+            // Copy to the device
+            Kokkos::View<int*>::HostMirror mirror_tile_neighbours = Kokkos::create_mirror_view(chunk.tiles[tile].d_tile_neighbours);
+            mirror_tile_neighbours(TILE_LEFT) = chunk.tiles[tile].tile_neighbours[TILE_LEFT];
+            mirror_tile_neighbours(TILE_RIGHT) = chunk.tiles[tile].tile_neighbours[TILE_RIGHT];
+            mirror_tile_neighbours(TILE_BOTTOM) = chunk.tiles[tile].tile_neighbours[TILE_BOTTOM];
+            mirror_tile_neighbours(TILE_TOP) = chunk.tiles[tile].tile_neighbours[TILE_TOP];
+            Kokkos::deep_copy(chunk.tiles[tile].d_tile_neighbours, mirror_tile_neighbours);
+            #endif
+
             tile++;
         }
         add_x_prev = 0;
@@ -325,6 +337,18 @@ void clover_decompose(int x_cells,
                 if (cx == chunk_x) chunk.chunk_neighbours[CHUNK_RIGHT] = EXTERNAL_FACE;
                 if (cy == 1) chunk.chunk_neighbours[CHUNK_BOTTOM] = EXTERNAL_FACE;
                 if (cy == chunk_y) chunk.chunk_neighbours[CHUNK_TOP] = EXTERNAL_FACE;
+
+                #ifdef USE_KOKKOS
+                // First, allocate the device copy
+                new(&chunk.d_chunk_neighbours)             Kokkos::View<int*>("chunk_neighbours", 4);
+                // Copy to the device
+                Kokkos::View<int*>::HostMirror mirror_chunk_neighbours = Kokkos::create_mirror_view(chunk.d_chunk_neighbours);
+                mirror_chunk_neighbours(CHUNK_LEFT) = chunk.chunk_neighbours[CHUNK_LEFT];
+                mirror_chunk_neighbours(CHUNK_RIGHT) = chunk.chunk_neighbours[CHUNK_RIGHT];
+                mirror_chunk_neighbours(CHUNK_BOTTOM) = chunk.chunk_neighbours[CHUNK_BOTTOM];
+                mirror_chunk_neighbours(CHUNK_TOP) = chunk.chunk_neighbours[CHUNK_TOP];
+                Kokkos::deep_copy(chunk.d_chunk_neighbours, mirror_chunk_neighbours);
+                #endif
             }
 
             if (cx <= mod_x) add_x_prev++;
