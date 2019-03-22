@@ -52,13 +52,13 @@ void advec_mom(
     if (direction == X) {
         mom_direction_x3_functor f4(
             tile,
-            x_min - 1, x_max + 1, y_min - 1 , y_max + 1,
+            x_min, x_max + 1, y_min , y_max + 1,
             vel1);
         f4.compute();
     } else if (direction == Y) {
         mom_direction_y3_functor f4(
             tile,
-            x_min, x_max + 1, y_min - 1 , y_max + 1,
+            x_min, x_max + 1, y_min, y_max + 1,
             vel1);
         f4.compute();
     }
