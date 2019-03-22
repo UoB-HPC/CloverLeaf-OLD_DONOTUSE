@@ -60,7 +60,7 @@ void field_summary(
 #endif
 
 #if defined(USE_KOKKOS)
-#include "../kernels/field_summary_kernel_c.cc"
+#include "kokkos/field_summary.cpp"
 void field_summary(
     double* vol,
     double* ie,
@@ -81,40 +81,64 @@ void field_summary(
             y_min = tile.t_ymin,
             y_max = tile.t_ymax;
 
-        Kokkos::deep_copy(tile.field.volume, tile.field.d_volume);
-        Kokkos::deep_copy(tile.field.density0, tile.field.d_density0);
-        Kokkos::deep_copy(tile.field.energy0, tile.field.d_energy0);
-        Kokkos::deep_copy(tile.field.pressure, tile.field.d_pressure);
-        Kokkos::deep_copy(tile.field.xvel0, tile.field.d_xvel0);
-        Kokkos::deep_copy(tile.field.yvel0, tile.field.d_yvel0);
+        field_summary_functor::value_type result;
 
-        double _vol   = 0.0,
-               _mass  = 0.0,
-               _ie    = 0.0,
-               _ke    = 0.0,
-               _press = 0.0;
+        BOSSPRINT(stdout, "RESULT %E, %E, %E, %E, %E\n", result.vol, result.mass, result.ie, result.ke, result.press);
 
-        for (int k = y_min; k <= y_max; k++) {
-            for (int j = x_min; j <= x_max; j++) {
-                field_summary_kernel_(
-                    j, k,
-                    x_min, x_max,
-                    y_min, y_max,
-                    tile.field.volume,
-                    tile.field.density0,
-                    tile.field.energy0,
-                    tile.field.pressure,
-                    tile.field.xvel0,
-                    tile.field.yvel0,
-                    &_vol, &_mass, &_ie, &_ke, &_press);
-            }
-        }
+        field_summary_functor f(
+          x_min, x_max, y_min, y_max,
+          tile.field.d_volume,
+          tile.field.d_density0,
+          tile.field.d_energy0,
+          tile.field.d_pressure,
+          tile.field.d_xvel0,
+          tile.field.d_yvel0
+        );
+        f.compute(result);
+        Kokkos::fence();
 
-        *vol   += _vol;
-        *mass  += _mass;
-        *ie    += _ie;
-        *ke    += _ke;
-        *press += _press;
+        BOSSPRINT(stdout, "RESULT %E, %E, %E, %E, %E\n", result.vol, result.mass, result.ie, result.ke, result.press);
+
+        *vol += result.vol;
+        *mass += result.mass;
+        *ie += result.ie;
+        *ke += result.ke;
+        *press += result.press;
+
+//        Kokkos::deep_copy(tile.field.volume, tile.field.d_volume);
+//        Kokkos::deep_copy(tile.field.density0, tile.field.d_density0);
+//        Kokkos::deep_copy(tile.field.energy0, tile.field.d_energy0);
+//        Kokkos::deep_copy(tile.field.pressure, tile.field.d_pressure);
+//        Kokkos::deep_copy(tile.field.xvel0, tile.field.d_xvel0);
+//        Kokkos::deep_copy(tile.field.yvel0, tile.field.d_yvel0);
+//
+//        double _vol   = 0.0,
+//               _mass  = 0.0,
+//               _ie    = 0.0,
+//               _ke    = 0.0,
+//               _press = 0.0;
+//
+//        for (int k = y_min; k <= y_max; k++) {
+//            for (int j = x_min; j <= x_max; j++) {
+//                field_summary_kernel_(
+//                    j, k,
+//                    x_min, x_max,
+//                    y_min, y_max,
+//                    tile.field.volume,
+//                    tile.field.density0,
+//                    tile.field.energy0,
+//                    tile.field.pressure,
+//                    tile.field.xvel0,
+//                    tile.field.yvel0,
+//                    &_vol, &_mass, &_ie, &_ke, &_press);
+//            }
+//        }
+//
+//        *vol   += _vol;
+//        *mass  += _mass;
+//        *ie    += _ie;
+//        *ke    += _ke;
+//        *press += _press;
     }
     Kokkos::fence();
 }
