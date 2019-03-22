@@ -83,8 +83,6 @@ void field_summary(
 
         field_summary_functor::value_type result;
 
-        BOSSPRINT(stdout, "RESULT %E, %E, %E, %E, %E\n", result.vol, result.mass, result.ie, result.ke, result.press);
-
         field_summary_functor f(
           x_min, x_max, y_min, y_max,
           tile.field.d_volume,
@@ -96,8 +94,6 @@ void field_summary(
         );
         f.compute(result);
         Kokkos::fence();
-
-        BOSSPRINT(stdout, "RESULT %E, %E, %E, %E, %E\n", result.vol, result.mass, result.ie, result.ke, result.press);
 
         *vol += result.vol;
         *mass += result.mass;

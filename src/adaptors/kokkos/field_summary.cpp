@@ -42,13 +42,14 @@ struct field_summary_functor {
   // Compute : call the kernel in parallel
   void compute(value_type& result)
   {
-    parallel_reduce("field_summary", MDRangePolicy<Rank<2>>({y_min, x_min}, {y_max+1, x_max+1}), *this, result);
+   // Need to use a 1D reduction because the 2D reduction resulted in shared memory segfaults
+    parallel_reduce("field_summary", (y_max+1-y_min)*(x_max+1-x_min), *this, result);
   }
 
 
   // Call the kernel
   KOKKOS_INLINE_FUNCTION
-  void operator()(const int k, const int j, value_type& update) const
+  void operator()(const int i, value_type& update) const
   {
     value_type result;
     result.vol = 0.0;
@@ -56,6 +57,9 @@ struct field_summary_functor {
     result.ie = 0.0;
     result.ke = 0.0;
     result.press = 0.0;
+
+    const int j = y_min + (i / (x_max+1-x_min));
+    const int k = x_min + (i % (x_max+1-x_min));
 
     field_summary_kernel_(
         j, k,
@@ -69,7 +73,7 @@ struct field_summary_functor {
         yvel0,
         &result.vol, &result.mass, &result.ie, &result.ke, &result.press);
 
-    //join(update, result);
+    join(update, result);
   }
 
   // Tell Kokkos how to reduce the structure of doubles
