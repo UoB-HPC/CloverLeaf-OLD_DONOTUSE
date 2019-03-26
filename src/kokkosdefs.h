@@ -64,7 +64,8 @@ typedef typename Kokkos::View<double*>::HostMirror  host_view_1d_t;
     typename const_field_2d_t = Kokkos::View<double**>, \
     typename field_2d_t = Kokkos::View<double**>, \
     typename const_field_1d_t = Kokkos::View<double*>, \
-    typename field_1d_t = Kokkos::View<double*> \
+    typename field_1d_t = Kokkos::View<double*>, \
+    typename flag_t = Kokkos::View<int*> \
     > __device__ __host__
 
 #else  //defined(__NVCC__)
@@ -75,7 +76,7 @@ typedef typename Kokkos::View<double*>::HostMirror  host_view_1d_t;
     typename const_field_1d_t = Kokkos::View<double*>, \
     typename field_1d_t = Kokkos::View<double*>, \
     typename flag_t = Kokkos::View<int*> \
-    >
+    > 
 
 #endif  //defined(__NVCC__)
 
