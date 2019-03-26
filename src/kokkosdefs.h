@@ -53,7 +53,7 @@
 #define const_field_1d_lt    const Kokkos::View<double*>
 #define field_1d_lt          const Kokkos::View<double*>
 
-#define flag_t               Kokkos::View<int*>
+#define flag_lt               Kokkos::View<int*>
 
 typedef typename Kokkos::View<double**>::HostMirror host_view_2d_t;
 typedef typename Kokkos::View<double*>::HostMirror  host_view_1d_t;
@@ -73,7 +73,7 @@ typedef typename Kokkos::View<double*>::HostMirror  host_view_1d_t;
     typename const_field_2d_t = Kokkos::View<double**>, \
     typename field_2d_t = Kokkos::View<double**>, \
     typename const_field_1d_t = Kokkos::View<double*>, \
-    typename field_1d_t = Kokkos::View<double*> \
+    typename field_1d_t = Kokkos::View<double*>, \
     typename flag_t = Kokkos::View<int*> \
     >
 
