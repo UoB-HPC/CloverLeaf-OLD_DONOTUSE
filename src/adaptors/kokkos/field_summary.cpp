@@ -58,8 +58,8 @@ struct field_summary_functor {
     result.ke = 0.0;
     result.press = 0.0;
 
-    const int j = y_min + (i % (x_max+1-x_min));
-    const int k = x_min + (i / (x_max+1-x_min));
+    const int j = y_min + (i / (x_max+1-x_min));
+    const int k = x_min + (i % (x_max+1-x_min));
 
     field_summary_kernel_(
         j, k,
